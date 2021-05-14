@@ -2,8 +2,15 @@ using LinearAlgebra
 using Distances
 using Distributions
 
+"""
+
+"""
 
 function distance_matrix__bdrMatrix(distance_matrix, verts, lower, upper)
+	"""
+	Given a distance matrix and distance threshold, change all distances outside
+	the input range to Inf
+	"""
     t = 1
     m = size(distance_matrix)[1]
     n = size(distance_matrix)[2]
@@ -151,20 +158,22 @@ function signbdrMatrix(verts, lowverts_orig, higverts_orig, maxdim, triangles, e
 	end
 	return bdrMatrices
 end
- 
-function findbasis(D, pc, lower, upper)
+
+function findbasis(D, pc, lower, upper, distmat=false)
 	vecverts = vec(D.bdrMatrices["lverts"][1])
 	verts = transpose(vecverts)[:,:]
 	pcreorder= pc[:,vecverts]
-	distance_matrix = pairwise(Euclidean(), pcreorder)
-	# di = D.distVec[1]
+	if distmat
+		distance_matrix= pcreorder[vecverts,:]
+	else
+		distance_matrix = pairwise(Euclidean(), pcreorder)
+	end
 	di=upper
-	x = distance_matrix__bdrMatrix(distance_matrix, vecverts, 0, di+exp(-16))
-	edge, lowverts, edgeLength, grainsone = build_lowfaces(distance_matrix, 0, di + exp(-16), vecverts)
+	x = distance_matrix__bdrMatrix(distance_matrix, vecverts, 0, di)
+	edge, lowverts, edgeLength, grainsone = build_lowfaces(distance_matrix, 0, di, vecverts)
 	triangles, higverts, distances,grainstwo = build_highfaces(lower, upper, x, edgeLength, vecverts)
 	a = signbdrMatrix(verts, lowverts, higverts, 1, triangles, edge, grainsone, grainstwo)
-	filtrationorder = bdrMatrices__filtrationorder(a)
-
+	filtrationorder = bdrMatrices__filtrationorder(a,1)
 	bdr = SparseMatrixCSC(length(filtrationorder["cp"][1]) - 1, length(filtrationorder["cp"][2]) - 1, filtrationorder["cp"][2], filtrationorder["rv"][2], filtrationorder["vl"][2])
-	return bdr, sort!(grainstwo, rev = true), sort!(distances),filtrationorder["hverts"][2]
+	return bdr, sort!(grainstwo, rev = true), sort!(distances), filtrationorder["hverts"], sort!(edgeLength)
 end

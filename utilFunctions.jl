@@ -1,5 +1,5 @@
 using Plots
-using JuMP,Clp,GLPK
+using JuMP,GLPK
 
 ######### visualize in 3D
 function plotGenerators(C, d, k, plotAllGens = false)
@@ -698,4 +698,11 @@ function checkCircuit(generator)
 		return false
 	end
 	return orderedVerts = unique(pts)
+end
+
+
+function C_gen_checkLoops(C, g)
+      D=SparseMatrixCSC(C.bdrMatrices["m"][1], length(C.bdrMatrices["cp"][1]) - 1,C.bdrMatrices["cp"][1],C.bdrMatrices["rv"][1],C.bdrMatrices["vl"][1])
+      T = D[:,g.rowval]
+      return length(g.rowval) - rank(Array(T))
 end
