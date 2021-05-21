@@ -207,3 +207,236 @@ fn main() {
     // this part is not implemented yet.
 }
 
+
+// use exhact::matrix::{SmOracle, RingSpec, RingMetadata, MajorDimension};
+// use exhact::cubical::{Cube, CubicalComplex};
+// use exhact::chx::{ChainComplex, factor_chain_complex, ChxTransformKind, FactoredComplexBlockCsm, Indexing};
+// use exhact::clique::Simplex;
+// use std;
+// use std::marker::PhantomData;
+// use exhact::csm::CSM;
+// use exhact::decomp::decomposition;
+
+
+// fn main() {
+
+//     // ----------------------------------------------------------------------------------
+//     // Set maximum threshold values for homology dimension and dissimilarity
+//     // ----------------------------------------------------------------------------------
+//     let dim = 3;
+//     let maxdis = 14;
+    
+    
+//     // ----------------------------------------------------------------------------------
+//     // Define an object to represent the ring Z/3Z
+//     // ----------------------------------------------------------------------------------
+//     let ringmetadata = exhact::matrix::RingMetadata{
+//     	ringspec: RingSpec::Modulus(3),
+//     	identity_additive: 0,
+//     	identity_multiplicative: 1,
+//     };
+//     println!("haha");
+//     // ----------------------------------------------------------------------------------
+//     // Build a "dissimilarity matrix" as a vector of vectors
+//     // ----------------------------------------------------------------------------------
+//     let dismat = vec![  vec![0,  10,  14,  10],
+//                         vec![10,  0,  10,  15],
+//                         vec![14,  10,  0,  10],
+//                         vec![10,  15,  10,  0]  ];
+    
+    
+//     // ----------------------------------------------------------------------------------
+//     // Construct the corresponding filtered clique complex
+//     // ----------------------------------------------------------------------------------
+//     let chx = exhact::clique::CliqueComplex {
+//         // the distance/dissimilarity matrix
+//         dissimilarity_matrix: dismat, 
+//         // threshold to stop the filtration
+//         dissimilarity_value_max: maxdis, 
+//         // sets "safeguards" on dimension; we'll get warnings if we try to 
+//         // get boundary matrices in dimension higher than dim+1
+//         safe_homology_degrees_to_build_boundaries: (1..dim+1).collect(), 
+//         // set the default major dimension (for sparse matrices) to be row
+//         major_dimension: MajorDimension::Row, 
+//         // indicates we want Z/3Z coefficients
+//         ringmetadata: ringmetadata, 
+//         // don't worry about this
+//         simplex_count: Vec::new() 
+//     };
+//     let D =  chx.get_smoracle(exhact::matrix::MajorDimension::Row,
+//                               exhact::chx::ChxTransformKind::Boundary);
+    
+//     let simplex_d1 = exhact::clique::Simplex{
+//         filvalue: 1,
+//         vertices : vec![3]
+//     };
+//     let simplex_d0 = exhact::clique::Simplex{
+//         filvalue: 0,
+//         vertices : vec![0]
+//     };
+ 
+//     let major_field = D.maj_itr( &simplex_d1 );
+//     println!("Structural nonzero entries of a row corresponding to a 0-simplex:");
+//     for item in major_field  {
+//         println!("{:?}", item);
+//     }
+//     let major_field = D.maj_itr( &simplex_d0 );
+//     println!("Structural nonzero entries of a row corresponding to a 0-simplex:");
+//     for item in major_field  {
+//         println!("{:?}", item);
+//     }
+
+//     std::assert_eq!(chx.key_2_filtration( &simplex_d0 ), 0);
+//     std::assert_eq!(chx.key_2_filtration( &simplex_d1 ), 1);
+ 
+//     // -------------------------------
+//     let max_homology_degree = dim+1;
+//     println!("here");
+//     let original_complex = &chx;
+//     let hmatrix = original_complex.get_smoracle(
+//         MajorDimension::Row,
+//         ChxTransformKind::Boundary
+//     );
+
+//     let mut blocks = FactoredComplexBlockCsm{
+//         phantom: PhantomData,
+//         original_complex: original_complex,
+//         dim_rowoper: vec![CSM::new(MajorDimension::Row, hmatrix.ring().clone())],
+//         dim_indexing: vec![Indexing::new()]
+//     };
+
+//     let mut maj_to_reduce = Vec::new();
+//     for ii in 1..(max_homology_degree+1){
+//         println!("dim{:?}", ii);
+//         maj_to_reduce.clear();
+//         let major_keys = original_complex.keys_ordered(ii-1);
+//         for key in major_keys.iter() {
+//             if !blocks.dim_indexing[ii-1].minkey_2_index.contains_key(key) {
+//                 maj_to_reduce.push(key.clone());
+//             }
+//         }
+//         let (rowoper, indexing) = decomposition(&hmatrix, &mut maj_to_reduce);
+//         blocks.dim_rowoper.push(rowoper);
+//         blocks.dim_indexing.push(indexing);
+//     }
+
+
+ 
+// }
+
+//! In this example, we have multiple products,
+//! and each consumes a set amount of fuel, and of time to produce.
+//! The goal is to find, knowing the available fuel and time,
+//! and the value of each product, how much we should produce of each.
+//!
+//! In this example, the number of resources is fixed (only fuel an time),
+//! and the amount of products varies.
+//! In the opposite case (a fixed number of products and an arbitrary number of resources),
+//! the modelling is even simpler: you don't have to store any expression in your problem struct,
+//! you can instantiate a SolverModel directly when creating your problem,
+//! and then use SolverModel::with to add constraints dynamically.
+
+// use good_lp::variable::ProblemVariables;
+// use good_lp::{default_solver, variable, variables, Expression, Solution, SolverModel, Variable};
+
+// struct Product {
+//     // amount of fuel producing 1 unit takes
+//     needed_fuel: f64,
+//     // time it takes to produce 1 unit
+//     needed_time: f64,
+//     value: f64, // The amount of money we can sell an unit of the product for
+// }
+
+// struct ResourceAllocationProblem {
+//     vars: ProblemVariables,
+//     total_value: Expression,
+//     consumed_fuel: Expression,
+//     consumed_time: Expression,
+//     available_fuel: f64,
+//     available_time: f64,
+// }
+
+// impl ResourceAllocationProblem {
+//     fn new(available_fuel: f64, available_time: f64) -> ResourceAllocationProblem {
+//         ResourceAllocationProblem {
+//             vars: variables!(),
+//             available_fuel,
+//             available_time,
+//             consumed_fuel: 0.into(),
+//             consumed_time: 0.into(),
+//             total_value: 0.into(),
+//         }
+//     }
+
+//     /// Add a new product to take into account in the optimization
+//     fn add(&mut self, product: Product) -> Variable {
+//         let amount_to_produce = self.vars.add(variable().min(0));
+//         self.total_value += amount_to_produce * product.value;
+//         self.consumed_fuel += amount_to_produce * product.needed_fuel;
+//         self.consumed_time += amount_to_produce * product.needed_time;
+//         amount_to_produce
+//     }
+
+//     fn best_product_quantities(self) -> impl Solution {
+//         self.vars
+//             .maximise(self.total_value)
+//             .using(default_solver)
+//             .with(self.consumed_fuel.leq(self.available_fuel))
+//             .with(self.consumed_time.leq(self.available_time))
+//             .solve()
+//             .unwrap()
+//     }
+// }
+
+// use float_eq::assert_float_eq;
+
+// #[test]
+// fn resource_allocation() {
+//     let mut pb = ResourceAllocationProblem::new(5., 3.);
+//     let steel = pb.add(Product {
+//         needed_fuel: 1.,
+//         needed_time: 1.,
+//         value: 10.,
+//     });
+//     let stainless_steel = pb.add(Product {
+//         needed_fuel: 2.,
+//         needed_time: 1.,
+//         value: 11.,
+//     });
+
+//     let solution = pb.best_product_quantities();
+
+//     // The amount of steel we should produce
+//     println!("solution value");
+//     println!("{}", solution.value(steel));
+//     println!("solution value done");
+//     assert_float_eq!(1., solution.value(steel), abs <= 1e-10);
+//     // The amount of stainless steel we should produce
+//     assert_float_eq!(2., solution.value(stainless_steel), abs <= 1e-10);
+// }
+// fn main(){
+
+// }
+
+// #[test]
+// fn using_a_vector() {
+//     let products = vec![
+//         Product {
+//             needed_fuel: 1.,
+//             needed_time: 1.,
+//             value: 10.,
+//         },
+//         Product {
+//             needed_fuel: 2.,
+//             needed_time: 1.,
+//             value: 11.,
+//         },
+//     ];
+
+//     let mut pb = ResourceAllocationProblem::new(5., 3.);
+//     let variables: Vec<_> = products.into_iter().map(|p| pb.add(p)).collect();
+//     let solution = pb.best_product_quantities();
+//     let product_quantities: Vec<_> = variables.iter().map(|&v| solution.value(v)).collect();
+//     assert_float_eq!(1., product_quantities[0], abs <= 1e-10);
+//     assert_float_eq!(2., product_quantities[1], abs <= 1e-10);
+// }
