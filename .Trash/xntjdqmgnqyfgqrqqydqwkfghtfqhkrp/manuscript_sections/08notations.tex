@@ -1,0 +1,20 @@
+%Since all of our optimal cycles had entries in $\{-1,-0, 1\}$, $C_{Len}\NI$ is identical to $L_{Len}(\optimalrep_{Len}\NI)$. 
+
+
+
+% we use a superscript to indicate the type of the optimization problem: $I$ represents integer programming, and $NI$ represents non-integer linear programming. We use a subscript to indicate the type of the optimal generator: $Unif$ represents uniform-weighted optimization, $Len$ represents length-weighted optimization, $Vol$ represents volume optimization, $Area$ represents area-weighted volume optimization, and $Orig$ represents the original cycle.
+%\GHP{I would say that both super and subscript say something about the type of program; suggested rephrase: the superscript indicates the presence or absence of an integer constraint, while the subscripts indicate all other factors relevant to the program (constraints, const function, etc.)}\LL{Got it! replaced phrasing in the paragraph above}
+
+%\LZ{Lu, I hate to suggest this as I know it's going to be a pain, but I think we should consider changing I to MIP and NI to LP. We can talk with others about this.} \LL{I agree. I'll just do a find and replace and regenerate the figures using the R script! Not a pain. :)}
+
+%\GHP{These examples are very good.  To make them more precise, do the following: where possible, refer to each variable as the optimal value or the optimal solution to linear program number <insert program number>.  This is because phrases like ``the volume-optimal cycle'' are vague (in particular, the phrase in quotes does not tell the reader which cycle is being optimized).  The motivated reader can guess things from context, but it is much better to be precise.}
+
+
+
+% Similarly, $\x^I$ denotes the solution to an integer programming problem, and $\x^{NI}$ denotes the solution to a linear programming problem. We use $\x_{Len}$ to represent solutions optimal against length-weighted loss functions and $\x_{Unif}$ to represent solutions optimal against uniform-weighted loss functions. 
+
+% We use $C$ to denote the optimum cost of an optimization problem. $C^I$ represents the optimum cost for an integer programming problem while $C^{NI}$ represents the optimum cost for a linear programming problem. Similarly, $C_{Len}$ represents the length-weighted optimum cost, and $C_{Unif}$ represents the uniform-weighted optimum cost. 
+
+% We use $L$ to denote the loss function for an optimization problem. $L_{Len}$ represents the length-weighted loss function and $L_{Unif}$ represents the uniform-weighted loss function. We use $L(X)$ to represent the loss of a generator $X$. For example, $L_{Unif}(X^{NI}_{Len})$ represents the uniform-weighted loss of the solution optimal against the length-weighted loss function obtained from a linear programming problem.
+
+% We use $T$ to denote the computation time for solving an optimization problem. $T^I$ represents the computation time for an integer linear programming problem and $T^{NI}$ represents the computation time for a linear programming problem.

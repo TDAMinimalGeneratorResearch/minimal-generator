@@ -1,0 +1,25 @@
+[package]
+name = "numopt"
+version = "0.2.1"
+authors = ["Tomas Tinoco De Rubira <ttinoco5687@gmail.com>"]
+edition = "2018"
+license = "BSD-2-Clause"
+description = "Numerical optimization problem abstractions, solver interfaces, and modeling tools."
+documentation = "https://docs.rs/numopt"
+repository = "https://github.com/ttinoco/numopt"
+
+[features]
+ipopt = []
+
+[dependencies]
+num-traits = "0.2.11"
+tempfile = "3.1.0"
+simple-error = "0.2.1"
+approx = "0.3.2"
+libc = "0.2.68"
+ndarray = "0.13.0"
+serial_test = "0.4.0"
+maplit = "1.0.2"
+
+[package.metadata.docs.rs]
+all-features = true

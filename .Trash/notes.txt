@@ -1,0 +1,67 @@
+% \textcolor{blue}{Last week progress:
+% \begin{enumerate}
+%     \item Added examples for comparison between the four algorithms, including the area example.
+%     \item Continued volume computation
+%     \begin{enumerate}
+%         \item nonintegral entries in $X^{NI}$: if we set the threshold to be $1.0$, we get entries in $\{1, -1, 0\}$
+%         \item $C^{I}_{Vol} = C^{NI}_{Vol} $
+%         \item $X^I$ computation time is around $60$ times the $X^{NI}$ computation time for one of the real-world data sets. This ratio seems to grow with the size of the optimization problem.
+%     \end{enumerate}
+% \end{enumerate}}
+% \textcolor{blue}{Last week progress (Dec 7):
+% \begin{enumerate}
+%     \item Implemented a function take takes in a pointcloud, birth time ($b_i$), death time ($d_i$), outputs a boundary matrix with columns born in $(b_i, d_i)$ and its basis matrix. 
+%     \item Computed experiments for Normal distribution, dimension 2.
+%     \begin{enumerate}
+%         \item $A$ - The basis from persistence calculation, a  basis of $E$.
+%         \item $B$ - $\{a \in A: a \text{ is born in }[b_i, d_i] \}$
+%         \item  $C$ - Full boundary matrix with columns born between $b_i$ and $d_i$
+%         \item  $D$ - Basis of column space of $C$.
+%         \item $E$ - The full boundary matrix.
+%     \end{enumerate}\\
+%     \begin{enumerate}
+%         \item Using the full boundary matrix given by the new function, we achieve the same optimum as using the original full matrix and using $\frac{1}{30}$ of the computation time. 
+%         \item Using the basis boundary matrix given by the new function, we sometimes ($\sim$20\% of the time) cannot achieve the optimum solution. 
+%     \end{enumerate}
+% \end{enumerate}}
+\textcolor{blue}{Last two days:
+\begin{enumerate}
+    \item Finished running volume optimal cycles for house data set. 
+    \item Running on other roadmap data sets. 
+    \item Computation time: extracting from $E < C$ $<$ using entire $E$
+    \begin{enumerate}
+        \item $A$ - The basis from persistence calculation, a  basis of $E$.
+        \item $B$ - $\{a \in A: a \text{ is born in }[b_i, d_i] \}$
+        \item  $C$ - Full boundary matrix with columns born between $b_i$ and $d_i$
+        \item  $D$ - Basis of column space of $C$.
+        \item $E$ - The full boundary matrix.
+    \end{enumerate} 
+    % \begin{enumerate}
+    %     \item Using the full boundary matrix given by the new function, we achieve the same optimum as using the original full matrix and using $\frac{1}{30}$ of the computation time. 
+    %     \item Using the basis boundary matrix given by the new function, we sometimes ($\sim$20\% of the time) cannot achieve the optimum solution. 
+    % \end{enumerate}
+\end{enumerate}}
+structure:
+intro(TDA), background(persistence, optimization), methods(quantities, data, how we computed), results & discussion, conclusion(a paragraph restating and future work.) 
+
+1. discuss linear program formulation
+2. 
+
+Could be done:
+2. small batch of experiments to compare using entire E and extracting E
+3. recording a complete snapshot of code you need to do this. 
+4. build full bdr for once and use part of it later
+
+
+% volume optimal
+
+1. circuits check - running, finished Normal dim 2, 8,9,10
+2. volume basis only - running
+3. one area example - done
+4. if time, more area 
+
+
+04/08/2021
+Things to do: 
+# Include erdos renyi in Table 3 and Figure 6
+# add back missing figures

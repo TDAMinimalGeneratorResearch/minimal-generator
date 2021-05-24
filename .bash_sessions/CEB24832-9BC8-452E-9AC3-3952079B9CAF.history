@@ -1,0 +1,156 @@
+git pull
+git pull
+    git branch --set-upstream-to=origin/<branch> git-checkout
+git pull
+git branch --set-upstream-to=origin/<branch> git-checkout
+build rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+cd toml-demo/
+ls
+cd src
+cd toml-demo/
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+cargo build
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rust version
+version --rust
+rust --version
+cargo --version
+cargo --version
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc --explain E0433
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+rustc rustLearn.rs 
+cargo build
+rustc rustLearn.rs 
+cargo build
+rustc src/main.rs 
+rustc src/main.rs 
+rustc src/main.rs 
+rustc src/main.rs 
+cargo build
+./target/debug/optimal_representatives
+rustc src/main.rs 
+rustc src/main.rs --release
+./target/debug/optimal_representatives --release
+rustc src/main.rs --release
+rustc src/main.rs --release
+rustc src/main.rs 
+ --release
+rustc src/distance_matrix.rs 
+./target/debug/optimal_representatives --release
+rustc src/main.rs 
+./target/debug/optimal_representatives --release
+rustc src/main.rs 
+rustc src/main.rs 
+./target/debug/optimal_representatives --release
+rustc src/main.rs 
+rustc src/main.rs 
+./target/debug/optimal_representatives --release
+rustc src/main.rs 
+./main 
+rustc src/main.rs 
+./main
+./main
+rustc src/main.rs 
+./main
+cargo build
+cargo build
+rustc src/main.rs 
+tree
+rustc src/main.rs 
+rustc src/main.rs 
+cargo build
+rustc src/main.rs 
+cargo run
+cargo build
+cargo run
+cargo build
+cargo build
+cargo build
+cargo run
+cargo build
+cargo run
+cargo build
+cargo run
+rustc src/2main.rs 
+cargo build
+cargo run
+git add ./
+git commit -m "latest code"
+git push
+./target/debug/optimal_representatives --release
+rustc src/2main.rs 
+./target/debug/optimal_representatives --release
+rustc src/2main.rs 
+rustc src/main.rs 
+./target/debug/optimal_representatives --release
+rustc src/main.rs 
+./target/debug/optimal_representatives --release
+cargo build
+./target/debug/optimal_representatives --release
+cargo clean --doc
+cd Developer/
+ls
+cd exhact_rust-devel_haibin_comments/
+ls
+cargo clean --doc
+cargo doc --no-deps --open
+cargo new toml-demo
+cargo new toml-demo
+cargo
+cargo clean --doc
+$ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+cargo new toml-dem
+cd toml-demo/
+ls
+vim Cargo.toml 
+cargo build
+vim Cargo.toml 
+cargo build
+ls
+vim Cargo.toml 
+cargo build
+ls
+rustc rustLearn.rs 
+cd 
+ls
+cd Downloads/
+ls
+ls
+cd arxiv
+cd arxivv
+ls
+rm .DS_Store

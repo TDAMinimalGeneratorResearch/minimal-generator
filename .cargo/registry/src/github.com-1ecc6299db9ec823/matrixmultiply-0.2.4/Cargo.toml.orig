@@ -1,0 +1,46 @@
+[package]
+name = "matrixmultiply"
+version = "0.2.4"
+authors = [
+    "bluss",
+    "R. Janis Goldschmidt"
+]
+
+license = "MIT/Apache-2.0"
+
+repository = "https://github.com/bluss/matrixmultiply/"
+documentation = "https://docs.rs/matrixmultiply/"
+
+description = "General matrix multiplication for f32 and f64 matrices. Operates on matrices with general layout (they can use arbitrary row and column stride). Detects and uses AVX or SSE2 on x86 platforms transparently for higher performance. Uses a microkernel strategy, so that the implementation is easy to parallelize and optimize."
+
+keywords = ["matrix", "sgemm", "dgemm"]
+categories = ["science"]
+
+exclude = ["docs/*"]
+
+[lib]
+bench = false
+
+[[bench]]
+name = "benchmarks"
+harness = false
+
+[dependencies]
+rawpointer = "0.2"
+
+[dev-dependencies]
+bencher = "0.1.2"
+itertools = "0.8"
+
+[features]
+default = ["std"]
+
+std = []
+
+[profile.release]
+[profile.bench]
+
+[package.metadata.release]
+no-dev-version = true
+tag-name = "{{version}}"
+

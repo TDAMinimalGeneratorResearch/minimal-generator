@@ -1,0 +1,127 @@
+
+% \begin{landscape}
+
+\begin{table}[!h]
+\caption{distmat}
+    {\footnotesize{
+    % \begin{tabular}{ |>{\centering\arraybackslash}m{3cm} | {\centering\arraybackslash}m{1.5cm} |  >{\centering\arraybackslash}m{1.8cm} | {\centering\arraybackslash}m{1.5cm} |  >{\centering\arraybackslash}m{2cm}|   >{\centering\arraybackslash}m{2cm}| >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm}|  >{\centering\arraybackslash}m{2cm}| >{\centering\arraybackslash}m{1.3cm}| >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm} |}
+    
+    \begin{tabular}{ |>{\centering}m{11em} *{11}{>{\centering\arraybackslash}m{4.5em} }|}
+ \hline
+  & \textbf{Klein} & \textbf{Vicsek}  & \textbf{C.elegans} & \textbf{HIV} & \textbf{Genome}  & \textbf{fractal R} & \textbf{network} & \textbf{house} & \textbf{senate} & \textbf{drag} & \textbf{H3N2}\\[0.5ex] 
+ \hline 
+ \hline
+ \textbf{Ambient dimension} & 3 & 3 & 202 &  673 & 688 &  259 & 300 & 261 & 60 & 3 &  1,173\\   
+ \textbf{\# points}   & 400 &  300  &  297 &   1088 &  1397  & 512 & 379 & 445  & 103 & 1,000 & 2,722\\ 
+ \textbf{\# representatives}&   & 124  &  107 &174   &     & 438 & 7  & 126  & 12 &  & 28 \\  
+ \textbf{$T$ persistence}   &   & 6.81 & 5.14 &728.51&     & 143.07 & 12.18  &  9.62 & 0.10 &  & 71,081.77  \\ 
+ [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{\qquad Edge-loss persistent homological cycle representatives (\pr \eqref{eq:edgelossgeneral})}} &&&&&& \\
+\hline
+%  \textbf{Memory (GiB)}    & 5.56 & 3.05 & 199.52 & 181.27  & 7.71 & 72.17 & 7.16 & 0.15& 416.38\\ \hline        
+ \textbf{$T\I_{E\text{-}Len}$ optimization} &   & 8.2 &  19.64&466.85  &     & 150.46 & 0.17 & 63.93  & 0.31 &  & 4,732.59	\\ 
+ \textbf{$T\NI_{E\text{-}Len}$ optimization} &   & 6.61 &16.07  &403.63 &     & 86.95 & 0.13 & 48.65  & 0.22 &  & 4,540.55 \\ 
+ \textbf{$T\I_{E\text{-}Unif}$ optimization} &   & 9.09 & 19.22 & 473.82 &     & 119.94 & 0.23 &  63.34 & 0.33 &  & 4,714.90	\\ 
+  \textbf{$T\NI_{E\text{-}Unif}$ optimization} &   & 5.55 & 15.63 & 404.95 &     & 83.40 & 0.12 & 48.88  & 0.22 &  & 4,547.37 \\
+  [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{Edge-loss filtered homological cycle represnetatives (\pr \eqref{eq:escolarargmin})}} &&&&&& \\
+\hline
+%  \textbf{Memory (GiB)}    & 5.56 & 3.05 & 199.52 & 181.27  & 7.71 & 72.17 & 7.16 & 0.15& 416.38\\ \hline        
+ \textbf{$T\I_{E\text{-}Len}$ optimization} &   &8.64  &20.41  & 468.22 &     &  155.08&  0.17 &  62.2  & 0.30 &  & 2,999.24	\\ 
+ \textbf{$T\NI_{E\text{-}Len}$ optimization} &   & 5.51 &16.15  & 403.74 &     & 88.66 &0.13  &  48.24 & 0.22 &  & 2,829.12	\\ 
+ \textbf{$T\I_{E\text{-}Unif}$ optimization} &   & 8.32 &19.76  & 476.84  &     &  142.4&  0.24  & 61.82  & 0.31 &  & 2,937.16	\\ 
+  \textbf{$T\NI_{E\text{-}Unif}$ optimization} &   & 5.63 & 16.23 & 406.97 &     & 87.59 &  0.12 & 48.11  &0.22  &  & 2,833.06	 \\
+  [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{Triangle-loss persistent homological cycle representatives (\pr \eqref{eq:trianglelossgeneral})\qquad}} &&&&&& \\
+\hline
+ \textbf{$T\I_{T\text{-}Unif}$ optimization} & & 23.07  &783.06  & 63,227.14 &  &  10,187.41   & 2.71 & 221.07  & 0.26  &  & 39,140.67 \\ 
+ \textbf{$T\NI_{T\text{-}Unif}$ optimization} & & 18.81 & 610.20 &60,459.49 &  &   8,441.76  & 2.08 & 170.95  & 0.23  &  & 36,401.50  \\ 
+ \textbf{$T$ build all}  & & 0.88  &  &  &  & 45.28 & 0.05 &  4.85 & 0.03  &  & \\ 
+\textbf{Total $T$ build part}  & & 3.06  &24.21 & 860.91 &  & 193.99 & 0.26 & 31.37  & 0.03  &  & 922.50 \\ \hline 
+\end{tabular}
+}%\LL{Updated 03/14}
+}
+\label{tab:realworldata}
+\end{table}
+% \end{landscape}
+% \begin{table}[!h]
+%     \centering
+%     \begin{tabular}{ |c || c |c |c |c | c| c|c|c|c|c|}
+%  \hline
+%  & Klein & Vicsek600  & eleg & HIV & Genome  & fractal R & network & house & senate & drag\\[0.5ex] 
+%  \hline 
+%  Ambient dimension & 3 & 3    & 202 &  673 & 688 &  259 & 300 & 261 & 60 & 3\\\hline  
+%  \# points &  400 &  300  &  297 &   1088 &  1397  & 512 & 379 & 445  & 103 & 1000\\\hline  
+%  $T$ persistence &   95.56  & 8.74  & 3.39 & 552.80 &  1079.96  & 62.99 & 31.73 & 7.79 & 0.12 & 1037.70 \\ \hline
+%  Memory (GiB) &   50.77  & 5.56 & 3.05 & 199.52 & 181.27  & 7.71 & 72.17 & 7.16 & 0.15& 416.38\\ \hline        
+%  \# generators & 257 & 124  &42& 199& 117& 126&  13 & 133 & 19& 311\\ \hline
+%  $T\I_{Len}$ optimization &2,253.14   & 358.72    & 47.75 &  8,140.87  & 48,109.66  & 2,700.03 &   17.05 & 347.09 &    1.18 & 8,305.27 \\ \hline
+%  $T\NI_{Len}$ optimization& 2,163.14  & 308.56  & 26.53 & 5,101.00 &23,264.60  &2,000.97  &  11.43   &138.36   &  0.91  &7,280.97 \\ \hline 
+%  $T\I_{Unif}$ optimization &2,323.93&   362.77&    47.62  &8,700.25& 46,754.56  &2,830.24  &  18.59   &311.09&     1.16&  8,339.93 \\ \hline
+%   $T\NI_{Unif}$ optimization &2,212.52   &309.72  &  26.55  &5,004.96& 23,323.30&  2,222.38 &   11.54  & 138.73 &    0.90 &  7,305.24 \\ 
+%  \hline
+%  $T\I_{Vol}$ optimization &  & 140.04  &  223.97 &  16,691.24  & 16,328.65 &  6,849.59 &    7.52  & 204.31 &   0.36  &  443.89\\ \hline
+%  $T\NI_{Vol}$ optimization&   & 130.95 & 169.08 & 14,547.61 & 14570.72 & 5,939.54&  8.01  & 172.66  &  0.30 & 398.79\\ \hline 
+%  T build all triangles &   & 14.86 & 9.76 &  & - & 47.8 & 11.76  &   &  0.04 & 172.60\\ \hline 
+% Total deleting time &   & 0.01 & 0.05 &  & &  & 0.00  &    &  0.00 & \\ \hline 
+% Total build-part time &   &  &   8.28 &  475.37 & 437.75 & 268.57 &  1.06 & 28.42 &    & 242.14\\ \hline 
+
+% \end{tabular}
+% \caption{External Data Sets (Time measured in seconds)}
+% \label{tab:data}
+% \end{table}
+% \end{center}
+
+
+
+
+\begin{table}[!h]
+\caption{\caption{Summary of the experimental results of the data sets from \cite{roadmap2017} as described in \se \ref{sec: realworlddata}. The rows include the ambient dimension, number of points, the number of cycle representatives in $\Homologies_1$, and the time (measured in seconds) it took to compute persistent homology for each data set. We also include the computation time taken to optimize the set of cycle representatives under six different optimization problems, and computation time of two different implementation choices for the triangle-loss optimal cycles: building the full $\partial_2$ boundary matrix once and extracting the part needed, or constructing part of the $\partial_2$ boundary matrix for each cycle representative. In this table, $T$ stands for computation time measured in seconds with subscripts indicating the type of the optimal cycle and superscripts indicating whether the program was solved using linear programming (NI) or integer programming (I). The time taken to construct the input to the optimization problem is included in the optimization time for edge-loss minimal cycle representatives, but is excluded and separately listed in the last two rows for the triangle-loss minimal cycle representatives. For triangle-loss cycles, we were able to compute $115$ out of the $117$ cycle representatives for the \textbf{Genome} data set and $52$ out of $57$ cycle representatives for the \textbf{H3N2} data set due to memory constraints. The numbers in the parenthesis represent the other optimization statistics corresponding to the triangle-loss optimal cycles we were actually able to compute. The last two rows compare two ways of building the input $\partial_2[:,\hat {\mathcal{F}}_{2}]$ matrix to the triangle-loss optimal cycle program. The penultimate row records the time of building the entire $\partial_{2}$ matrix once and then extracting columns born in the interval $\closedinterval$ for each representative. The last row records the total time to iteratively build the part of the boundary matrix $\partial_2[:,\hat {\mathcal{F}}_{2}]$ for each cycle representative.}
+}
+    {\footnotesize{
+    % \begin{tabular}{ |>{\centering\arraybackslash}m{3cm} | {\centering\arraybackslash}m{1.5cm} |  >{\centering\arraybackslash}m{1.8cm} | {\centering\arraybackslash}m{1.5cm} |  >{\centering\arraybackslash}m{2cm}|   >{\centering\arraybackslash}m{2cm}| >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm}|  >{\centering\arraybackslash}m{2cm}| >{\centering\arraybackslash}m{1.3cm}| >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm} |}
+    
+    \begin{tabular}{ |>{\centering}m{11em} *{11}{>{\centering\arraybackslash}m{4.5em} }|}
+ \hline
+  & \textbf{Klein} & \textbf{Vicsek}  & \textbf{C.elegans} & \textbf{HIV} & \textbf{Genome}  & \textbf{fractal R} & \textbf{network} & \textbf{house} & \textbf{senate} & \textbf{drag} & \textbf{H3N2}\\[0.5ex] 
+ \hline 
+ \hline
+ \textbf{Ambient dimension} & 3 & 3    & 202 &  673 & 688 &  259 & 300 & 261 & 60 & 3 &  1,173\\   
+ \textbf{\# points}   & 400 &  300  &  297 &   1088 &  1397  & 512 & 379 & 445  & 103 & 1,000 & 2,722\\ 
+ \textbf{\# representatives} & 257 & 124  &42& 199& 117 (115) & 126&  13 & 133 & 19& 311 & 57 (53) \\  
+ \textbf{$T$ persistence} &   66.21  & 5.48  & 3.41 & 552.80 &  967.61  & 62.99 & 10.23 & 7.79 & 0.12 & 948.16 & 23,362.05 \\ 
+ [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{\qquad Edge-loss persistent homological cycle representatives (\pr \eqref{eq:edgelossgeneral})}} &&&&&& \\
+\hline
+%  \textbf{Memory (GiB)}    & 5.56 & 3.05 & 199.52 & 181.27  & 7.71 & 72.17 & 7.16 & 0.15& 416.38\\ \hline        
+ \textbf{$T\I_{E\text{-}Len}$ optimization} & 16.01 & 8.24 & 13.22 & 957.48 & 656.05 & 78.1 & 0.72 & 66.23 & 0.38 & 45.14 &5469.85	\\ 
+ \textbf{$T\NI_{E\text{-}Len}$ optimization} & 11.28 & 5.66 & 9.94 & 850.09 & 491.69 & 53.85 & 0.57 & 48.53 & 0.29 & 34.73 &4989.13	\\ 
+ \textbf{$T\I_{E\text{-}Unif}$ optimization} & 14.59 & 8.66 & 13.36 & 980.82 & 689.51 & 82.17 & 0.76 & 66.67 & 0.4 & 45.51 & 5274.77	\\ 
+  \textbf{$T\NI_{E\text{-}Unif}$ optimization} & 11.38 & 5.66 & 10.39 & 872.12 & 492.66 & 54.96 & 0.56 & 49.72 & 0.31 & 33.88 & 4991.39	\\
+  [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{Edge-loss filtered homological cycle represnetatives (\pr \eqref{eq:escolarargmin})}} &&&&&& \\
+\hline
+%  \textbf{Memory (GiB)}    & 5.56 & 3.05 & 199.52 & 181.27  & 7.71 & 72.17 & 7.16 & 0.15& 416.38\\ \hline        
+ \textbf{$T\I_{E\text{-}Len}$ optimization} & 16.93 & 8.05 & 13.88 & 557.47 & 1144.17 & 75.56 & 0.97 & 61.84 & 0.35 & 67.77 & 5464.05	\\ 
+ \textbf{$T\NI_{E\text{-}Len}$ optimization} & 10.29 & 6.15 & 11.3 & 464.34 & 973.15 & 53.86 & 0.66 & 43.22 & 0.26 & 50.25 & 4992.40	\\ 
+ \textbf{$T\I_{E\text{-}Unif}$ optimization} & 15.14 & 8.53 & 13.2 & 562.57 & 1191.44 & 79.31 & 0.68 & 61.42 & 0.35 & 68.63 & 5277.85	\\ 
+  \textbf{$T\NI_{E\text{-}Unif}$ optimization} & 11.07 & 5.94 & 10.35 & 467.22 & 981.72 & 53.86 & 0.53 & 43.66 & 0.43 & 54.05 &4988.87	 \\
+  [0.5ex] 
+\hline
+\multicolumn{5}{c}{\textbf{Triangle-loss persistent homological cycle representatives (\pr \eqref{eq:trianglelossgeneral})\qquad}} &&&&&& \\
+\hline
+ \textbf{$T\I_{T\text{-}Unif}$ optimization} &   185.92 &72.69 &  477.53 &  21,072.34  & 16,379.86&  5,300.92 &     25.33  & 421.45 &    0.91 &  384.91 & 12,341.58\\ 
+ \textbf{$T\NI_{T\text{-}Unif}$ optimization} & 103.26 & 62.42 & 372.46 & 18,958.53 & 14,535.42 & 4,411.80& 20.86  & 342.05 & 0.79 & 277.93 & 11,467.15\\ 
+ \textbf{$T$ build all}  &5.52 & 3.56 &10.07 &  826.25& - & 47.8 & 12.55  & 6.82  &  0.08 & 172.60 & -\\ 
+% Total deleting time   & 0.01 & 0.05 &  & &  & 0.00  &    &  0.00 & \\ \hline 
+\textbf{Total $T$ build part} & 6.13  & 3.30 &   8.28 &  451.41 &415.79& 94.86 & 0.87 & 33.40 &  0.06  & 198.27 & 895.36\\ \hline 
+\end{tabular}
+}%\LL{Updated 03/14}
+}
+\label{tab:realworldata}
+\end{table}

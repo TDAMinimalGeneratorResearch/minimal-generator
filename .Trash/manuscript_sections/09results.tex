@@ -1,0 +1,249 @@
+\section{Results and Discussion}\label{results}
+
+We first describe the notations we use for discussing the results in \se \ref{notations}. We then investigate each of the questions raised in \se \ref{intro} with our analyses in the rest of the section.
+
+\subsection{Notation}\label{notations}
+
+We use $\optimalrep$ to denote a cycle representative, $C$ to denote the minimum cost of an optimization problem, and $L$ to denote the loss (objective) function that is being optimized.
+% \GHP{including or excluding time to compute the original cycle representatives?  including or excluding the time required to construct the inputs to the  solver?}, 
+We use $T$ \textbf{persistence} to denote the time taken to compute all original cycle representatives and their lifespans $\persinterval$. We use $T$ \textbf{optimization} to denote the computation time for optimizing all generators found by the persistence algorithm, and $t$ to represent the computation for optimizing a particular generator. We note $T$ \textbf{optimization} includes the time required to construct the inputs to the solver for the edge-loss methods, and excludes the time required to construct the inputs to the triangle-loss methods, whose computation time is separately recorded in order to compare two ways of constructing the input matrix, as discussed in \se \ref{acceleratation technique}. 
+
+
+For each of these symbols, the superscript indicates the presence or absence of an integer constraint, while the subscripts indicate the cost function. %all other factors relevant to the program (constraints, cost function, etc.).
+For example, the notation
+% \GHP{$C_{Len}^{\R} =$}
+$C_{E\text{-}Len}\NI = L_{E\text{-}Len}(\optimalrep_{E\text{-}Len}\NI)$ represents the length of the length-weighted minimal cycle representative which solves \ref{itm:edge_NIL}; $L_{E\text{-}Unif}(\originalrep)$ represents the number of edges in the original cycle representative $\originalrep$; and $C_{E\text{-}Len}\I$ represents the length of the length-weighted minimal cycle representative that is a solution to the integer program \ref{itm:edge_IL}. 
+
+
+
+\subsection{Computation time comparisons} 
+\label{sec:timecomparisons}
+
+We summarize results for Programs \ref{itm:edge_NIU}, \ref{itm:edge_IU}, \ref{itm:edge_NIL},
+\ref{itm:edge_IL},
+\ref{itm:tri_NIU}, and 
+\ref{itm:tri_IU} in \tab \ref{tab:realworldata} for data described in \se \ref{sec: realworlddata} and \tab \ref{tab:distributiondata} for data described in \se \ref{sec: randompointclouds}\footnote{As mentioned in \se \ref{sec:trianglelossmethdos}, we only compute $\Tri\area$ methods for data in ambient dimension 2, and as such, these methods do not appear in these tables.}. In each table, rows 1-3 provide information about the data by specifying ambient dimension, number of points, and number of cycle representatives. Row 4, labeled as $T$ \textbf{persistence}, gives the total time to compute persistent homology for the data, measured in seconds. Rows 5-10 give the total time to optimize all cycle representatives that are feasible to compute using each optimization technique. In the last two rows of each table, we provide the time of constructing the input to the triangle-loss methods using two different approaches described in \se \ref{acceleratation technique}. The penultimate row records the time of building the entire $\partial_{2}$ matrix once and then extracting $\partial_2[\mathcal{F}_1, \hat {\mathcal{F}}_{2}]$ for each representative. The last row records the total time to iteratively build the part of the boundary matrix $\partial_{2}[ \mathcal{F}_1 , \hat {\mathcal{F}}_{2} ]$ for each cycle representative. In \tab \ref{tab:distributiondata}, the computation times displayed average all random samples from each dimension for each distribution. 
+
+The two numbers in parenthesis in the third row of \tab \ref{tab:realworldata} indicate the actual number of representatives we were able to optimize using the triangle-loss methods (all edge-loss representatives were optimized). For the \textbf{genome} and \textbf{H3N2} data sets, we are not able to compute all triangle-loss cycle representatives due to the large number of 2-simplices born between the birth and death interval of some cycles. For instance, for a particular cycle representative in the \textbf{genome} data set, there were $10,522,991$ 2-simplices born in this cycle's lifespan. %We compute optimal cycle representatives for $115$ out of $117$ representatives for the \textbf{genome} data set and $53$ out of $57$ representatives for the \textbf{H3N2} data set. 
+Also, given the large number of $2$-simplices in the simplicial complex%($453,424,290$ triangles for the \textbf{genome} data set and $3,357,641,440$ triangles for the \textbf{H3N2} data set)
+, we are not able to build the full $\partial_2$ matrix due to memory constraints, denoted by - in the penultimate row of \tab \ref{tab:realworldata}. 
+
+Below we describe some insights on computation time drawn from the two tables. 
+
+
+% From \tab \ref{tab:realworldata} and \tab \ref{tab:distributiondata}, we can observe that the length and uniform-weighted optimal cycle representatives are much more efficient to compute than the volume optimal cycles. In general, solving a mixed integer programming (MIP) problem is slower than solving a linear programming problem. 
+
+% \subsection{Comparative time cost of optimizations}\label{Computational cost of the various optimization techniques}
+
+
+\emph{Computation time comparison between persistence and optimization (\textbf{$T$ persistence} vs. \textbf{$T$ optimization})}
+
+We observe that more often than not $T$ \textbf{optimization}\footnote{Including the time of constructing the input to the optimization programs.} $>$ $T$ \textbf{persistence} e.g. for 6 out of the 11 real-world data sets described in \se \ref{sec: realworlddata} when using the 4 edge-loss methods and 10 out of the 11 data sets when using the two uniform-weighted triangle-loss methods. For all of the synthetic data described in \se \ref{sec: randompointclouds}, we have $T$ \textbf{optimization} $>$ $T$ \textbf{persistence} when using all six optimization programs. 
+Therefore, the computational cost of optimizing a basis of cycle representatives generally exceeds the cost of computing such a basis.
+
+\emph{Computation time comparison between integral and nonintegral programs ($T^I \text{ vs. } T^{NI}$)} 
+
+In Tables \ref{tab:realworldata} and \ref{tab:distributiondata}, we observe that $T^I$ $>$ $T^{NI}$, i.e., the total computation time of optimizing a basis of cycle representatives using an integer program exceeds the computation time using a non-integer constrained program. Yet, $T^I$ and $T^{NI}$ are on the same order of magnitude, for both edge-loss methods and triangle-loss method.  
+
+
+Let $r_{E\text{-}Unif} = \frac{t\I_{E\text{-}Unif}}{t\NI_{E\text{-}Unif}},$ and define $r_{E\text{-}Len}$ and $r_{T\text{-}Unif}$ similarly. We compute each for every cycle representative for data described in Tables \ref{tab:realworldata} and \ref{tab:distributiondata}. Let $\bar{r}_\bullet$ denote the average of $r_\bullet$ and $\sigma_{r_\bullet}$ denote the standard deviation of $r_\bullet$. We have $\Bar{r}_{E\text{-}Unif} = 1.44 , \sigma_{r_{E\text{-}Unif}} = 3.17$, $\Bar{r}_{E\text{-}Len} = 1.46,  \sigma_{r_{E\text{-}Len}} = 2.65$, $ \sigma_{r_{T\text{-}Unif}} = 1.32, \sigma_{r_{T\text{-}Unif}} = 1.40$. \fig \ref{fig:lp_mip_ratio_df}(A, C, E) plots $r_\bullet$ using scatter plots and \fig \ref{fig:lp_mip_ratio_df}(B, D, F) displays the same data using box plots. The vertical axis represents the ratio between the MIP time and LP time of optimizing a cycle representative. The horizontal axis in the scatter plots represents the computation time to solve the LP. The red line in each subfigure represents the horizontal line $y=1$. As we can see from the box plots, the ratio between the computation time of MIP and LP for most of the cycle representatives ($>50\%$) is around $1$ and less than $2$. Although there are cases where the computation time of solving an MIP is $71.03$ times the computation time of solving an LP, such cases happen only for cycle representatives with a very short LP computation time. %\LL{Updated}
+
+
+\emph{Triangle-loss versus edge-loss programs. ($T_{T\text{-}\bullet}$ vs. $T_{E\text{-}\bullet}$)} 
+
+%\GHP{We should note that Obayashi has special accelerations for this.} \LL{updated! Please proof read. I think Obayashi's first acceleration technique indeed did not work for many of our programs and that's why we didn't use it. However, in the original paper they did say this strategy could work. Do we have an explanation for why it didn't work for our programs?}
+%\LZ{Should this and next paragraph be shortened footnotes?}
+%We first note that Obayashi \cite{Obayashi2018} proposes a few techniques for accelerating the triangle-loss methods. First, Obayashi proposes dropping condition \eqref{obacond3} when running the optimization program, and then check if the solution already satisfies the constraint. If not, rerun the program with the constraint added. We experiment with this proposed method on the \textbf{Vicsek} data set and found that for all generators, the solutions do not automatically satisfy the condition if we do not require it and the total computation time of this approach will exceed that of including the constraint. Thus, our code does not use this acceleration technique by default, though is implemented to accommodate this technique. 
+
+
+%Another heuristic performance enhancement technique proposed by Obayashi \cite{Obayashi2018} is to use the locality of an optimal volume with the observation that the simplices in the optimal volume are often contained in a neighborhood of $\sigma_{d_i}$. This reduces the optimization problem size by using $\mathcal{F}_q^{(r)} = \{\sigma \in \mathcal{F}_q | \sigma \subset B_r(\sigma_{d_i})\}$ for a parameter $r > 0$ instead of $\mathcal{F}_q$, where $B_r(\sigma_{d_i})$ is the ball of radius $r$ whose center is the centroid of $\sigma_{d_i}$. Our program does not implement this technique currently. 
+
+We observe that the edge-loss optimal cycles are more efficient to compute than the triangle-loss cycles for more than $65.70\%$ of the cycle representatives\footnote{Obayashi \cite{Obayashi2018} proposes a few techniques for accelerating the triangle-loss methods which we did not implement}. This aligns with our intuition because for representatives with a longer persistence, the number of columns in the boundary matrix $\partial_{2}[ \mathcal{F}_1 , \hat {\mathcal{F}}_{2} ]$ grows faster than that of $\partial_1[:, \mathcal{Q}]$. Consequently, the edge-loss programs are feasible for all cycle representatives we experiment with, whereas the triangle-loss technique fails for $6$ representatives due to the large problem size (with greater than twenty million triangles born between the life span of those cycle representatives).
+
+\emph{Computation time of different linear solvers}
+
+The choice of linear solver can significantly impact the computational cost of the optimization problems. We perform experiments on length/uniform-minimal cycle representatives using the GLPK \cite{glpk} and Gurobi \cite{gurobi} linear solvers on $90$ data sets drawn from the normal distribution with dimensions from $2$ to $10$ with a total of $4815$ cycle representatives. The median of the computation time ratio between using the GLPK solver and Gurobi solver is $2.22$ for \pr
+\ref{itm:edge_NIU}, $1.68$ for \pr \ref{itm:edge_IU}, $2.28$ for \pr \ref{itm:edge_NIL}, and $1.73$ for \pr \ref{itm:edge_IL}, and the computation time using the GLPK solver can be $30$ times larger than the computation time using the Gurobi solver for some cycles, see figure in the Supplementary Material. Therefore, we use the Gurobi solver in all other analyses in this paper. 
+
+
+
+
+%\subsection{Comparisons of filtered cycle basis problem vs. persistent cycle basis problem ($\setoffilteredcyclebases$ vs. $\setofpersistenthcyclebases$)} 
+
+%\LZ{Need introductory paragraph to orient the reader what we've done for this comparison as so far we've only said we are using Algorithms 1 and 3, not the FCB algorithm.} 
+%\LL{I think we could maybe remove this section, as the comparisons between the FCB and PrsHCB are spread out through the results sections, in subsections of coefficients, cyclicity, etc.}
+%We find that the original cycle representatives could have up to $10$ loops and all the solutions found by solving $\setoffilteredcyclebases$ form one bona fide loop, whereas $99.65\%$ of the solutions found by solving $\setofpersistenthcyclebases$ form one bona fide loop. 
+
+\subsection{Performance of acceleration techniques} \label{accelerateresults}
+
+\emph{Edge-loss optimal cycles.} 
+
+As discussed in \se \ref{acceleratation technique}, we accelerate edge-loss problems by replacing $\partial_2[:, \goodtriangles]$ with the column basis submatrix of $\partial_2[:, \hat \goodtriangles]$. We further reduce the size of $\partial_2[:, \hat \goodtriangles]$ by only including the rows corresponding to 1-simplices born before the birth time of the cycle, denoted as $\partial_2[\goodedges, \hat \goodtriangles]$. We perform experiments on a small-sized data set (\textbf{Senate}) that consists of 103 points in dimension $60$ and a medium-sized data set (\textbf{House}) that contains $445$ points in dimension $261$. In \tab
+\ref{unif-acceleration-table}, we report the computation time of solving the optimization problems in Programs \ref{itm:edge_NIU}, \ref{itm:edge_IU}, \ref{itm:edge_NIL}, and \ref{itm:edge_IL} using these three techniques of varying the size of the input boundary matrix. The results align with intuition that the optimizations are faster with fewer input variables, and thus, the third implementation is the most efficient among the three.
+
+\emph{Triangle-loss optimal cycles.}
+
+As discussed in \se \ref{acceleratation technique}, there are also multiple approaches to creating the input to the triangle-loss problems. To recap, we restrict the boundary matrix $\partial_2$ to $\goodvolmatrix$ for a particular cycle representative $\optimalrep^i$. We can do so in various ways: (i) zeroing out the columns of $\partial_2$ not in $\hat{\mathcal{F}}_2$ but maintaining the original size of the boundary matrix, (iia) building the entire boundary matrix $\partial_2$ once and then deleting the columns not in $\hat{\mathcal{F}}_2$ for each representative, (iib) building the columns in $\hat{\mathcal{F}}_2$ iteratively for each representative, and (iiia/b) in conjunction with (iia) or (iib) respectively, reducing the rows of the boundary matrix of $\partial_2$ to only include the rows born before the death time of the cycle $\mathcal{F}_1$. 
+
+In \tab \ref{unif-acceleration-table}, we summarize the computation time of solving Programs 
+\ref{itm:tri_NIU} and
+\ref{itm:tri_IU}
+ to find triangle-loss optimal cycles with three different sized boundary matrices as input: (i) zeroing out, (iib) deleting partial columns, and (iiib) deleting partial rows and columns. Note that (iia) and (iib) both result in the same boundary matrix $\partial_2[:, \hat{\mathcal{F}}_2]$. We again use the \textbf{Senate} and \textbf{House} data sets for analysis. We see that deleting partial rows and columns is the most efficient among the three implementations, which again matches intuition that reducing the number of variables accelerates the optimization problem. 
+
+We also ran experiments on the real-world data sets to compare the timing of building $\partial_{2}[ \mathcal{F}_1 , \hat {\mathcal{F}}_{2}]$ via methods (iiia) and (iiib) and summarize the results in the last two rows of \tab \ref{tab:realworldata}. We find that approach (iiia), where we build the entire matrix $\partial_2$ and then delete columns for each cycle representative, is in general faster than approach (iiib), where the boundary matrix $\partial_2[\mathcal{F}_1, \hat{\mathcal{F}}_2]$ is iteratively built for each representative. However, this latter approach can be more useful for large data sets, whose full boundary matrix $\partial_2$ might be too large to construct. For example, building the full boundary matrix for the \textbf{Genome} data set caused Julia to crash due to the large number  of $2$-simplices ($453,424,290$ triangles for the \textbf{Genome} data set and $3,357,641,440$ triangles for the \textbf{H3N2} data set). Whereas, by implenting (iiib) where we rebuild a part of the boundary matrix for each representative, we were able to optimize $115$ out of the $117$ cycle representatives for the \textbf{Genome} data set and $52$ of $57$ cycle representatives for the \textbf{H3N2} data set.
+
+\subsection{Coefficients of optimal cycle representatives}
+\label{coefficient}
+As discussed in \se \ref{secl0l1}, the problem of solving an $\ell_0$ optimization is desirable for its interpretability but doing so is NP-hard \cite{NPhardL0}. Often, $\ell_0$ optimization is approximated by an $\ell_1$ optimization problem, which is solvable in polynomial time. If the coefficients of a solution of the $\ell_1$ problem are in $\{-1,0,1\}$, then it is in fact an $\ell_0$ solution to the restricted optimization problem where we require solutions to have entries in $\{-1, 0, 1\}$ \cite{Escolar2016, Obayashi2018}. 
+
+We systematically check each solution of the six programs
+\ref{itm:edge_NIU},
+\ref{itm:edge_IU},
+\ref{itm:edge_NIL},
+\ref{itm:edge_IL},
+\ref{itm:tri_NIU}, and
+\ref{itm:tri_IU}
+ across all data sets and all optimal cycle representatives for found by Algorithms \ref{alg:edge} and \ref{alg:rdvvolumeoptimization} and Program \eqref{eq:escolarargmin} to see if the coefficients are integral or in $\{-1,0,1\}$. We analyze the $18,163$ optimal cycle representatives and find the following consistent results.
+ 
+ 
+ \emph{All} of the $\ell_1$ optimal representatives obtained by solving the edge-loss problems $\setoffilteredcyclebases$ by \pr \eqref{eq:escolarargmin} and $\setofpersistenthcyclebases$ by Algorithm \ref{alg:edge} (for both the integral and non-integral problems) had coefficients in $\{-1, 0, 1\}$ and thus, are not only all integral solutions but also $\ell_0$ optimal for the restricted optimization problem\footnote{See the Table in the Supplementary Material.}. When solving the triangle-loss problems by Algorithm \ref{alg:rdvvolumeoptimization}, we obtain one solution with coefficients of $2$ (for both the integral and non-integral problems) for one cycle representative from the logistic distribution data set. For that single representative, we rerun the optimizations with the additional constraint that it have coefficients with an absolute value less than or equal to one, which results in an infeasible solution. %\LL{updated 0314} %For optimal solutions to the integral programs with coefficients of larger than $1$, we rerun the program with the constraint that the absolute value of each coefficient to be less than or equal to $1$. By doing so, we either were able to find a solution with entries in $\{-1,0,1\}$ or fail to find a solution. \LZ{This last sentence is vague, can we briefly quantify? Wait, just read the next paragraph, isn't that describing the same thing as the last few sentences?}
+
+
+% In addition, all solutions found by solving \pr \eqref{eq:escolarargmin} have entries in $\{-1,0,1\}$ or machine error away from $\{-1,0,1\}$, whereas $0.21\%$ of solutions found by solving the more constrained Algorithm \ref{alg:edge} have entries not in $\{-1,0,1\}$ with a difference above machine error. When requiring integral solutions, the coefficients of the solutions are in $\{-2,-1,0,1,2\}$. For the $0.21\%$ of solution cycle representatives with coefficients of $\pm 2$, we rerun the optimization with the additional constraint that $\optimalrep$ has coefficients less than or equal to $1$. With the additional constraint, we fail to find a solution for $21.05\%$ of these cycle representatives and were able to get a solution in $\{-1,0,1\}$ for the other $78.95\%$. 
+
+This surprising result suggests that in most cases, the modeler can reap both the computational advantage of $\ell_1$ solutions and the theoretical and interpretability advantages of $\ell_0$ solutions by solving an $\ell_1$ optimization problem. Further, we find that the optimum cost is the same whether we require an integer solution or not for more than $99.97\%$ of solutions to \pr $\Edge\len$, $100\%$ of solutions to $\Edge\unif$, and $100\%$ of solutions to $\Tri\unif$. \emph{Thus, the modeler can drop the integral constraint to save computation time while still being able to achieve an integral solution in most cases.} %\LL{Updated 0314}
+
+%\subsection{Uniform/Length-weighted optimal cycles and volume optimal cycles} \LL{Maybe this could be a remark after we describe volume optimal cycles? }
+%\GHP{I would put this paragraph in the discussion section!  and maybe keep just a sentence or two in the methods section} \LL{I think we are merging the results and discussion sections?}
+%Another important difference between the uniform/length-weighted minimal cycle and the volume-optimal cycles is that to find the volume-optimal cycle, one only need the lifespan $L$ of the original cycle representative and does not need the original representative itself. This can be seen by inspection of the optimization problem (\ref{obacond1}) - (\ref{obacond3}). For example, Ichinomiya et al. \cite{ichinomiya2020protein} perform PH analysis and identified all cycles with volume-optimal cycles directly without computing original cycle representatives. This property of the volume-optimal cycles can be useful if the modeler uses a persistence software that only outputs persistence information but not the original cycle representatives. However, our implementation uses persistence output from the \url{Eirene} library \cite{eirenecode}, which already computes the original cycle representatives when calculating persistence. 
+
+\subsection{Comparing optimal cycle representatives against different loss functions}\label{sec:comparing optimal generators against different loss functions}
+
+We compare the optimal cycle representatives against different loss functions to study the extent to which the solutions produced by each technique vary. We consider two loss functions on an $H_1$ cycle representative $\optimalrep \in \Cycles_1(K)$:
+$$L_{E\text{-}Len}(\optimalrep) = \sum_{\sigma \in \optimalrep} \mathrm{length}(\sigma)$$
+where $\mathrm{length}(\sigma)$ is the distance---as designated by the metric $d$ used to define the VR complex---between the two vertices of a $1$-simplex $\sigma$, and
+$$L_{E\text{-}Unif}(\optimalrep) = ||\optimalrep||_0=|\supp(\optimalrep)|, $$ 
+the number of 1-simplices (edges) in a representative. We also consider $L_{T\text{-}Area}(\optimalrep)$ as the area enclosed by a representative, only applying this loss function to data sets with ambient dimension $2$. 
+
+
+\fig \ref{fig:Examplesofeachoptimalcycles} shows an example of various optimal cycle representatives obtained from Programs
+\ref{itm:edge_NIU},
+\ref{itm:edge_NIL},
+\ref{itm:tri_NIU}, and
+\ref{itm:tri_NIA}
+on an example point cloud drawn from the normal distribution in $\R^2$. In this example, solutions obtained from Algorithm \ref{alg:edge} and \pr \eqref{eq:escolarargmin} are the same. Each subfigure is labeled by program in the upper left corner and different loss functions evaluated at the optimal solution to the given program in the upper right corner. We do not have a way to measure the volume (i.e. the number of triangles bounded by the representative) of edge-loss minimal cycle representatives, as no triangulation of the area bounded by the $1$-cycle is specified in the optimization. We observe that various notions of optimality lead to differing cycle representatives, yet each solution to an optimization problem minimizes the loss function it is intended to optimize. This will not always be the case, as we will see momentarily.
+
+We compute the loss of solutions to the eight $\setofpersistenthcyclebases$ linear programs detailed in \se \ref{sec:programsandmethods} as well as the four edge-loss $\setoffilteredcyclebases$ problems from \pr \eqref{eq:escolarargmin}, against the three loss functions. Then, we divide each loss by the optimum cost attained by each linear program (when not requiring integer constraints), $C_{E\text{-}Unif}\NI=L_{E\text{-}Unif}(\optimalrep_{E\text{-}Unif}\NI)$, $C_{E\text{-}Len}\NI=L_{E\text{-}Len}(\optimalrep_{E\text{-}Len}\NI)$, $C_{T\text{-}Area}\NI=L_{T\text{-}Area}(\optimalrep_{T\text{-}Area}\NI)$ to study the extent to which the solutions produced by each technique vary.  %In each of the subfigures, we indicate the type of optimal cycle representative solution on the horizontal axis, and plot the ratio between their respective loss and the optimum attained by the linear program on the vertical axis. 
+Box plots of these ratios are displayed in \fig\ref{fig:lengthcocmpare}. 
+
+
+
+
+These ratios suggest that the uniform-weighted and length-weighted edge-loss cycles do minimize what they set out to minimize, namely, the number of edges and the total length, respectively. We also observe that intuitively the less-constrained solutions to the $\setoffilteredcyclebases$ \pr \eqref{eq:escolarargmin} can have a lower cost than the more-constrained solutions to the $\setofpersistenthcyclebases$ \pr \eqref{eq:edgelossgeneral}. 
+ 
+We also see that the edge-loss minimal cycles have similar loss in terms of length and number of edges ($L_{E\text{-}Len}$ and $L_{E\text{-}Unif}$) whereas the triangle-loss cycles can have larger losses ($L_{E\text{-}Len}(\optimalrep_{T\text{-}Unif})$ and $L_{E\text{-}Unif}(\optimalrep_{T\text{-}Unif})$). We find that $63.28\%$ of the $L_{E\text{-}Unif}$ minimal cycle representatives are also $L_{E\text{-}Len}$ minimal while $99.66\%$ of the $L_{E\text{-}Len}$ minimal cycle representatives are also $L_{E\text{-}Unif}$ minimal across all cycle representatives from all data sets for $\setofpersistenthcyclebases$ cycles. Similarly, we find that $61.31\%$ of the $L_{E\text{-}Unif}$ minimal cycle representatives are also $L_{E\text{-}Len}$ minimal while $99.32\%$ of the $L_{E\text{-}Len}$ minimal cycle representatives are also $L_{E\text{-}Unif}$ minimal across all cycle representatives from all data sets for $\setoffilteredcyclebases$ cycles. This suggests that modelers can often use the length-weighted minimal cycle to substitute the uniform-weighted minimal cycle. However, the triangle-loss cycles can potentially provide very different results. %\LL{Updated 0314}
+
+As mentioned in \se \ref{sec:trianglelossmethdos}, we only consider optimal area of cycle representatives in data with an ambient dimension of $2$ and analyze the 190 cycle representatives. As such, we consider the ten realizations of point clouds in $\mathbb{R}^2$ drawn from a normal distribution. In \se \ref{coefficient}, we discussed that $\optimalrep\I = \optimalrep\NI$ for nearly all of the edge-loss as well as uniform-weighted triangle-loss methods. This is also true for the area-weighted triangle-loss method.
+
+%where \LZ{Lu, insert} of solutions \ref{itm:tri_NIA}$ = $\ref{itm:tri_IA}. \LL{This is actually true for the area-weighetd ones as well. I just updated the figure. The previous figure's data was generated using the Gurobi solver, but for some reason that the NI solution has a larger area than the I solution. I switched to the GLPK for this specific plot and obtain the data in the plot. } %The persistence computation results in $190$ cycle representatives, and we optimize each with the eight optimizations 
+%\ref{itm:edge_NIU},
+%\ref{itm:edge_IU},
+%\ref{itm:edge_NIL},
+%\ref{itm:edge_IL},
+%\ref{itm:tri_NIU},
+%\ref{itm:tri_IU},
+%\ref{itm:tri_NIA}, and
+%\ref{itm:tri_IA}. 
+
+Counterintuitively, the $L_{T\text{-}Area}$ optimal cycle representative might not be the representative that encloses the smallest area. As shown in \fig\ref{fig:lengthcocmpare}, we observe that $18.42\%$ of $\optimalrep_{E\text{-}Unif}\NI$, $19.47\%$ of $\optimalrep_{E\text{-}Unif}\I$, $30\%$ of $\optimalrep_{E\text{-}Len}\NI$, and $30\%$ of  $\optimalrep_{E\text{-}Len}\I$ have an area smaller than that of the triangle-loss area-weighted optimal cycle for the cycles from $\setofpersistenthcyclebases$ using Program \eqref{eq:edgelossgeneral}. 
+Similarly,  $19.47\%$ of $\optimalrep_{E\text{-}Unif}\NI$, $19.47\%$ of  $\optimalrep_{E\text{-}Unif}\I$, $30.53\%$ of $\optimalrep_{E\text{-}Len}\NI$, and $30.53\%$ of $\optimalrep_{E\text{-}Len}\I$ have an area smaller than that of the triangle-loss area-weighted optimal cycle for the cycles from $\setoffilteredcyclebases$ using Program \eqref{eq:escolarargmin}. Lastly, $12.63\%$ of $\optimalrep^{I}_{T\text{-}Unif}$ and $\optimalrep^{I}_{T\text{-}Area}$ has an area smaller than that of the triangle-loss area-weighted optimal cycle.  %\LL{Updated 0314}
+
+In Figure \ref{fig:areaExample}, we provide an example illustrating why the triangle-loss area-weighted optimal cycle, solving Programs \ref{itm:tri_NIA}, or
+\ref{itm:tri_IA}, might not be the cycle that encloses the smallest area. Another reason why the area-weighted triangle-loss cycles could have a larger enclosed area is that in the optimization problems, the loss function is the sum of the triangles the cycle bounds, not the real enclosed area. Therefore, the area-weighted triangle-loss cycle will have the optimal area-weighted optimal cost, but not necessarily the smallest enclosed area. 
+
+
+%In Figure \ref{fig:areaExample}, (A) is the original cycle representative, (B) is the area-weighted volume optimal representative triangulated based on the $2$-simplices in the optimal area-weighted volume, (C) is the area-weighted optimal representative, and (D) is the length-weighted minimal representative.
+%By inspection, we see that the triangle-loss area-weighted optimal cycle encloses the area of an extra 2-simplex $\{c,d,e\}$ (highlighted in yellow) from the edge-loss length-weighted minimal cycle. By constraint \eq (\ref{obacond1}), triangle-loss optimal cycles must contain the triangle born at the death time of the cycle. \LZ{Need to update with the simplex-wise discussion} In this example, the optimal area-weighted cycle contains both $\{a,b,d\}$ and $\{a,d,f\}$ as they are born at the death time of the cycle. This constraint is not a requirement of the edge-loss methods, and as such, can enclose a cycle with smaller area.\\
+
+
+%The area-weighted optimal volume shown in $(B)$ contains six 2-simplices: $\volvec_B = [a,g,h], [a,g,f],[a,b,d],[a,d,f],[d,e,f],[b,c,d]$. The area-weighted optimal cycle representative is then the boundary of the six triangles $\partial \volvec_B = [a,b,c,d,e,f,g,h,a]$. The measured cost, $||W_{Area} \volvec_B||_1$, is then the sum of the area of the six triangles. Adding the 2-simplex $[c,d,e]$ would cancel out the 1-simplices $[d,e],[c,d]$, and add in the edge $[c,e]$, resulting in the cycle representative $\optimalrep = [a,b,c,e,f,g,h,a]$ in $D$. The new cycle representative $\optimalrep$ will have a smaller enclosed area than $\partial \volvec_B$, but a larger measured cost $||W_{Area} \optimalrep||_1$ because we now add the area of the 2-simplex $[c,d,e]$. Therefore, we emphasize that the area-weighted volume optimal cycle representative obtained from \ref{eq:MIP-Area} will not always be a cycle representative that encloses the smallest area. \LZ{delete whole paragraph?}
+ 
+\subsection{Comparative performance and precision of LP solvers}\label{Computational cost of the various optimization techniques}
+
+As discussed in \se \ref{sec:timecomparisons}, the GLPK solver performs much slower than the Gurobi solver in an initial set of experiments. The GLPK solver also finds non-integral solutions when solving a linear programming problem in Programs
+\ref{itm:edge_NIU}, and
+\ref{itm:edge_NIL}
+ more often than the Gurobi solver. On the same set of experiments as in \se \ref{sec:timecomparisons}, when finding the $\setoffilteredcyclebases$ using \pr \eqref{eq:escolarargmin}, $9.74\%$ of the edge-loss length-weighted minimal cycle representatives have non-integral entries, and $8.32\%$ of the edge-loss uniform-weighted minimal cycle representatives have non-integral entries when using the GLPK solver, whereas when using the Gurobi solver, $0.12\%$ of the length-weighted minimal cycle representatives have non-integral entries, and $0.04\%$ of the uniform-weighted minimal cycle representatives have non-integral entries. For the length-weighted minimal cycle representatives, the non-integral solutions differ from an $\ell_0$ optimal solution by a margin of machine error with both solvers. However, for the uniform-weighted minimal cycle representatives, the GLPK solver has $1.83\%$ of its non-integral solutions differ from an $\ell_0$ optimal solution by a margin not of machine epsilon, and the Gurobi solver has $0.02\%$ of its non-integral solutions differ from an $\ell_0$ optimal solution by a margin greater than machine epsilon. For the GLPK solver, when solving \pr
+ \ref{itm:edge_NIU}, instead of finding an integral solution, it tends to find a solution with fractional entries that sum to $1$. For example, instead of assigning an edge a coefficient of $1$, it sometimes assigns two edges each with a coefficient of $0.5$. In that way, the solution is still $\ell_1$ optimal, but no longer $\ell_0$ optimal.\\
+
+\subsection{Statistical properties of optimal cycle representatives with regard to various other quantities of interest}
+
+
+
+\noindent \emph{Support of a representative forming a single loop in the underlying graph}
+
+As can be seen in \fig \ref{fig:areaExample} (A), an original cycle representative may not be a single closed curve. In this example, the Betti number $\beta_1(\originalrep)=2$; colloquially, this representative consists of two ``loops". The number of loops in a cycle representative $\optimalrep$ is the first Betti number of the support of $\optimalrep$ (equivalently, the nullity of the column submatrix $\partial_1[:, S]$, where $S = \{i : \optimalrep_i \neq 0\}$ is the support of $\optimalrep$). We are interested in exploring how often the support of an original cycle representative forms a single loop in the underlying graph. We analyze each of the 360 synthetic data sets of various dimensions and distributions discussed in \se \ref{sec: randompointclouds} and display the results in \fig \ref{fig:loopsbreakdown}. We find that the majority of the original cycle representatives have one loop. However, as the ambient dimension of the data increases, the proportion of the cycle representatives with a single loop decreases, and we observe cycle representatives with up to $10$ loops. After optimizing each of these cycle representatives with the edge-loss methods, we verify that all $\setoffilteredcyclebases$ and $\setofpersistenthcyclebases$ optimal cycles only have one loop, whereas $0.13\%$ of the triangle-loss cycles have $2$ loops. %\LL{Updated 0314}
+
+
+% \emph{Length of a length-weighted optimal cycle matches the length of a uniform-weighted optimal cycle.}
+
+
+
+
+% \subsection{Overall effectiveness of optimization} \label{Comparing the loss of the optimal cycles against the original generator}
+
+\noindent \emph{Overall effectiveness of optimization ($L_\bullet(\optimalrep_\bullet^\bullet)$ vs. $L_\bullet(\originalrep)$)} 
+
+We compare the optimal representatives against the original cycle representatives with respect to edge-loss functions $L_{E\text{-}Unif}$ and $L_{E\text{-}Len}$. As shown in \fig \ref{fig:effectivenessall}, we find that the optimizations are in general effective in reducing the size of the cycle representative, especially for representatives with larger size. On each of the subfigures, the horizontal axis is the size of the original cycle representative and the vertical axis is the ratio between the loss of each optimal representative and the loss of the original representative:
+$$\frac{C^\bullet_\bullet}{L_\bullet(\originalrep)}.$$ 
+The average $\frac{C\NI_{E\text{-}Unif}}{L_{E\text{-}Unif}(\originalrep)}$ over all cycle representatives is $90.16\%$ and the average for $\frac{C\NI_{E\text{-}Len}}{L_{E\text{-}Len}(\originalrep)}$ over all cycle representatives is $90.36\%$ for cycles obtained from Algorithm \ref{alg:edge}.
+
+The average $\frac{C\NI_{E\text{-}Unif}}{L_{E\text{-}Unif}(\originalrep)}$ over all cycle representatives is $89.64\%$ and the average for $\frac{C\NI_{E\text{-}Len}}{L_{E\text{-}Len}(\originalrep)}$ over all cycle representatives is $89.72\%$ for cycles obtained from Program \eqref{eq:escolarargmin}. We do not have a way to measure the effectiveness of the volume optimal cycles. %\LL{Updated 03/14} % as we do not have a way to compute the number of triangles bounded by the original generators.
+
+\noindent \emph{Comparing solutions to the integral programs and non-integral programs ( $\optimalrep^{NI}_\bullet$ vs. $\optimalrep^{I}_{\bullet}$)}
+
+Among all $\setofpersistenthcyclebases$ cycle representatives, $66.38\%$ of them have $\optimalrep^{NI}_{E\text{-}Unif} = \optimalrep^{I}_{E\text{-}Unif}$, and  $99.51\%$ of them have $\optimalrep^{NI}_{E\text{-}Len} = \optimalrep^{I}_{E\text{-}Len}$. We find $\optimalrep^{NI}_{T\text{-}Unif} = \optimalrep^{I}_{T\text{-}Unif}$ for $74.27\%$ of the cycle representatives when using the triangle-loss \pr \eqref{eq:trianglelossgeneral}. %This suggests that there tend to be multiple solutions that achieve the uniform-weighted optimal loss and very rare to find multiple solutions to achieve the length-weighted optimal loss. 
+
+
+\noindent \emph{Cycle representative size for different distributions and dimensions}
+
+\fig \ref{fig:gen_num_breakdown} provides a summary of the size and number of cycle representatives found for each distribution data set described in Section \ref{sec: randompointclouds}. We observe that there tend to be both more representatives as well as more representatives with more $1$-simplices for higher dimensions.
+
+\noindent \emph{Duplicate intervals in the barcode}
+
+Of all data sets analyzed, the only one to have duplicate intervals --- multiple features with the same birth/death times --- in its barcode is \textbf{Klein}. This indicates that duplicate intervals are rare in practice, at least in dimension 1. We note that Algorithm \ref{alg:edge} replaces cycles that have been optimized in the cycle basis for later cycle optimization, as without doing so it is possible in theory to get a set of optimized cycles that no longer form a basis when there are duplicate intervals. However, we verify that even without this replacement in the \textbf{Klein} data, we still achieve the same optimal cycles. 
+
+ \noindent \emph{Edge-loss cycle representatives $\setoffilteredcyclebases$ vs. $\setofpersistenthcyclebases$}
+
+We find that for $84.52\%$ of \ref{itm:edge_NIU}, $90.84\%$ of \ref{itm:edge_IU}, $93.49\%$ of \ref{itm:edge_NIL}, and $93.49\%$ of \ref{itm:edge_IL}, the $\setoffilteredcyclebases$ edge-loss cycle representatives found by \pr \eqref{eq:escolarargmin} and the $\setofpersistenthcyclebases$ edge-loss cycles from \pr \eqref{eq:edgelossgeneral} are the same, i.e. the $\ell_1$ norm of their difference is $0$. As mentioned in Remark \ref{rmk:filteredversuspersistent}, the $\setoffilteredcyclebases$ cycles may not have the same death time as $\originalrep$. For the real-world data sets, $6.72\%$ of the $\eqref{itm:edge_NIL}$ and $\eqref{itm:edge_IL}$,  $7.65\%$ of the $\eqref{itm:edge_NIU}$ and $4.48\%$ of $\eqref{itm:edge_IU}$ have lifetimes different than $\originalrep$. For the randomly generated distribution data sets, $7.11\%$ of the $\eqref{itm:edge_NIL}$ and $\eqref{itm:edge_IL}$,  $8.06\%$ of the $\eqref{itm:edge_NIU}$ and $4.25\%$ of $\eqref{itm:edge_IU}$ have lifetimes different than $\originalrep$. All cycle representatives with lifetimes different than $\originalrep$ have death time beyond that of $\originalrep$.
+
+% We find that $C^{MIP} = C^{LP}$ for length-weighted, uniform-weighted, and volume optimal cycle representatives for all cycle representatives considered, which implies that the space of $\ell_0$ optimal solutions properly contains that of $\ell_1$ optimal solutions.
+% % However, $11$ of the $257$ cycle representatives for the Klein bottle data set have $|C^{MIP}_{Len} - C^{LP}_{Len}| \sim 10^{-16}$ (machine precision).  
+
+% All solutions to the integer linear programming problem  one have solutions in $\{-1, 0, 1\},$ which implies that they are also solutions to the $\ell^0$ optimization problem. More than $99\%$ of $\x^{LP}$ have entries in $\{-1, 0, 1\}$ while the rest solutions have entries within $10^{-16}$ of $\{-1, 0, 1\}$. We report the frequency in Table \ref{entry}. When computing volume-optimal cycles, the optimal volume $z$ always have entries in $\{-1,0,1\},$ but in very rare cases the volume-optimal cycle $\partial z$ have entries outside of $\{-1,0,1\}$.
+
+
+% % \textcolor{blue}{One thing to note that is when using the GLPK solver, we did get non-integral entries when dropping the constraint that the variables be integral, whereas when using the Gurobi solver, all the $\x$ we get were integral and in $\{-1, 0, 1\}.$ } \textcolor{red}{Non-integral look like machine epsilon and report the frequency. }
+
+% In terms of the solutions $\x$, we have $\x^{MIP}_{Unif} = \x^{LP}_{Unif}$ for $77.62\%$ of the cycle representatives from distribution point clouds and $46.70\%$ of the cycle representatives from the real-world data set. We have $\x^{MIP}_{Len} = \x^{LP}_{Len}$ for all the cycle representatives considered. This makes sense since with the uniform-weighted loss function, we are minimizing the number of simplices in a cycle representative. Therefore, there might be multiple ways to achieve the optimum whereas with the length-weighted loss function, we are minimizing the total length of the cycle representative. Since almost all simplices have different lengths, it is likely that there is a unique solution to achieve the optimum, though not guaranteed. 
+% % $100\%$ of the cycle representatives from distribution point clouds and $93.23\%$ of the cycle representatives from the real-world data set -- decided to get rid of the klein data set 
+% % or: since all simplices have diff length/diameters, it is possible that solutions in this regime are unique. 
+
+% % \begin{table}[h]
+% %     \centering
+% %     \begin{tabular}{|c|c|c|}
+% %     \hline
+% %          & $\x_{Unif}$ & $\x_{Len}$\\ \hline
+% %          $C^{I} = C^{LP}$ & $100\%$  & $100\%$ \\ \hline
+% %          $\optimalrep^{MIP = \optimalrep^{LP}$ & $80.29\%$ & $100\%$ \\ \hline
+% %     \end{tabular}
+% %     \caption{$\ell_1$ solutions and $\ell_0$ solutions}
+% %     \label{tab:my_label}
+% % \end{table}
+
+% We examine the effectiveness of the uniform-weighted and length-weighted optimal solutions by calculating $\frac{C_{Len}}{L_{Len}(\x_{Orig})}$ and $\frac{C_{Unif}}{L_{Unif}(\x_{Orig})}$. As shown in Figure \ref{fig:len_eff_dist}, we find the algorithms to be effective in reducing the size of the original cycle representative.  
+
+% % 
+
+% % \subsection{Computation Time of Integer Linear Programming and Linear Programming Problems}
+% We then look at the computation time of integer linear programming and linear programming problems. We compute $\frac{T^{I}}{T^{LP}}$, as shown in Figure \ref{fig:lp_mip_ratio_df} and \ref{fig:lp_mip_ratio_dist}.  In theory, solving an integer linear programming problem is NP-hard. Our experiments suggest that in most cases, using the Gurobi mathematical optimization solver \cite{gurobi}, we can solve an integer programming problem within a reasonable amount of time compared with a linear programming problem. 

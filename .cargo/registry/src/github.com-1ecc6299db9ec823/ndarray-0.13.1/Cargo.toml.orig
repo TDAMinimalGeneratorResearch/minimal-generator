@@ -1,0 +1,81 @@
+[package]
+
+name = "ndarray"
+version = "0.13.1"
+edition = "2018"
+authors = [
+  "bluss",
+  "Jim Turner"
+]
+license = "MIT/Apache-2.0"
+readme = "README-crates.io.md"
+
+repository = "https://github.com/rust-ndarray/ndarray"
+documentation = "https://docs.rs/ndarray/"
+
+description = "An n-dimensional array for general elements and for numerics. Lightweight array views and slicing; views support chunking and splitting."
+
+keywords = ["array", "data-structure", "multidimensional", "matrix", "blas"]
+categories = ["data-structures", "science"]
+
+build = "build.rs"
+
+exclude = ["docgen/images/*"]
+
+[lib]
+name = "ndarray"
+bench = false
+test = true
+
+[dependencies]
+num-integer = "0.1.39"
+num-traits = "0.2"
+num-complex = "0.2"
+
+rayon = { version = "1.0.3", optional = true }
+
+approx = { version = "0.3.2", optional = true }
+
+# Use via the `blas` crate feature!
+cblas-sys = { version = "0.1.4", optional = true, default-features = false }
+blas-src = { version = "0.2.0", optional = true, default-features = false }
+
+matrixmultiply = { version = "0.2.0" }
+serde = { version = "1.0", optional = true }
+rawpointer = { version = "0.2" }
+
+[dev-dependencies]
+defmac = "0.2"
+quickcheck = { version = "0.9", default-features = false }
+approx = "0.3.2"
+itertools = { version = "0.8.0", default-features = false, features = ["use_std"] }
+
+[features]
+# Enable blas usage
+# See README for more instructions
+blas = ["cblas-sys", "blas-src"]
+
+# Old name for the serde feature
+serde-1 = ["serde"]
+
+# These features are used for testing
+test-blas-openblas-sys = ["blas"]
+test = ["test-blas-openblas-sys"]
+
+# This feature is used for docs
+docs = ["approx", "serde", "rayon"]
+
+[profile.release]
+[profile.bench]
+debug = true
+
+[workspace]
+members = ["ndarray-rand", "serialization-tests", "blas-tests"]
+exclude = ["numeric-tests"]
+
+[package.metadata.release]
+no-dev-version = true
+tag-name = "{{version}}"
+
+[package.metadata.docs.rs]
+features = ["docs"]

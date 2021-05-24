@@ -1,0 +1,10 @@
+# Misc
+ROADMAP.md
+
+# vscode
+.vscode
+
+# Rust
+/target
+/libipopt-sys/target
+Cargo.lock

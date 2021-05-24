@@ -1,0 +1,44 @@
+\setlength{\tabcolsep}{9pt}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{center}
+\begin{table}[]
+\caption{{\normalsize{Classifying the coefficients of the optimal cycles for all of the real-world data discussed in Section 5.1 as well as all of the synthetic sets discussed in Section 5.2. The rows are labeled by the coefficient type of the cycle representatives: ``Integral'' means the coefficients for the cycle representative $\optimalrep$ are in $\mathbb{Z}$ and ``In $\{-1,0,1\}$'' means the coefficients for the representative $\optimalrep$ are in $\{-1,0,1\}$. For the columns, $\optimalrep$ represents the optimal representative with its superscript indicating the type of optimization problem: $I$ for integer programming and $NI$ for linear programming, and its subscript indicating the type of optimal cycle: ${E\text{-}Len}, E\text{-}Unif, T\text{-}Unif$ refer to edge loss length-weighted minimal (minimizing total length of $1$-simplices), edge loss uniform (minimizing total number of $1$-simplices), and triangle loss uniform (minimizing the number of $2$-simplices a cycle representative bounds), respectively.}}}
+\centering
+
+% \begin{tabular}{|p{2cm} ||p{0.6cm} p{0.6cm} p{0.6cm} p{0.6cm} p{0.6cm}|p{0.6cm}| |p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|}
+
+{\scriptsize{ \begin{tabular}{ |>{\centering}m{7em} *{10}{>{\centering\arraybackslash}m{2.5em} }|}
+ \hline
+ & \multicolumn{10}{c|}{\textbf{Edge-loss filtered homological optimal cycles} (Program \eqref{eq:edgelossgeneral})} \\
+\hline
+& \multicolumn{4}{c}{\textbf{Randomly Generated Data Sets}} & & 
+ \multicolumn{4}{c}{\textbf{Real-World Data Sets}} &  \\  \cline{2-5}  \cline{7-10}
+
+\textbf{Coefficient Type} & $\x\I_{E\text{-}Len}$ & $\x\NI_{E\text{-}Len}$ & $\x\I_{T\text{-}Unif}$ & $\x\NI_{E\text{-}Unif}$ &  & $\x\I_{E\text{-}Len}$ & $\x\NI_{E\text{-}Len}$ & $\x\I_{E\text{-}Unif}$ & $\x\NI_{E\text{-}Unif}$ & \\
+\hline
+\textbf{Integral}  & $100\%$ &$100\%$&   $100\%$ & $100\%$ &  & $100\%$ &$100\%$&  $100\%$ & $100\%$ & \\
+\textbf{In $\{-1, 0, 1\}$} &  $100\%$  & $100\%$   &$100\%$ & $100\%$ & & $100\%$ &$100\%$&  $100\%$ & $100\%$ & \\ \hline
+ & \multicolumn{10}{c|}{\textbf{Edge-loss persistent homological optimal cycles} (\pr (8))}  \\\hline
+
+& \multicolumn{4}{c}{\textbf{Randomly Generated Data Sets}} & & 
+ \multicolumn{4}{c}{\textbf{Real-World Data Sets}} &  \\  \cline{2-5}  \cline{7-10}
+ \textbf{Coefficient Type} & $\x\I_{E\text{-}Len}$ & $\x\NI_{E\text{-}Len}$ & $\x\I_{T\text{-}Unif}$ & $\x\NI_{E\text{-}Unif}$ &  & $\x\I_{E\text{-}Len}$ & $\x\NI_{E\text{-}Len}$ & $\x\I_{E\text{-}Unif}$ & $\x\NI_{E\text{-}Unif}$ & \\
+
+\hline 
+\textbf{Integral}  & $100\%$ &$100\%$&   $100\%$ & $100\%$  &&  $100\%$ & $100\%$ &  $100\%$ & $99.94\%$ & \\
+\textbf{In $\{-1, 0, 1\}$} &  $100\%$  & $100\%$   &$100\%$ & $100\%$ &  & $100\%$ & $100\%$&  $100\%$ & $99.94\%$ & \\ \hline
+
+& \multicolumn{10}{c|}{\textbf{Triangle-loss optimal cycles} (\pr \eqref{eq:trianglelossgeneral})}  \\\hline
+& \multicolumn{4}{c}{\textbf{Randomly Generated Data Sets}} & & 
+ \multicolumn{4}{c}{\textbf{Real-World Data Sets}} &  \\  \cline{2-5}  \cline{7-10}
+ \textbf{Coefficient Type} & $\x\I_{T\text{-}Unif}$ &    $\x\NI_{T\text{-}Unif}$ & $\x\I_{T\text{-}Area}$ & $\x\NI_{T\text{-}Area}$  &  & $\x\I_{T\text{-}Unif}$ &    $\x\NI_{T\text{-}Unif}$ & $\x\I_{T\text{-}Area}$ & $\x\NI_{T\text{-}Area}$ &\\
+\textbf{Integral}  &  $100\%$ &$99.99\%$ &$100\%$ &$100\%$  &  & $100\%$ &  $100\%$ &  $100\%$ & $100\%$  & \\
+\textbf{In $\{-1, 0, 1\}$} &  $100\%$ &$99.99\%$ &$100\%$ &$100\%$  &  & $100\%$ &  $100\%$ &  $100\%$ & $100\%$  & \\ \hline
+
+\end{tabular}
+}}
+\label{entry}
+\end{table}
+\label{tab:IntegerCoefficients}
+\end{center}

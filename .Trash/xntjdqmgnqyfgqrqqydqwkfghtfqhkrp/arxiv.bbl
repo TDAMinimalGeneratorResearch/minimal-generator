@@ -1,0 +1,391 @@
+\begin{thebibliography}{10}
+
+\bibitem{bendich2016persistent}
+P.~Bendich, J.~S. Marron, E.~Miller, A.~Pieloch, and S.~Skwerer.
+\newblock Persistent homology analysis of brain artery trees.
+\newblock {\em The annals of applied statistics}, 10(1):198, 2016.
+
+\bibitem{bertsimas-LPbook}
+D.~Bertsimas and J.~Tsitsiklis.
+\newblock {\em Introduction to linear optimization}.
+\newblock Athena Scientific, 1997.
+
+\bibitem{collectivemotion}
+D.~Bhaskar, A.~Manhart, J.~Milzman, J.~T. Nardini, K.~M. Storey, C.~M. Topaz,
+  and L.~Ziegelmeier.
+\newblock Analyzing collective motion with machine learning and topology.
+\newblock {\em Chaos: An Interdisciplinary Journal of Nonlinear Science},
+  29(12):123125, 2019.
+
+\bibitem{pathplanning}
+S.~{Bhattacharya}, R.~{Ghrist}, and V.~{Kumar}.
+\newblock Persistent homology for path planning in uncertain environments.
+\newblock {\em IEEE Transactions on Robotics}, 31(3):578--590, 2015.
+
+\bibitem{borradaile2020minimum}
+G.~Borradaile, W.~Maxwell, and A.~Nayyeri.
+\newblock Minimum bounded chains and minimum homologous chains in embedded
+  simplicial complexes.
+\newblock Number~21, pages 21:1--21:15. 36th International Symposium on
+  Computational Geometry (SoCG 2020), Leibniz International Proceedings in
+  Informatics, 2020.
+
+\bibitem{BoyVan2004}
+S.~Boyd and L.~Vandenberghe.
+\newblock {\em Convex Optimization}.
+\newblock {Cambridge University Press}, March 2004.
+
+\bibitem{TheSurveyorsAreaFormula}
+B.~Braden.
+\newblock The surveyor's area formula.
+\newblock {\em The College Mathematics Journal}, 17(4):326--337, 1986.
+
+\bibitem{pointcloud-topo}
+R.~Brüel-Gabrielsson, V.~Ganapathi-Subramanian, P.~Skraba, and L.~J. Guibas.
+\newblock Topology-aware surface reconstruction for point clouds.
+\newblock {\em Computer Graphics Forum}, 39(5):197--207, 2020.
+
+\bibitem{Carlsson2009TopologyAD}
+G.~Carlsson.
+\newblock Topology and data.
+\newblock {\em Bulletin of the American Mathematical Society}, 46:255--308,
+  2009.
+
+\bibitem{hiv}
+J.~M. Chan, G.~Carlsson, and R.~Rabadan.
+\newblock Topology of viral evolution.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  110(46):18566--18571, 2013.
+
+\bibitem{chenquantifying}
+C.~Chen and D.~Freedman.
+\newblock {Quantifying Homology Classes}.
+\newblock In S.~Albers and P.~Weil, editors, {\em 25th International Symposium
+  on Theoretical Aspects of Computer Science}, volume~1 of {\em Leibniz
+  International Proceedings in Informatics (LIPIcs)}, pages 169--180, Dagstuhl,
+  Germany, 2008. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik.
+
+\bibitem{chenhardness}
+C.~Chen and D.~Freedman.
+\newblock Hardness results for homology localization.
+\newblock In {\em Proceedings of the Twenty-First Annual ACM-SIAM Symposium on
+  Discrete Algorithms}, SODA '10, page 1594–1604, USA, 2010. Society for
+  Industrial and Applied Mathematics.
+
+\bibitem{chen2010measuring}
+C.~Chen and D.~Freedman.
+\newblock Measuring and computing natural generators for homology groups.
+\newblock {\em Computational Geometry}, 43(2):169--181, 2010.
+
+\bibitem{cohen2006vines}
+D.~Cohen-Steiner, H.~Edelsbrunner, and D.~Morozov.
+\newblock Vines and vineyards by updating persistence in linear time.
+\newblock In {\em Proceedings of the twenty-second annual symposium on
+  Computational geometry}, pages 119--126, 2006.
+
+\bibitem{erdos-renyi-RP2}
+A.~Costa, M.~Farber, and D.~Horak.
+\newblock Fundamental groups of clique complexes of random graphs.
+\newblock {\em Transactions of the London Mathematical Society}, 2(1):1--32,
+  2015.
+
+\bibitem{genome}
+T.~A. Davis and Y.~Hu.
+\newblock The university of florida sparse matrix collection.
+\newblock {\em ACM Trans. Math. Softw.}, 38(1), Dec. 2011.
+
+\bibitem{SMVDualities11}
+V.~de~Silva, D.~Morozov, and M.~Vejdemo-Johansson.
+\newblock Dualities in persistent (co)homology.
+\newblock {\em Inverse Problems}, 27(12):124003, 17, 2011.
+
+\bibitem{dey2011optimal}
+T.~K. Dey, A.~N. Hirani, and B.~Krishnamoorthy.
+\newblock Optimal homologous cycles, total unimodularity, and linear
+  programming.
+\newblock {\em SIAM Journal on Computing}, 40(4):1026--1044, 2011.
+
+\bibitem{dey2018}
+T.~K. Dey, T.~Hou, and S.~Mandal.
+\newblock Persistent 1-cycles: Definition, computation, and its application.
+\newblock In {\em International Workshop on Computational Topology in Image
+  Context}, pages 123--136. Springer, 2019.
+
+\bibitem{dey2018efficient}
+T.~K. Dey, T.~Li, and Y.~Wang.
+\newblock Efficient algorithms for computing a minimal homology basis.
+\newblock In {\em Latin American Symposium on Theoretical Informatics}, pages
+  376--398. Springer, 2018.
+
+\bibitem{shortestonedimension}
+T.~K. Dey, J.~Sun, and Y.~Wang.
+\newblock Approximating loops in a shortest homology basis from point data.
+\newblock In {\em Proceedings of the Twenty-Sixth Annual Symposium on
+  Computational Geometry}, SoCG '10, page 166–175, New York, NY, USA, 2010.
+  Association for Computing Machinery.
+
+\bibitem{persistenthomologyasurvey}
+H.~Edelsbrunner and J.~Harer.
+\newblock Persistent homology—a survey.
+\newblock {\em Discrete \& Computational Geometry - DCG}, 453, 01 2008.
+
+\bibitem{edelsbrunner2010computational}
+H.~Edelsbrunner and J.~Harer.
+\newblock {\em Computational Topology: An Introduction}.
+\newblock Applied Mathematics. American Mathematical Society, 2010.
+
+\bibitem{emmett2015multiscale}
+K.~Emmett, B.~Schweinhart, and R.~Rabadan.
+\newblock Multiscale topology of chromatin folding.
+\newblock {\em arXiv preprint arXiv:1511.01426}, 2015.
+
+\bibitem{erickson2005greedy}
+J.~Erickson and K.~Whittlesey.
+\newblock Greedy optimal homotopy and homology generators.
+\newblock In {\em SODA}, volume~5, pages 1038--1046, 2005.
+
+\bibitem{OptiPersLP}
+E.~Escolar and Y.~Hiraoka.
+\newblock {OptiPersLP - optimal cycles in persistence via linear programming}.
+\newblock \url{https://bitbucket.org/remere/optiperslp/src/master/}, 2021.
+
+\bibitem{Escolar2016}
+E.~G. Escolar and Y.~Hiraoka.
+\newblock Optimal cycles for persistent homology via linear programming.
+\newblock In {\em Optimization in the Real World}, pages 79--96. Springer,
+  2016.
+
+\bibitem{Ghrist08}
+R.~Ghrist.
+\newblock Barcodes: the persistent topology of data.
+\newblock {\em Bulletin of the American Mathematical Society}, 45(1):61--75,
+  2008.
+
+\bibitem{barcodeGhrist}
+R.~Ghrist.
+\newblock Barcodes: The persistent topology of data.
+\newblock {\em Bulletin (New Series) of the American Mathematical Society}, 45,
+  02 2008.
+
+\bibitem{ghrist2014elementary}
+R.~Ghrist.
+\newblock {\em Elementary Applied Topology}.
+\newblock CreateSpace Independent Publishing Platform, 2014.
+
+\bibitem{giusti2016two}
+C.~Giusti, R.~Ghrist, and D.~S. Bassett.
+\newblock Two’s company, three (or more) is a simplex.
+\newblock {\em Journal of computational neuroscience}, 41(1):1--14, 2016.
+
+\bibitem{glpk}
+{GNU Project}.
+\newblock {GLPK (GNU Linear Programming Kit)}.
+\newblock \url{https://www.gnu.org/software/glpk/}, 2012.
+
+\bibitem{eirenecode}
+{Gregory Henselman-Petrusek}.
+\newblock {Eirene (Julia library for computational persistent homology)}.
+\newblock \url{https://github.com/Eetion/Eirene.jl}, Commit
+  4f57d6a0e4c030202a07a60bc1bb1ed1544bf679, 2016.
+
+\bibitem{gurobi}
+L.~Gurobi~Optimization.
+\newblock Gurobi optimizer reference manual.
+\newblock 2020.
+
+\bibitem{hatcher2002algebraic}
+A.~Hatcher, C.~U. Press, and C.~U.~D. of~Mathematics.
+\newblock {\em Algebraic Topology}.
+\newblock Algebraic Topology. Cambridge University Press, 2002.
+
+\bibitem{henselman2014combinatorial}
+G.~Henselman and P.~D{\l}otko.
+\newblock Combinatorial invariants of multidimensional topological network
+  data.
+\newblock In {\em 2014 IEEE Global Conference on Signal and Information
+  Processing (GlobalSIP)}, pages 828--832. IEEE, 2014.
+
+\bibitem{eirene}
+G.~{Henselman} and R.~{Ghrist}.
+\newblock {Matroid Filtrations and Computational Persistent Homology}.
+\newblock {\em ArXiv e-prints}, June 2016.
+
+\bibitem{henselman2017}
+G.~Henselman-Petrusek.
+\newblock {\em Matroids and canonical forms: theory and applications}.
+\newblock PhD thesis, University of Pennsylvania, May 2017.
+
+\bibitem{Hiraoka7035}
+Y.~Hiraoka, T.~Nakamura, A.~Hirata, E.~G. Escolar, K.~Matsue, and Y.~Nishiura.
+\newblock Hierarchical structures of amorphous solids characterized by
+  persistent homology.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  113(26):7035--7040, 2016.
+
+\bibitem{Usingpersistenthomologyanddynamicaldistancestoanalyzeproteinbinding}
+V.~Kovacev-Nikolic, P.~Bubenik, D.~Nikolić, and G.~Heo.
+\newblock Using persistent homology and dynamical distances to analyze protein
+  binding.
+\newblock {\em Statistical Applications in Genetics and Molecular Biology},
+  15(1):19 -- 38, 01 Mar. 2016.
+
+\bibitem{li_thompson}
+{Li, Lu and Thompson, Connor}.
+\newblock {Source code, \emph{Minimal Cycle Representatives in Persistent
+  Homology using Linear Programming: an Empirical Study with User's Guide}}.
+\newblock
+  \url{https://github.com/TDAMinimalGeneratorResearch/minimal-generator}, 2021.
+
+\bibitem{HIVdata}
+{Los Alamos National Laboratory}.
+\newblock {HIV database}.
+\newblock \url{http://www.hiv.lanl.gov/content/index}.
+
+\bibitem{zebrafish}
+M.~R. McGuirl, A.~Volkening, and B.~Sandstede.
+\newblock Topological data analysis of zebrafish patterns.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  117(10):5113--5124, 2020.
+
+\bibitem{primoz}
+N.~Milosavljevi\'{c}, D.~Morozov, and P.~Skraba.
+\newblock Zigzag persistent homology in matrix multiplication time.
+\newblock In {\em Proceedings of the Twenty-Seventh Annual Symposium on
+  Computational Geometry}, SoCG '11, page 216–225, New York, NY, USA, 2011.
+  Association for Computing Machinery.
+
+\bibitem{newman2006finding}
+M.~E. Newman.
+\newblock Finding community structure in networks using the eigenvectors of
+  matrices.
+\newblock {\em Physical review E}, 74(3):036104, 2006.
+
+\bibitem{Obayashi2018}
+I.~Obayashi.
+\newblock Volume-optimal cycle: Tightest representative cycle of a generator in
+  persistent homology.
+\newblock {\em SIAM Journal on Applied Algebra and Geometry}, 2(4):508--534,
+  2018.
+
+\bibitem{homcloud}
+I.~Obayashi, T.~Wada, T.~Tunhua, J.~Miyanaga, and Y.~Hiraoka.
+\newblock {HomCloud: data analysis software based on persistent homology)}.
+\newblock \url{https://homcloud.dev/}, 2021.
+
+\bibitem{roadmap2017}
+N.~Otter, M.~A. Porter, U.~Tillmann, P.~Grindrod, and H.~A. Harrington.
+\newblock A roadmap for the computation of persistent homology.
+\newblock {\em EPJ Data Science}, 6(1):17, 2017.
+
+\bibitem{roadmapgithub}
+{Otter, Nina and Porter, Mason A and Tillmann, Ulrike and Grindrod, Peter and
+  Harrington, Heather A}.
+\newblock {\emph{A roadmap for the computation of persistent homology}}.
+\newblock \url{https://github.com/n-otter/PH-roadmap}, 2017.
+
+\bibitem{celegans}
+G.~Petri, M.~Scolamiero, I.~Donato, and F.~Vaccarino.
+\newblock Topological strata of weighted complex networks.
+\newblock {\em PloS one}, 8(6):e66506, 2013.
+
+\bibitem{schweinhart2015statistical}
+B.~Schweinhart.
+\newblock {\em Statistical Topology of Embedded Graphs}.
+\newblock PhD thesis, Princeton University, 2015.
+
+\bibitem{singh2007topological}
+G.~Singh, F.~M{\'e}moli, and G.~E. Carlsson.
+\newblock Topological methods for the analysis of high dimensional data sets
+  and 3d object recognition.
+\newblock {\em SPBG}, 91:100, 2007.
+
+\bibitem{robert}
+A.~E. Sizemore, J.~E. Phillips-Cremins, R.~Ghrist, and D.~S. Bassett.
+\newblock The importance of the whole: Topological data analysis for the
+  network neuroscientist.
+\newblock {\em Network Neuroscience}, 3(3):656--673, 2019.
+
+\bibitem{fractr}
+O.~Sporns.
+\newblock Small-world connectivity, motif composition, and complexity of
+  fractal neuronal connections.
+\newblock {\em Bio Systems}, 85(1):55—64, July 2006.
+
+\bibitem{drag}
+{Stanford University Computer Graphics Laboratory}.
+\newblock {The Stanford 3D Scanning Repository}.
+\newblock \url{https://graphics.stanford.edu/data/3Dscanrep/}, 1999.
+
+\bibitem{dohono}
+A.~{Tahbaz-Salehi} and A.~{Jadbabaie}.
+\newblock Distributed coverage verification in sensor networks without location
+  information.
+\newblock In {\em 2008 47th IEEE Conference on Decision and Control}, pages
+  4170--4176, 2008.
+
+\bibitem{NPhardL0}
+A.~{Tahbaz-Salehi} and A.~{Jadbabaie}.
+\newblock Distributed coverage verification in sensor networks without location
+  information.
+\newblock {\em IEEE Transactions on Automatic Control}, 55(8):1837--1849, 2010.
+
+\bibitem{TZH15}
+C.~M. Topaz, L.~Ziegelmeier, and T.~Halverson.
+\newblock Topological data analysis of biological aggregation models.
+\newblock {\em PloS one}, 10(5), 2015.
+
+\bibitem{selectingbiologicalexperiments/journal.pone.0213679}
+M.~Ulmer, L.~Ziegelmeier, and C.~M. Topaz.
+\newblock A topological approach to selecting models of biological experiments.
+\newblock {\em PLOS ONE}, 14(3):1--18, 03 2019.
+
+\bibitem{Vanderbei-LPbook}
+R.~J. Vanderbei.
+\newblock {\em Linear programming foundations and extensions}.
+\newblock International series in operations research \& management science ;
+  v.196. Springer, New York, 4th ed. edition, 2014.
+
+\bibitem{VASUDEVAN20113292}
+R.~Vasudevan, A.~D. Ames, and R.~Bajcsy.
+\newblock Human based cost from persistent homology for bipedal walking.
+\newblock {\em IFAC Proceedings Volumes}, 44(1):3292--3297, 2011.
+\newblock 18th IFAC World Congress.
+
+\bibitem{vicsek}
+T.~Vicsek, A.~Czir\'ok, E.~Ben-Jacob, I.~Cohen, and O.~Shochet.
+\newblock Novel type of phase transition in a system of self-driven particles.
+\newblock {\em Phys. Rev. Lett.}, 75:1226--1229, Aug 1995.
+
+\bibitem{wu}
+P.~Wu, C.~Chen, Y.~Wang, S.~Zhang, C.~Yuan, Z.~Qian, D.~N. Metaxas, and
+  L.~Axel.
+\newblock Optimal topological cycles and their application in cardiac
+  trabeculae restoration.
+\newblock In {\em Information Processing in Medical Imaging, {IPMI}}, pages
+  80--92, 2017.
+
+\bibitem{xia2016multiscale}
+K.~Xia, Z.~Li, and L.~Mu.
+\newblock Multiscale persistent functions for biomolecular structure
+  characterization.
+\newblock {\em Bulletin of mathematical biology}, 80(1):1--31, 2018.
+
+\bibitem{xia2014persistent}
+K.~Xia and G.-W. Wei.
+\newblock Persistent homology analysis of protein structure, flexibility, and
+  folding.
+\newblock {\em International journal for numerical methods in biomedical
+  engineering}, 30(8):814--844, 2014.
+
+\bibitem{zhang2019heuristic}
+X.~Zhang and P.~Wu.
+\newblock Heuristic search for homology localization problem and its
+  application in cardiac trabeculae reconstruction.
+\newblock In {\em IJCAI}, 2019.
+
+\bibitem{zomorodiancarlssoncomputingph}
+A.~Zomorodian and G.~Carlsson.
+\newblock Computing persistent homology.
+\newblock {\em Discrete and Computational Geometry}, 33:249--274, 02 2005.
+
+\end{thebibliography}

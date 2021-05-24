@@ -1,0 +1,445 @@
+\section{Related work}\label{problem formulation}
+
+
+One important problem in TDA is interpreting homological features. In general, a lifetime interval $\persinterval$ corresponding to a feature may be represented by many different cycle representatives. As discussed in \cite{chenquantifying}, localizing homology classes can be characterized as finding a representative cycle with the most concise geometric measure. As an illustrative example from \cite{Escolar2016}, Figure \ref{fig:example-optimal} (A) shows a simplicial complex $K$ with $\Homologies_1(K)$ isomorphic to $\mathbb{Q}$ or equivalently, $\beta_1=1$; it contains one hole.  Figures \ref{fig:example-optimal} (B), (C), and (D) display three cycle representatives, $\originalrep$, $\optimalrep'$, and $\optimalrep''$, each of which represents the same homology class (heuristically, they encircle the same hole). We intuitively prefer $\optimalrep''$ as a representative, since it involves the fewest edges %(and in fact, no cycle representative has fewer) 
+and ``hugs'' the hole most tightly. Given a simplicial complex $K$ and a nontrivial cycle $\originalrep$ on it, we are interested in finding a cycle representative that is optimal with respect to some geometric criterion. In this section, we discuss previous studies on optimal cycle representatives. 
+
+Minimal cycle representatives have proven  useful in many applications. Hiraoka et al. \cite{Hiraoka7035} use TDA to geometrically analyze amorphous solids. Their analysis using minimal cycle representatives explicitly captures hierarchical structures of the shapes of cavities and rings. Wu et al. \cite{wu} discuss an application of optimal cycles in Cardiac Trabeculae Restoration, which aims to reconstruct trabeculae, very complex muscle structures that are hard to detect by traditional image segmentation methods. They propose to use topological priors and cycle representatives to help segment the trabeculae. However, the original cycle representative can be complicated and noisy, causing the reconstructed surface to be messy. Optimizing the cycle representatives makes the cycle more smooth and thus, leads to more accurate segmentation results. Emmett et al. \cite{emmett2015multiscale} use PH to analyze chromatin interaction data to study chromatin conformation. They use loops to represent different types of chromatin interactions. To annotate particular loops as interactions, they need to first localize a cycle. Thus, they propose an algorithm to locate a minimal cycle representative for a given PH class using a breadth-first search, which finds the shortest path that contains the edge that enters the filtration at the birth time of the cycle and is homologically independent from the minimal cycles of all PH classes born before the current cycle. 
+
+% As stated above, given a homology class its representative cycle is not uniquely defined: one approach to this challenge is to select representative cycles that are optimal with respect to some geometric criterion. 
+
+%\GHP{Could we talk about whether this paragraph is still needed?  I think Lori and I discussed earlier.}
+%\LZ{I haven't read the rest, but I think a high level overview of previous work is important.}
+
+There are several approaches used to define an optimal cycle representative. Dey et al. \cite{dey2011optimal} propose an algorithm to find an optimal homologous $1$-cycle for a given homology class via linear programming. That is, they consider a single homology class $[\optimalrep]$ and search for a homologous cycle representative that minimizes some geometric measure within that class, for instance, the number of $1$-simplices within the representative. Escolar and Hiraoka \cite{Escolar2016} extend this approach to find an optimal cycle by using cycles outside of a single homology class to ``factor out" redundant information. In this approach, an optimal cycle representative is no longer guaranteed to be homologous to the original representative, but the collection of cycle representatives have each been independently optimized and the collection still forms a homology basis. Further, \cite{Escolar2016} extends this approach to achieve a filtered cycle basis, although we note that it is not guaranteed to be a persistent homology basis. The two approaches in \cite{dey2011optimal,Escolar2016} aim to minimize the number of $1$-simplices in a cycle representative. Obayashi \cite{Obayashi2018} proposes an alternative algorithm for finding volume-optimal cycles in persistent homology, which minimize the number of $2$-simplices which the cycle representative bounds, also using linear programming. These methods serve as the foundation for our present paper and are discussed in more detail in the rest of this section.  
+
+
+
+%\GHP{[[GHP: A brief word of caution: it will be important to make sure that no one else has tried weighting their simplices this way. It’s not key to the publishability of the paper that this type of weighting be novel, so it’s ok to be a little conservative about this. On the other hand, if it’s really true that others haven’t weighted their complexes this way, then it’s perfectly find to point out that this is new :)]]}
+% We use variations based on each notion of optimal cycle: length-optimal cycles which minimize the total length (as determined by the underlying metric) of the cycle rather than the number of 1-simplices, and area-optimal cycles which minimize the total area of the 2-simplices bounding the cycle rather than the number of such 2-simplices. Note that these volume-weighted optimization problems have been mentioned before, for example in \cite{dey2011optimal}. Throughout each of these approaches, a challenge in computing optimal cycle representatives is the size of the underlying data: often the simplicial complexes in question have many simplices \LZ{(on the order of...?)}, which significantly impacts how quickly cycles can be optimized by linear programming.
+
+In addition to linear programming, many researchers have contributed to the problem of computing optimal cycles: Wu et al. \cite{wu} propose an algorithm for finding shortest persistent $1$-cycles. They first construct a graph based on the given simplicial complex and then compute annotation for the given complex. The annotation assigns all edges different vectors and can be used to verify if a cycle belongs to the desired group of cycles. They then find the shortest path between two vertices of the edge born at the birth time of the original cycle representative using a new $A^*$ heuristic search strategy. Their algorithm is a polynomial time algorithm but in the worst case, the time complexity is exponential to the number of topological features. Dey et al. \cite{shortestonedimension} propose a polynomial-time algorithm that computes a set of loops from a VR complex of the given data whose lengths approximate those of a shortest basis of the one dimensional homology group $\Homologies_1$. In \cite{dey2018}, Dey et al. show that finding optimal (minimal) persistent $1$-cycles is NP-hard and then propose a polynomial time algorithm to find an alternative set of meaningful cycle representatives. This alternative set of representatives is not always optimal but still meaningful because each persistent $1$-cycle is a sum of shortest cycles born at different indices. They find shortest cycles using Dijkstra's algorithm by considering the $1$-skeleton as a graph.   This list is by no means exhaustive, and does not touch on the wide variety of related approaches, e.g. \cite{chenhardness}, which attempts to fit cycle representatives within a ball of minimum radius.
+
+
+
+% \GHP{The following few paragraphs are very similr to the first few -- maybe this is a copy/paste error?  Please let me know when this is worked out and I'll finish reading this section!}
+% An important problem in TDA is interpreting cycle representatives. This is challenging because given a homology class, its representative cycle is not uniquely defined. Therefore, the same feature (i.e. bar) can have many different cycle representatives, in general. As discussion in  \cite{chenquantifying}, the problem of localizing homology classes can be characterized as finding the cycle representing a given class with the most concise geometric measure. 
+%  \cite{quantifying2}
+ 
+% One empirically and theoretically motivated approach to this challenge is to select cycle representatives that are optimal with respect to some criterion. Moreover, this optimality should reflect the underlying geometry of the input.  
+
+% Several such criteria for $\Homologies_1$ cycle representatives have been proposed. \cite{Escolar2016} introduces $\ell^1$-optimal cycles which minimizes the number of simplices in a cycle. \cite{Obayashi2018} introduces another concept of optimality: volume-optimal cycles, which minimizes the number of $2$-simplices as the internal volume of the cycle. We can formulate both notions of optimal cycles  as an optimization problem and solve it via linear programming. We propose two variations based on each notion of optimal cycles - length optimal cycles which minimize the total length of the cycle and area optimal cycles which minimize the area of the $2$-simplices make up the cycle instead of the number of $2$-simplices as the internal volume of the cycle.  
+
+
+% Researchers have been actively working on developing methods to find optimal cycles. Wu et al. \cite{wu} discussed an application of optimal cycles in Cardiac Trabeculae Restoration and proposed an algorithm computing minimal persistent $1$-cycles using an annotation technique and heuristic search with exponential time complexity in the worst case. Dey et al. \cite{shortestonedimension} presented a polynomial time algorithm for approximating
+% a shortest basis of the first homology group of a smooth manifold from a point data.
+% We can find the ``tightest'' representative cycle under a certain formalization as optimization problems on homology. Such optimization problems have been widely studied in various settings \cite{chenhardness, dey2011optimal, tahdistributedcoverage}. Chen and Freedman \cite{chenhardness} showed that this optimization problem is generally NP-hard if $\mathbb{\Cycles}_2$ is used as a coefficient field. Tahbaz-Salehi and Jadbabaie \cite{tahdistributedcoverage} formalized the problem as the optimization to find the ``sparsest'' homology generator. Both papers try to minimize the $\ell^0$ norm of a chain among all cycles with the same homology calss. The latter paper also proposed an $\ell^1$ approximation method on the grounds that the general $\ell^0$ linear optimization problem is NP-hard, and the approximated problem can be solved efficiently by linear programming. Dey et al. \cite{dey2011optimal} proposed a similar approach but an integer programming for problem formalization to avoid fractional coefficients coming from linear programming. In addition, the paper proved the sufficient condition under which linear programming gives the same solution as integer programming. Under this condition it follows that the homology optimization problem is polynomial type solvable and is easier than integer programming since linear programming has polynomial time complexity and integer programming is NP-hard.
+
+
+% For persistent homology, \textit{optimal cycles} and \textit{volume-optimal cycles} have been successfully applied. Escolar et al. \cite{Escolar2016} formalized the definition of optimal cycles and proposed an algorithm for finding optimal cycles via linear programming. 
+% Schweinhart \cite{Schweinhart2015StatisticalTO} proposed volume-optimal cycles and Obayashi et al. \cite{Obayashi2018} generalized the concept of volume-optimal cycles and proposed an algorithm of computing volume-optimal cycles via linear programming. The optimal cycles minimize the size of the cycle while the volume-optimal cycles minimize the internal volume of the cycle. 
+
+
+% \subsection{Relevant Work}
+
+% \subsection{Relevant Work}
+
+
+% one of the 1st papers
+\label{sec:minimalgenerators}
+
+In the next three subsections, we briefly survey the optimization problems on which the present work is based.
+
+\subsection{Minimal cycle representatives of a homology class} \label{singlecyclecase}
+
+
+Given a homology class $\hclass =[\originalrep] \in \Homologies_n(K; G)$ and a function $\loss: \Cycles_n(K;G) \to \R$, how does one find a cycle representative of $\hclass$ on which $\loss$ attains minimum?  This problem is equivalent to  solving the following program defined in \cite{dey2011optimal}:
+\begin{align}
+   \begin{split}
+    \text{minimize } & \loss(\optimalrep) \\
+    \text{ subject to } & \optimalrep = \originalrep + \partial_{n+1} \boundingchain, \\
+    & \boundingchain \in \Chains_{n+1}(K; G).
+    % \\
+    % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+   \end{split}
+   \label{eq:homologous}
+\end{align}
+This formulation considers all cycle representatives homologous to $\originalrep$, i.e. that differ by a boundary, and selects the optimal representative $\optimalrep$ which minimizes $\loss$.
+\pr \eqref{eq:homologous} is correct because the coset $\hclass$ can be expressed in the form
+%
+    \begin{align*}
+    \hclass
+    =
+    \originalrep + \Boundaries_n(K; G) 
+    =
+    \{ \originalrep + \partial_{n+1} \boundingchain \mid \boundingchain \in \Chains_{n+1}(K; G) \}
+    \end{align*}  
+%
+In practice, a cycle representative $\originalrep$ is almost always provided together with the initial problem data (which consists of $K$, $G$, $\loss$, and $\hclass$), so the central challenge lies with solving \pr \eqref{eq:homologous}.
+
+% \GHP{Now that we have a bit more time, I'd vote for changing `Equation (X)' to `Program (X)'.}
+% \LZ{Fine with me. I'll try to change it.}
+Several variants of \pr \eqref{eq:homologous} have been studied, especially where $\loss(\optimalrep) = ||\optimalrep||_0$ or $\loss(\optimalrep) = ||\optimalrep||_1$.  For a survey of results when $G = \field_2$, see \cite{chenhardness}.  For a discussion of results when $G = \Z$, see \cite{dey2011optimal}.  Broadly  speaking, minimizing against $\ell_0$  tends to be hard, even when $K$ has attractive properties such as embeddability in a low-dimensional Euclidean space \cite{borradaile2020minimum}.  Minimizing against $\ell_1$  is hard when $G = \field_2$ (since, in this case, $\ell_1 = \ell_0$),  but tractable via linear programming when $G \in \{\Q, \R\}$.  
+
+
+An interesting variant of the minimal cycle representative problem is the minimal \emph{persistent} cycle representative problem.  This problem was described in  \cite{chenquantifying} and may be formulated as follows:  given an interval $[a,b) \in \barcode_n(K_\bullet)$, solve 
+\begin{align}
+   \begin{split}
+    \text{minimize } & \loss(\optimalrep) \\
+    \text{ subject to } & \birth(\optimalrep) = a \\
+    & \death(\optimalrep) = b \\
+    & \optimalrep \in \Cycles_n(K_a; G)
+    % \\
+    % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+   \end{split}
+   \label{eq:minbarcoderep}
+\end{align}
+for $x$.  An advanced treatment of this problem can be found in \cite{chenquantifying} for special case where (i)  $G = \field_2$, (ii) $\loss$ is a weighted sum of incident edges,  and (iii) the birth function assigns distinct values to any two simplices of the same dimension, and (iv) $n=1$.  
+
+
+% By and large, these binary variants have been shown to be difficult, even when the simplicial complex has attractive properties, such as embeddings in low-dimensional Euclidean space \cite{borradaile2020minimum}.  However, under certain conditions optimal solutions are provably attainable over the integers \cite{dey2011optimal}.  See \cite{chenhardness} for further discussion.
+
+
+% One of the first problems to consider, vis-a-vis minimal cycle representatives, can be stated as follows: given a homology class $\hclass \in \Homologies_n(K)$,  find a cycle representative of $\hclass$ that has the smallest $\ell_0$ norm.  This problem is motivated by the idea that cycle representatives with minimal support will tend to ``hug'' the hole or holes that they surround most tightly.  It is equivalent to the problem of finding an element of $\mathrm{argmin}_{\optimalrep \in \hclass} || \optimalrep||_0$.
+
+% Given some (not necessarily minimal) cycle representative $\originalrep$ of $\hclass$, the problem of finding an $\ell_0$-minimal representative can be formulated as follows \cite{dey2011optimal}:
+% \begin{align}
+%   \begin{split}
+%     \text{minimize } &  ||\optimalrep||_0  \\
+%     \text{ subject to } & \optimalrep = \originalrep + \partial_2 \boundingchain, \\
+%     & \boundingchain \in \Chains_2(K).
+%     % \\
+%     % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+%   \end{split}
+%   \label{eq:homologous}
+% \end{align}
+% This formulation is correct because $\hclass$ is the coset $\originalrep + \Boundaries_n(K) = \{ \originalrep + \partial_2 \boundingchain :\boundingchain \in \Chains_2(K) \}$.  
+
+% Finding an initial cycle representative $\originalrep$ is typically trivial in practice; in nearly all cases, one has access to such a representative before one sets to work solving the problem.  Several variants of the mixed integer program \eqref{eq:homologous} has been studied, especially involving homology over the 2-element field $\Field_2 = \{0,1\}$.  By and large, these binary variants have been shown to be difficult, even when the simplicial complex has attractive properties, such as embeddings in low-dimensional Euclidean space \cite{borradaile2020minimum}.  However, under certain conditions optimal solutions are provably attainable over the integers \cite{dey2011optimal}.  See \cite{chenhardness} for further discussion.
+
+% ---------------------------------------------
+% THE FOLLOWING IS MATERIAL THAT GREG COMMENTED OUT AFTER RE-HASHING THIS SECTION
+
+% \GHP{Vector coordinates = lower case}
+
+% \GHP{Change omegas to w's}
+
+
+% To compute a basis of optimal cycles, we first need to find a generator basis by preparing a boundary matrix and applying a matrix reduction algorithm. See \cite{kaczynski2006computational} for the full details of an algorithm. 
+% \LZ{GREG, should we say more here? I imagine we'll say more in the methods section.}
+
+% Dey et al. \cite{dey2011optimal} formalize finding an optimal generator on a simplicial complex $K$ within a single homology class. Given a homological generator $ \optimalrep \in 
+% \Cycles_1(K)$, expressed as
+% $$
+% \optimalrep = \sum_{\sigma \in \Simplices_1(K)} x_{\sigma}\sigma 
+% $$
+% the  $\ell_0$ ``norm''\footnote{Note that the $\ell_0$ ``norm'' is not a real norm as it does not satisfy the homogeneous requirement of a norm. For example, scaling a vector $\optimalrep$ by a constant factor does not change its $\ell_0$ ``norm''.} of $\optimalrep$ is defined as  
+% $$
+% ||\optimalrep||_0 = |\supp(\optimalrep)|,
+% $$
+% where
+% \begin{align*}
+% \supp(\optimalrep) = \{\sigma  \mid x_{\sigma} \neq 0\}  && \textstyle \optimalrep = \sum_\sigma x_\sigma \sigma
+% \end{align*}
+% is the \emph{support} of $\optimalrep$, consisting of all indices corresponding to nonzero entries in $\optimalrep$.  \LZ{Putting note to think about notation.} Heuristically, we regard $||\optimalrep||_0$ as the number of 1-simplices or edges that``make up'' the generator.
+% Dey et al. \cite{dey2011optimal} define the solution $\optimalrep$ as the \textit{optimal homologous generator} for a given  homological generator $\originalrep$, which can be found by solving the following problem: 
+% \begin{align}
+%   \begin{split}
+%     \text{minimize } &  ||\optimalrep||_0  \\
+%     \text{ subject to } & \optimalrep = \originalrep + \partial_2 \mathbf w, \\
+%     & \mathbf w \in \Chains_2(K).
+%     % \\
+%     % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+%   \end{split}
+%   \label{eq:homologous}
+% \end{align}
+
+% The optimization problem in \eq (\ref{eq:homologous}) finds an optimal generator $\optimalrep$ with the minimal $\ell_0$ norm, or equivalently, with the minimum number of $1$-simplices. The constraint $\optimalrep = \originalrep + \partial_2 \boundingchain$, for $\boundingchain \in \Chains_2(K)$ allows boundaries of $2$-chains to be added to the original generator. This ensures that the optimal cycle $\optimalrep$ is still within the same homology class (i.e., is homologous) as it can only differ by a $1$-boundary (boundary of a $2$-chain, $\boundingchain$) to the original cycle $\originalrep$.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Minimal homological cycle bases}
+
+\pr \eqref{eq:homologous} has a natural extension when $G$ is a field.  This extension focuses not on the smallest representative of a single homology class, but the smallest  \emph{homological cycle basis}.  It may be formally expressed as follows:
+\begin{align}
+   \begin{split}
+    \text{minimize } & \textstyle \sum_{\optimalrep \in \hcyclebasis} \loss(\optimalrep) \\
+    \text{ subject to } & \hcyclebasis \in \setofhcyclebases_n(K ; G)
+    % \\
+    % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+   \end{split}
+   \label{eq:generalminimalbasis}
+\end{align}
+where $\setofhcyclebases_n(K, G)$ is the family of dimension-$n$ homological cycle bases of $\Homologies_n(K;G)$. Thus, the program is finding a complete generating set $\hcyclebasis$ for all of the homological cycles of dimension $n$ where each element has been minimized in some sense.  
+
+It is natural to wonder whether a solution to \pr \eqref{eq:generalminimalbasis} could be obtained by first calculating an arbitrary (possibly non-minimal) homological cycle basis $\hcyclebasis = \{\optimalrep^1, \ldots, \optimalrep^m \}$ and then selecting an optimal cycle representative $\cycle^i$ from each homology class $[\optimalrep^i]$.    Unfortunately, the resulting basis need not be optimal.  To see why, consider the simplicial complex $K_3$ shown in Figure \ref{fig:example-optimal} (E), taking $G$ to be $\Q$ and $\loss$ to be the $\ell_0$ norm.  Complex $K_{\bullet}$ has several different homological cycle bases in degree 1, including  $\hcyclebasis_0: = \{\hat \optimalrep^6, \optimalrep^6\}$, $\hcyclebasis_1: = \{\optimalrep^5,  \optimalrep^6\}$, and $\hcyclebasis_2: = \{ \optimalrep^5,  \hat \optimalrep^6 + \optimalrep^4\}$.  However, only $\hcyclebasis_0$ is $\ell_0$-minimal.  Moreover, each of the cycle representatives $\optimalrep^5, \optimalrep^6, \hat \optimalrep^6$ is already minimal within its homology class, so element-wise minimization will not transform  $\hcyclebasis_1$ or $\hcyclebasis_2$ into optimal bases, as might have been hoped. %\LZ{Personally, I recall feeling that what Lu had here previously was more intuitive/understandable than what is here now.} \CG{This reads OK to me, but I don't know what was here before. Can we resurrect it somehow for comparison?}
+
+
+As with the minimal cycle representative problem, the minimal homological cycle basis problem has been well-studied in the special case where $\loss$ is the $\ell_0$ norm and $G = \field_2$.  In this case, Equation \eqref{eq:generalminimalbasis} is NP-hard to approximate for $n>1$, but  $O(n^3)$ when $n=1$ \cite{dey2018efficient}. Several interesting variants and special cases have been developed in the $n=1$ case, as well \cite{shortestonedimension, erickson2005greedy, chen2010measuring}.  We are not currently aware of a systematic treatment for the case $G \in \{\Q, \R\}$.
+
+
+A natural variant of the minimal homological cycle basis problem in \eq \eqref{eq:generalminimalbasis} is the minimal \emph{persistent homological cycle basis} problem  %This can be formalized by replacing $\setofhcyclebases_n(K ; G)$ in \eqref{eq:generalminimalbasis} with :
+\begin{align}
+   \begin{split}
+    \text{minimize } & \textstyle \sum_{\optimalrep \in \hcyclebasis} \loss(\optimalrep) \\
+    \text{ subject to } & \hcyclebasis \in \setofpersistenthcyclebases_n(K_\bullet ; G)
+    % \\
+    % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+   \end{split}
+   \label{eq:persistentminimalbasis}
+\end{align}
+where $\setofpersistenthcyclebases_n(K_\bullet; G)$ is the set of \emph{persistent} homological cycle bases. This is a stricter condition than \pr \eqref{eq:generalminimalbasis} in that not only does it require that the elements of $\hcyclebasis$ form a generating set of all cycles of dimension $n$, but the barcode associated to $\hcyclebasis$ must match $\barcode_n(K_\bullet).$ That is, the multisets of birth/death pairs must be identical.
+
+\pr \eqref{eq:persistentminimalbasis} is much more recent than \pr \eqref{eq:generalminimalbasis}, and consequently appears less in the literature.   In the special case where every bar in the multiset $\barcode_n(K_\bullet)$ has multiplicity 1 (i.e. there are no duplicate bars), \pr \eqref{eq:persistentminimalbasis} can be solved by making one call to the minimal persistent cycle representative \pr \eqref{eq:minbarcoderep} for each bar.   In particular, the method of \cite{chenquantifying} may be applied to obtain a minimal persistent basis when the correct hypotheses are satisfied: $G = \field_2$, loss is a weighted sum of incident simplices, there are distinct birth times for all simplices of the same dimension, and $n=1$. In general, however, bars of multiplicity 2 are possible, and in this case repeated application of \pr \eqref{eq:minbarcoderep} will be insufficient. %\LZ{Sentence of explanation why?}
+
+\subsection{Minimal filtered cycle space bases}
+
+A close cousin of the minimal homological cycle basis \pr \eqref{eq:generalminimalbasis} is the minimal \emph{filtered cycle basis} problem, which may be formulated as  follows
+\begin{align}
+   \begin{split}
+    \text{minimize } & \textstyle \sum_{\optimalrep \in \fcyclebasis} \loss(\optimalrep) \\
+    \text{ subject to } & \fcyclebasis \in \setoffilteredcyclebases(K_\bullet ; G)
+    % \\
+    % & \mathbf w \in \R^{\Simplices_{n+1}(K)}
+   \end{split}
+   \label{eq:filteredminimalbasis}
+\end{align}
+where $\setoffilteredcyclebases(K_\bullet)$ is the family of all bases $\fcyclebasis$ of $\Cycles_n(K_{\epsilon_T})$ such that $\fcyclebasis$ contains a basis for each  subspace $\Cycles_n(K_{\epsilon_i})$, for $i \in \{1, \ldots, T\}$. %\LZ{$\epsilon_i$ or just list as $i$ like in 3. below?} \CG{I think $\epsilon_i$, since this is a priori a general filtration, and that's how general filtratrions are denoted.}
+
+Escolar and Hiraoka \cite{Escolar2016} provide a polynomial time solution via linear programming when
+    \begin{enumerate}
+        \item $\loss$ is the $\ell_1$ norm,
+        \item $G = \Q$, and
+        \item $K_\bullet$ is a simplex-wise filtration (without loss of generality, $K_\bullet = (K_1, \ldots, K_T)$).
+    \end{enumerate}
+    
+    % \LZ{Possibly delete after here until ****}
+Their key observation is that $\fcyclebasis$ is an optimal solution to \pr \eqref{eq:persistentminimalbasis} if and only if $\fcyclebasis$ can be expressed as a collection $\{\cycle^j : j \in J\}$ where  \begin{enumerate}
+    \item the the set $J = \{j :  \Cycles_n(K_{j-1}) \subsetneq \Cycles_n(K_j) \}$ that indexes the cycles is the list of filtrations at which a novel $n$-cycle appears, and
+    \item for each $j \in J$, the cycle $\cycle^j$ first appears in $K_j$ and is a minimizer for the loss function among all such cycles, i.e. $\cycle^j \in \argmin_{\cycle \in \Cycles_n(K_j) \backslash \Cycles_n(K_{j-1})} \loss(\cycle).$
+\end{enumerate}
+The authors formulate this problem as 
+
+% may be expressed in the form $\{\cycle^j : j \in J\}$, where (i) $J = \{j :  \Cycles_N(K_{j-1}) \subsetneq \Cycles_N(K_j) \}$, and (ii) $\cycle^j \in \argmin_{\cycle \in \Cycles_N(K_j) \backslash \Cycles_N(K_{j-1})} \loss(\cycle)$ for each $j \in J$.  \LZ{Greg, this is a spot where I really think we could use a "lay" description. I don't like the following, but something of the sort: That is, $\fcyclebasis$ is a collection of cycles which minimize each independent cycle through the filtration....I think it's important to have sentences like this to really make clear what is going on. That could be why we missed it in reading their paper, originally.} This reduces the problem to finding elements of $\argmin_{\cycle \in \Cycles_N(K_j) \backslash \Cycles_N(K_{j-1})} \loss(\cycle)$. 
+\begin{align}
+\begin{split}
+\text{minimize } & ||\mathbf{x} ||_1  \\
+\text{ subject to } & \mathbf{x} = \originalrep + \sum_{r\in R} w_r g^r + \sum_{s \in S} v_s f^s \\
+& \boundingchain \in \Q^R  \\
+& \mathbf{v} \in \Q^S
+\end{split}
+\label{eq:escolarargmin}
+\end{align}
+where $\originalrep \in\Cycles_N(K_j) \backslash \Cycles_N(K_{j-1})$ is a novel cycle representative at filtration $j$; $\{g^r : r \in R\}$ is a basis for $\Boundaries_n(K_{j-1})$\footnote{Because of the assumption that $K_\bullet$ is a simplex-wise filtration, if there is a new $n$-cycle in $K_j$ then there cannot also be a new $(n+1)$-simplex, so this is also a basis for $\Boundaries_n(K_j).$}; and $\{g^r : r \in R\} \cup \{f^s : s \in S\}$ is an extension of the given basis for $\Boundaries_n(K_{j-1})$ to a basis for $\Cycles_n(K_{j-1})$. That is, $\originalrep$ is a cycle that has just appeared in the filtration. To optimize it, we are allowed to consider linear combinations of both boundaries, $\{g^r\}$, and cycles, $\{f^s\}$, born before $\originalrep.$ The cycle $\optimalrep$ obtained in this way cannot have a birth time before that of $\originalrep$, but may have a different death time if $[\sum_{s\in S}v_sf^s]$ dies later than $[\originalrep]$. 
+
+
+% \LZ{This notation feels hard to parse. Has it been defined? Bold f, g? This is another spot where we definitely need a lay translation. Please edit: We interpret these equations as follows: $\originalrep$ is a new cycle to be optimized. The constraint $\mathbf{x} = \originalrep + \sum_{r\in R} w_r g^r + \sum_{s \in S} v_s f^s$ allows linear combinations of $n$-boundaries born before $\originalrep$ as well as linear combinations of $n$-cycles born before $\originalrep$ to be added to $\originalrep$. This ensures...but does not ensure...} 
+
+% \LZ{****}
+
+The algorithm developed in \cite{Escolar2016} is cleverly constructed to extract $\originalrep$, $\{g^r : r \in R\}$, and $\{f^s : s \in S\}$ from matrices which are generated in the normal course of a barcode calculation.
+
+
+\begin{remark}
+\label{rmk:filteredversuspersistent}
+It is important to distinguish between  $\setofpersistenthcyclebases$ and $\setoffilteredcyclebases$, hence between the optimization Programs \eqref{eq:persistentminimalbasis} and \eqref{eq:filteredminimalbasis}.  As Escolar and Hiraoka \cite{Escolar2016} point out, given $\hcyclebasis \in \setofpersistenthcyclebases$ and $\fcyclebasis \in \setoffilteredcyclebases$, one can always find an injective function $\phi: \hcyclebasis \to \fcyclebasis$ such that $\birth(\cycle) = \birth(\phi(\cycle))$ for all $\cycle$.  However, this does not imply that $\phi(\hcyclebasis) \in \setofpersistenthcyclebases$, as the deaths of each cycle may not coincide.  Indeed, the question of whether a persistent homological cycle basis can be extracted from $\fcyclebasis$ \emph{by any means} is an open question, so far as we are aware. We provide an example in \fig \ref{fig:example-persBasis} where the cycle basis obtained by optimizing each cycle using \pr \eqref{eq:filteredminimalbasis} is not a persistent homology cycle basis $\hcyclebasis$. 
+\end{remark}
+%In \fig \ref{fig:example-persBasis}(\textbf{A}), each of the thickened cycles represents a cycle representative for the hole it encloses. In \fig \ref{fig:example-persBasis}\textbf{(B)}, the barcode records the lifespan of each cycle representative. For example, $\persinterval (\optimalrep^1) = [0, \infty), \persinterval(\optimalrep^2) = [1,2).$ In this example, $\{\optimalrep^1, \optimalrep^2\}$ forms a basis for the persistent homology group. If we optimize $\optimalrep^2$ using \pr \eqref{eq:filteredminimalbasis}, we obtain $\hat \optimalrep^2$. However, $\persinterval(\hat \optimalrep^2) = [1,\infty),$ which no longer has the same lifetime as the original persistent cycle $\optimalrep^2$. Therefore, $\{\optimalrep^1, \hat \optimalrep^2\}$ is no longer a persistent homological cycle basis. 
+
+
+
+Though Remark \ref{rmk:filteredversuspersistent} is a bit disappointing for those interested in persistent homology, the machinery developed to study \pr \eqref{eq:filteredminimalbasis} is nevertheless interesting, and we will discuss an adaptation.
+
+
+\subsection{Volume-optimal cycles: minimizing over bounding chains}\label{sec:volume}
+
+Schwinhart \cite{schweinhart2015statistical} and  Obayashi \cite{Obayashi2018} consider a different notion of minimization: \emph{volume}\footnote{This notion of volume differs from that of \cite{chenhardness}. The latter refers to volume as the $\ell_0$ norm of a chain, while the former (which we discuss in this section) refers to the $\ell_0$ norm of a \emph{bounding} chain.} optimality.  This approach focuses on the ``size'' of a bounding chain; it is specifically designed for cycle representatives in a persistent homological cycle basis.    
+
+
+Obayashi \cite{Obayashi2018} formalizes the approach as follows.  First, assume a simplex-wise filtration $K_\bullet$; without loss of generality, $K_\bullet = (K_1, \ldots, K_T)$, and we may enumerate the simplices of $K_T$ such that $K_i = \{\simplex_1, \ldots, \simplex_i\}$ for all $i$.  Since each simplex has a unique birth time, each interval in  $\barcode_n(K_\bullet)= \{[b_1, d_1), \ldots, [b_N, d_N)\}$ has a unique left  endpoint.  Fix $[b_i,d_i) \in \barcode_n(K_\bullet)$ such that $d_i < \infty$ (in the case $d_i = \infty$, volume is undefined).    It can be shown that $\sigma_{b_i}$ is an $n$-simplex and  $\sigma_{d_i}$ is an $(n+1)$-simplex.
+
+A \emph{persistent volume} $\volvec$ for $[b_i, d_i)$ is an $(n+1)$ chain $\volvec \in \Chains_{n+1}(K_{d_i})$ such that\footnote{If we regard $\partial_{n+1}\volvec$ as a function $\Simplices_{n}(K_{d_i}) \to \Q$, then $(\partial_n \volvec)_\tau$ is the value taken by $\partial_n \volvec$ on simplex $\tau$.  Alternatively, if we regard $\partial_n \volvec$ as a linear combination of $n$-simplices, then $(\partial_n \volvec)_\tau$ is the coefficient placed by $\partial_n \volvec$ on $\tau$.}
+\begin{align}
+    \volvec   & = \sigma_{d_i} + \sum_{\sigma_k \in \mathcal{F}_{n+1}} \alpha_k\sigma_k \label{obacond1} \\
+    (\partial_{n+1} \volvec)_\tau  & = 0 \quad \forall \tau \in \mathcal{F}_n \label{obacond2}\\
+    (\partial_{n+1} \volvec)_{\sigma_{b_i}}  & \ne 0, \label{obacond3}
+\end{align}
+where $\mathcal{F}_n = \{\sigma_k \in \Simplices_n(K) : b_i < k < d_i \}$ denotes the $n$-simplices alive in the window between the birth and death time of the interval under consideration.   
+
+We interpret these equations as follows: Given a persistence interval $[b_i,d_i)$, condition \eqref{obacond1} implies that $\volvec$ only contains $n+1$-simplices born between $b_i$ and $d_i$ and must contain the $n+1$-simplex born at $d_i$. Condition \eqref{obacond2} ensures that the boundary of $\volvec$ contains no $n$-simplex born after $b_i$, and condition \eqref{obacond3} ensures that the boundary of $\volvec$ contains the $n$-simplex born at $b_i$. This guarantees that $\partial_{n+1}\volvec$ exists at step $b_i$, does not exist before step $b_i$, and dies at step $d_i$.
+
+%
+\begin{theorem}[Obayashi \cite{Obayashi2018}]  
+\label{thm:obayashi}
+Suppose that $[b_i, d_i) \in \barcode_n(K_\bullet)$ and  $d_i < \infty$.
+    \begin{enumerate}
+        \item Interval $[b_i, d_i)$ has a persistent volume.
+        \item If $\volvec$ is a persistent volume for $[b_i, d_i)$ then $\persinterval(\partial_{n+1}\volvec) = [b_i, d_i)$.
+        \item Suppose that $\hcyclebasis$ is an $n$-dimensional persistent homological cycle basis for $K_\bullet$, that $\originalrep \in \hcyclebasis$ is the basis vector corresponding to $[b_i, d_i)$, and that $\volvec$ is a persistent volume for $[b_i, d_i)$.  Then, $(\hcyclebasis \backslash \{\originalrep\}) \cup \{\partial_{n+1}\volvec\} $ 
+        % \LZ{This should be $\originalrep$ not $\optimalrep$, right?}
+        is also a persistent homological cycle basis.
+    \end{enumerate}
+\end{theorem}
+
+By Theorem \ref{thm:obayashi}, for any barcode composed of finite intervals, one can construct a persistent homological cycle basis from nothing but (boundaries of) persistent volumes!  Were we to build such a basis, it would be natural to ask for volumes that are optimal with respect to some loss function; that is, we might like to solve
+\begin{align}
+\begin{split}
+    \text{minimize } & \loss(\volvec) \\
+    \text{subject to } 
+    & \eqref{obacond1}, \eqref{obacond2}, \eqref{obacond3}\\
+    & \textbf{v} \in \Chains_{n+1}(K_{d_i}) 
+\end{split}
+\label{eq:generalminimalvolume}
+\end{align}
+for each barcode interval $[b_i, d_i)$.  A solution $\volvec$ to \pr \eqref{eq:generalminimalvolume} is called an \emph{optimal volume}; its boundary, $\optimalrep=\partial_{n+1}\volvec$ is called a \emph{volume-optimal cycle}.
+
+It is interesting to contrast $\ell_0$-minimal cycle representatives for an interval\footnote{Technically, this notion is not well-defined; to be formal, we should fix a persistent homology cycle basis $\hcyclebasis$, fix a cycle representative $\cycle \in \hcyclebasis$ with lifespan interval $[b_i, d_i)$, and ask for an $\ell_0$ cycle representative in the same homology class, $[\cycle] \in \Homologies_n(K_{b_i})$, as per \pr \eqref{eq:homologous}.  However, in simple cases the intended meaning is clear.} $[b_i, d_i)$ with  $\ell_0$ \emph{volume}-optimal cycle for the same interval.  Consider, for example, \fig \ref{fig:volumeoptimal}.  For the persistence interval $[b_i,d_i)$, the cycle with minimal number of edges is $(a,b) + (b,c) + (c,d)  + (d,a)$. However, the volume-optimal cycle would be found as follows: considering $K_{d_i}$, we must find the fewest $2$-simplices whose boundary captures the persistence interval. In this case, we would have an optimal volume  $(a,b,e) + (b,c,e) + (a,d,e)$ and volume-optimal cycle $(a,b)+ (b,c) + (c,e) + (e,d)+ (d,a)$.
+
+\subsection{$\ell_0$ versus $\ell_1$-optimization} \label{secl0l1}
+
+As mentioned above, it is common to choose $\loss(\optimalrep) = ||\optimalrep||_0$ or $\loss(\optimalrep) = ||\optimalrep||_1$. A linear program (LP) with $\ell_1$ objective function is polynomial time solvable. However, an objective function with the $\ell_0$ norm restricted to $\{0,1,-1\}$-coefficients is often preferred as the output of such a problem is highly interpretable: a cycle representative with minimal number of edges or enclosing the minimal number of triangles. Yet, $\ell_0$-optimization is known to be NP-hard \cite{NPhardL0}. 
+% For a vector $\mathbf{v} \in \mathbb{R}^m$, the $\ell_1$-norm is defined as:
+% $$||\mathbf{v}||_1 = \sum_{i=1}^m|v_i|.$$
+% Instead, we could assign the $i$th diagonal entry $w_{[i, i]}$ equal to the distance, as designated by the metric $d$ used to define the Vietoris-Rips complex, between the two vertices of the $i$th $1$-simplex $\sigma_i$. A solution to this weighted $\ell_1$ optimization that had entries in $\{-1,0,1\}$ would result in an optimal chain with the minimal length. 
+
+The  $\ell_1$ norm promotes sparsity and often gives a good approximation of $\ell_0$ optimization \cite{dohono,NPhardL0}, but the solution may not be exact. Yet, if all of the coefficients of the solution $\optimalrep$ are restricted to $0$ or $\pm 1$ in the optimization problem, then the $\ell_0$ and $\ell_1$ norms are identical. A looser restriction, as proposed in Escolar et al. \cite{Escolar2016}, would be to solve an optimization with $\ell_1$ objective function with integer constraints on the solution. %A solution $\optimalrep$ is \textit{integral} if all of its entries are integers. 
+Requiring the solution to be integral also allows us to understand the optimal solution more intuitively than having fractional coefficients. Such an optimization problem is called a \textit{mixed integer program} (MIP), which is known to be slower than linear programming and is NP-hard \cite{Obayashi2018}. Many variants of integer programming special to optimal homologous cycles, in particular, have been shown to be hard as well \cite{borradaile2020minimum}. In \se \ref{methodsProblems}, we discuss the optimization problems we implement, where each is solved both as an LP with an $\ell_1$-norm in the objective function and an MIP by adding the constraint that $\optimalrep$ is integral. 
+
+Dey et al. \cite{dey2011optimal} gives the \textit{totally-unimodularity} sufficient condition which guarantees that an LP and MIP give the same optimal solution. A matrix is totally unimodular if the determinant of each square submatrix is $-1, 0$, or $1$. Dey et al. \cite{dey2011optimal} give conditions for when the $\partial_{n+1}$ matrix is totally unimodular. If the totally-unimodularity condition is not satisfied, then an LP may not give the desired result. As totally unimodularity is not guaranteed for all boundary matrices \cite{henselman2014combinatorial}, we cannot rely on this condition. 
+
+\subsection{Software implementations}
+\label{sec:existingimplementations}
+
+\emph{Edge-minimal cycles}  Software implementing the edge-loss method introduced in \cite{Escolar2016} can be found at \cite{OptiPersLP}.  This is a C++ library specialized for 3d point clouds.
+
+
+\emph{Volume optimal cycles} The volume optimization technique introduced in \cite{Obayashi2018} is available through the software platform \emph{HomCloud}, available at  \cite{homcloud}.  The code can be accessed by unarchiving the HomCloud package  (for example,
+\url{https://homcloud.dev/download/homcloud-3.1.0.tar.gz}) and picking the
+file \url{homcloud-x.y.z/homcloud/optvol.py}.
+
+
+%\GHP{I would leave things here, for this section; specifically, I'd forego the (very nice) explanation of why volume optimization works (sorry Connor and Lu!) and move everything after "Another important difference" into the methods section for the experiment.}
+
+%, for example, illustrates that   volume-optimal cycles are different from minimal cycles solving Equations (\ref{eq:homologous}) or (\ref{eq:generalmultiplecyclecase}), which have the minimal number of edges. 
+
+
+
+%Another notion of an optimal 1-cycle, proposed by Obayashi \cite{Obayashi2018}, minimizes the number of $2$-simplices (triangles) a cycle representative bounds. This algorithm assumes a simplex-wise filtration, but this is not the case, in general. As a result, we cannot conclude from the results in Obayashi \cite{Obayashi2018} that our modified version of the algorithm will always properly find a volume-optimal cycle, though from our observations it does. \CT{LU, did I mischaracterize this?}\LL{I'm not sure -- the Obayashi paper proved that we should find a solution to the volume optimal program if we use a simplexwise filtration} We first introduce the original algorithm, then present our modified version of it. 
+
+%The original paper by Obayashi \cite{Obayashi2018} considers the general case of computing volume-optimal cycles for persistent homology in dimension $(n-1)$ with $n\geq 2$. In the present paper, we focus on 1-dimensional homological cycle representatives with $n=2$. Given a simplex $\sigma \in \Simplices_1(K)$ and a $1$-chain $\optimalrep \in \Chains_1(K)$, let $\sigma^*: \Chains_1(K) \to \R$ be the linear map defined by $\sigma^*\optimalrep = \langle \sigma, \optimalrep \rangle$, \LL{$\sigma^*\optimalrep = x_\sigma$?}, which is the coefficient of $\sigma$ in $\optimalrep$ \LZ{Wait, what is this notation? Dot product? I think you've described it to me before, but not clear now.} \LL{Yes it's the dot product} \LZ{We need to fix this notation to be more clear.}.  Also let $\sigma_k$ be the simplex born at time $k$. Then, given an interval $\persinterval(\optimalrep^i)=[b_i,d_i)$ with $d_i < \infty$ in $PH_n(K)$ for a complex $K$, Obayashi \cite{Obayashi2018} defines a \textit{volume-optimal cycle} as follows: The cycle $\optimalrep = \partial_{2} \volvec$ is a \textit{volume-optimal cycle}, and $\volvec$ is the corresponding optimal \textit{volume} if $\volvec$ solves the linear program
+%\begin{align}
+%    \text{minimize } & ||\volvec||_0 \label{voll0}\\
+%    \text{subject to } 
+%    & \volvec   = \sigma_{d_i} + \sum_{\sigma_k \in \mathcal{F}_{2}} \alpha_k\sigma_k \label{obacond1} \\
+%    & \tau^*(\partial_{2} \volvec)  = 0 \quad \forall \tau \in \mathcal{F}_1 \label{obacond2}\\
+%    & \sigma_{b_i}^*(\partial_{2} \volvec)  \ne 0, \label{obacond3}\\
+%    & \textbf{v} \in \Chains_n(K_{d_i}) \label{obacond4}
+%\end{align}
+%where $\mathcal{F}_n = \{\sigma_k \in \Simplices_n(K) : b_i < k < d_i \}$ denotes the $n$-simplices alive in the window between the birth and death time of the interval under consideration. Here, $\volvec$ is a $2$-chain, whereas $\optimalrep=\partial_{2} \volvec$ is a $1$-chain and a cycle representative for $\Homologies_1(K)$ which corresponds to the persistence interval $[b_i,d_i)$. \LZ{Interesting. It just dawned on me that this optimization does not first require a cycle representative for the interval. Is that correct? Maybe we should make this point somewhere} \LL{Yes, actually there's a paper where they just directly used volume optimal cycles instead of original cycle representatives \cite{ichinomiya2020protein}. But our code isn't the best place to do so right? Because we will get cycle representatives when we compute persistence. }
+%\LZ{Lu, please put in a couple sentences explaining this.} \LL{I added a paragraph after the example comparing unif/len weighted minimal cycles and volume optimal cycle. Please review!}
+
+
+
+%We interpret this optimization problem as follows: Given a persistence interval $[b_i,d_i)$, a volume-optimal cycle $\optimalrep=\partial_{2} \volvec$ arises from a linear combination of $2$-simplices existing in $K_{d_i}$ which has a minimal number of $2$-simplices and whose boundary $\partial_{2} \volvec \in K_{b_i}$ has the appropriate birth and death time. Condition \eqref{obacond1} implies that $\volvec$ only contains $2$-simplices born between $b_i$ and $d_i$ and must contain the $2$-simplex born at $d_i$. Condition \eqref{obacond2} ensures that the optimal cycle representative $\optimalrep$ must contain the edge born at $b_i$, and condition \eqref{obacond3} ensures that $\optimalrep$ contains no edge born after $b_i$. This guarantees that the optimal cycle representative found exists at step $b_i$ and does not exist before step $b_i$. 
+
+
+%The example in \fig \ref{fig:volumeoptimal} seeks to describe a situation in which volume-optimal cycles are different from minimal cycles solving Equations (\ref{eq:homologous}) or (\ref{eq:generalmultiplecyclecase}), which have the minimal number of edges. 
+% \begin{example}
+% This example seeks to describe a situation in which volume-optimal cycles are different from cycles with minimal $0$-norm. Consider the following filtration:
+% \begin{center}
+% \begin{tikzpicture}[scale = .6]
+% \foreach \x in {10,20} %put here so triangles aren't on top of vertices
+%     \draw[fill = gray] (2+\x,0) -- (1 + \x,1) -- (2 + \x,2) -- (2 + \x,0);
+% \foreach \x in {20} %put here so triangles aren't on top of vertices
+%     \draw[fill = gray] (1+\x,1) -- (2 + \x,2) -- (0 + \x,2) -- (0 + \x,0) -- (2 + \x,0) -- (1 + \x,1);
+% \foreach \x in {0,5,10,20}
+%     {
+%     \node[circle, fill = black, minimum size = .1cm, inner sep = 2pt] (a\x) at (0 + \x,0) {};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep = 2pt] (b\x) at (0 + \x,2) {};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep = 2pt] (c\x) at (2 + \x,2) {};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep = 2pt] (d\x) at (2 + \x,0) {};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep = 2pt] (e\x) at (1 + \x,1) {};
+%     \draw[black, thick] (a\x) -- (b\x) -- (c\x) -- (d\x) -- (e\x) -- (c\x);
+%     }
+% \foreach \x in {5,10,15,20}
+%     {
+%     \node[draw = none] at (\x - 1.5,1) {$\hookrightarrow$};
+%     }
+% \foreach \x in {5,10,20}
+%     {
+%     \draw[black,thick] (a\x) -- (d\x);
+%     }
+% \foreach \x in {20}
+%     \draw[black, thick] (a\x) -- (e\x) -- (b\x);
+% \node[draw = none] at (16,1) {$\cdots$};
+% \node[draw = none] at (6,2.5) {$K_{b_i}$};
+% \node[draw = none] at (21,2.5) {$K_{d_i}$};
+% \draw (a0) node[left] {$a$}  -- (b0) node[left] {$b$} -- (c0) node[right] {$c$} -- (d0) node[right] {$d$} -- (e0) node[above left] {$e$};
+% \end{tikzpicture}
+% \end{center}
+%For the persistence interval $[b_i,d_i)$, the cycle with minimal number of edges is $(a,b) + (b,c) + (c,d)  + (d,a)$. However, the volume-optimal cycle would be found as follows: considering $K_{d_i}$, we must find the fewest $2$-simplices whose boundary captures the persistence interval. In this case, we would have an optimal volume  $(a,b,e) + (b,c,e) + (a,d,e)$ and volume-optimal cycle $(a,b)+ (b,c) + (c,e) + (e,d)+ (d,a)$.
+% \end{example}
+
+
+% ------- moved from 3.2
+
+
+
+% However, Escolar and Hiraoka \cite{Escolar2016} provide a polynomial time solution via linear programming when
+%     \begin{enumerate}
+%         \item $\loss$ is the $\ell_1$ norm,
+%         \item $G = \Q$, and
+%         \item $K_\bullet$ is a simplex-wise filtration.
+%     \end{enumerate}
+% If $K_\bullet$ is not a simplex-wise filtration then the same general approach may be applied to a simplex-wise refinement $K'_\bullet$, though optimality is no longer guaranteed.
+
+
+
+
+% In broad strokes, the argument of \cite{Escolar2016} proceeds as follows.  Let $K_\bullet = (K_1, \ldots, K_N)$ be a filtered complex with bijective birth function $\birth: K_N \to \{1, \ldots, N\}$, and let  $\hcyclebasis$ be a persistent $n$-dimensional homological cycle basis for $K_\bullet$.  Then for each $i>1$, exactly one of the following holds: 
+%     \begin{enumerate}
+%         \item $\Homologies_n(K_i) = \Homologies_n(K_{i-1})$
+%         \item $\Boundaries_n(K_{i-1}) \subsetneq \Boundaries_n(K_i)$; in this case  $\hcyclebasis_i = \hcyclebasis_{i-1} - \{\cycle\}$ for some $\cycle$
+%         \item $\Cycles_n(K_{i-1}) \subsetneq \Cycles_n(K_i)$; in this case $\hcyclebasis_i = \hcyclebasis_{i-1} \cup \{\cycle\}$ for some $\cycle$. 
+%     \end{enumerate}
+% In case 3, we have
+%     \begin{align*}
+%         \Cycles_n(K_i) 
+%         = 
+%         \underbrace{\Cycles_n(K_{i-1})}_{\Boundaries_n(K_{i-1}) + \spann(\hcyclebasis_{i-1})} + \;\; \cycle 
+%     \end{align*}
+
+
+% Recently, a partial solution has been suggested by Escolar and Hiraoka \cite{Escolar2016}.  As with the strategy of element-wise minimization, this approach begins with an arbitrary basis $\hcyclebasis = \{\optimalrep^1, \optimalrep^2, \ldots,  \optimalrep^m \}$.  However, rather than replacing $\optimalrep^i$ with another representative of the same homology class, the proposed method replaces $\optimalrep^i$ with the smallest representative $\cycle^i$ such that $\{\optimalrep^1, \ldots, \cycle^i,  \ldots, \optimalrep^m \}$ is still a persistent homological cycle basis.
+
+% \GHP{Next step, explain what this means in terms of adding cycle reps born by the time that $\optimalrep^i$ is born.}
+
+% \GHP{Leaving things off here -- will resume in AM!}
+
+% In general, the optimal solution obtained by solving the optimal homologous cycle problem in Equation (\ref{eq:homologous}) may not be enough to optimize a cycle representative that encloses more than one hole. That is, given a collection of representatives $\{\optimalrep^0, \optimalrep^1, \ldots, \optimalrep^m\}$  \LZ{Need to define up in section 2 carefully} 
+% %\GHP{Ah - now there is a notation conflict: in one context we use subscripts to denote different vectors: $\{\optimalrep_0, \optimalrep_1, \ldots, \optimalrep_m\}$, while later on we use the same subscripts to denote the coefficients of a single vector, i.e. $\optimalrep = \optimalrep_0, \optimalrep_1, \ldots, \optimalrep_m$.  Suggested resolution: user \textbf{superscripts} to differentiate different vectors, and use subscripts to indicate coefficients of the vectors. Putting vector numbers in superscript position will make it awkward to use primes, but you can replace those with hats} \LL{Maybe we can use $x_i$ to denote the coefficients of a single vector and $\optimalrep^i$ to denote a vector? } \LZ{That could work if people really pay attention to the notation, but may not be super obvious.} \CT{I tried to make this replacement throughout this section.}
+% representing a basis in homology, we want to find the min-loss substitute $\hat{\optimalrep}^i$ for $\optimalrep^i$ such that $\{\optimalrep^0, \optimalrep^1, \ldots, \hat{\optimalrep}^i, \ldots \optimalrep^m\}$still represents a homology basis. If we begin with a basis of cycles, we will maintain a basis of cycles after adding a cycle to another.
+
+
+% For example, consider Figure \ref{fig:example-optimal} (e),  a filtered simplicial complex $K_1 \subseteq K_2 \subseteq K_3$. In the filtration, a homology class $[\optimalrep^4]$ appears for the first time in $K_1$, and becomes trivial for the first time in $K_2$. Another homology class $[\optimalrep^5]$ appears first in $K_2$, and $[\optimalrep^6]$ appears first in $K_3$. The cycle representatives $\{\optimalrep^4, \optimalrep^5, \optimalrep^6\}$ form a basis in homology through the filtration. However, we can replace $\optimalrep^6$ with $\hat{\optimalrep}^6$ and obtain the min-loss collection of representatives that still represents the same homology basis. By inspection, we can see that $\hat{\optimalrep}^6$ cannot be obtained from $\optimalrep^6$ without adding the cycle, $\optimalrep^5$. This is a different optimization problem than Equation (\ref{eq:homologous}) in that by adding a cycle to a cycle, we might change the homology class the latter represents. For example, after adding $\optimalrep^5$ to $\optimalrep^6$, we obtain $\hat{\optimalrep}^6$, which no longer encloses the same hole that $\optimalrep^6$ encloses and thus, is not homologous to $\optimalrep^6$. However, if we begin with a basis of cycles, we still maintain a basis of cycles after adding a cycle to another. 
+
+% Below we formulate the optimization problem for finding a minimal cycle representative proposed by Escolar et al. in \cite{Escolar2016}, which achieves a basis of cycles that have each been optimized in relation to the other cycle representatives. Let $\{\optimalrep^1, \ldots, \optimalrep^m\}$ \LZ{If keep this notation, should we have something other than $m$ since above $m$ was used in the basis? May be easier to change $m$ above than in all the optimizations below} be representatives born before the birth time of the cycle $\originalrep$ and consider the problem:
+% \begin{align}
+% \begin{split}
+% \text{minimize } & ||\mathbf{x} ||_0  \\
+% \text{ subject to } & \mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j \\
+% & \boundingchain \in \Chains_2(K)  \\
+% & a_j \in \R  \text{ for } j = 1, \ldots, m
+% \end{split}
+% \label{eq:generalmultiplecyclecase}
+% \end{align}
+
+% The optimization problem in Equation (\ref{eq:generalmultiplecyclecase}) minimizes the $\ell_0$ ``norm'' of the optimal cycle. The constraint $\mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j$, for $\boundingchain \in \Chains_2(K)$ 
+% allows boundaries of 2-chains as well as linear combinations of cycle representatives born before the birth time to be added to $\originalrep$. This ensures that we can replace $\originalrep$ with $\optimalrep$ in the homological basis and still get a valid homological basis since we are only adding $1$-cycles within the same basis and $1$-boundaries to the original cycle representative. \\
+
+% For example, $\hat{\optimalrep}^6=\originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j = \optimalrep^6 + 0 + \optimalrep^5$ is the solution to Equation (\ref{eq:generalmultiplecyclecase}) for the example in Figure \ref{fig:example-optimal} (e), where the 0 denotes that no boundaries were added to achieve this optimal cycle.
+
+% In our analysis, we do not implement Equation (\ref{eq:homologous}) as Equation (\ref{eq:generalmultiplecyclecase}) is more general.
+
+% %\GHP{Two things: (i) the set $\{\optimalrep^0', \optimalrep^1', \ldots, \optimalrep^m'\}$ never represents a homology class, but rather a set of homology classes, (ii) while it is indeed desirable to find a min-weight basis of this form, that is not what we do.  We only replace one of the $\optimalrep^i$ s with an  $\optimalrep^i'$.  Replacing all of them is a more complicated problem, which you two are very well equipped to think about, but which we don't have space for in this paper.} \LL{Got it!}

@@ -1,0 +1,22 @@
+[package]
+name = "py_literal"
+version = "0.4.0"
+authors = ["Jim Turner <py_literal@turner.link>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/jturner314/py_literal"
+documentation = "https://docs.rs/py_literal"
+description = "Read and write Python literals"
+keywords = ["python"]
+categories = ["parser-implementations", "encoding"]
+readme = "README.md"
+edition = "2018"
+
+[dependencies]
+num-bigint = { version = "0.4", default-features = false }
+num-complex = { version = "0.4", default-features = false }
+num-traits = { version = "0.2", default-features = false }
+pest = "2.0"
+pest_derive = "2.0"
+
+[dev-dependencies]
+num = { version = "0.4", default-features = false, features = ["alloc"] }

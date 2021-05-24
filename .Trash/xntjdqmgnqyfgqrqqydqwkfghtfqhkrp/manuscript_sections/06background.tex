@@ -1,0 +1,379 @@
+\section{Background: Topological Data Analysis and Persitent Homology}\label{background}
+\label{sec:background}
+
+%\LZ{This section reads really nicely, but we should likely try to reduce some words. For space constraints, possible things we could remove/condense from this background: padding by 0, computing persistent homology (at least most of the details).}
+
+%\L\Cycles{In general, I think we can condense this background of PH a bit. We should talk about this at our next meeting, though.}
+
+% We provide a brief introduction to some fundamental terms in TDA,\L\Cycles{No need to list out terms, although this is useful for us to make sure we've done all of these.} including simplicial complex, chain complex, the chain complex associated to a simplicial complex, boundary matrix, chain, cycle, boundary, persistent homology, and cycle representative in persistent homology.
+
+In this section, we introduce key terms in algebraic and computational topology to provide minimal background and establish notation. For a more thorough introduction see, for example, \cite{Carlsson2009TopologyAD, hatcher2002algebraic, edelsbrunner2010computational, barcodeGhrist, persistenthomologyasurvey,TZH15}. 
+
+%We first introduce the notion of simplicial complexes, which are the basic geometric constructs used to represent data objects. The representation of a discrete set of data points as a simplicial complex enables the use of methods from simplicial homology to quantify the shape of the data in terms of connectedness and topologically important features. 
+
+Given a discrete set of sample data, we approximate the topological space underlying the data by constructing a \textit{simplicial complex}. This construction expresses the structure as a union of vertices, edges, triangles, tetrahedrons, and higher dimensional analogues  \cite{Carlsson2009TopologyAD}. 
+% A simplicial complex is a set consisting of a finite collection of $n$-simplices (simple pieces). A simplex is a generalization of a triangle from 2D to other dimensions, for example, a $0$-simplex is a vertex, a $1$-simplex is an edge, a $2$-simplex is a filled-in triangle, a $3$-simplex is a solid tetrahedron, and so on. % moved down: [[[While there are a variety of approaches to create a simplicial complex from sample data, we use the \textit{Vietoris-Rips} (VR) complex, a common choice in TDA because it is simple to compute \cite{Carlsson2009TopologyAD}.\\]]]
+% We now define a simplicial complex, which is a combinatorial object used to approximate a topological space, as well as a subcomplex:
+
+
+
+\noindent \textbf{Simplicial Complexes.} A \textit{simplicial complex} is a collection $K$ of non-empty subsets of a finite set $V$. The elements of $V$ are called \textit{vertices} of $K$, and the elements of $K$ are called \textit{simplices}. A simplicial complex has the following properties: (1) $\{v\}$ in $K$ for all $v \in V$, and (2) $\tau \subset \sigma$ and $\sigma \in K$ guarantees that $\tau \in K$. %A \textit{subcomplex} is a subset of simplices of a given simplicial complex which itself is a simplicial complex. A subset $\tau$ of a simplex $\sigma$ is a \emph{facet} if $\tau = \sigma \setminus \{v\}$ for some vertex $v \in \sigma$. The cardinality of $\tau$ is one less than the cardinality of $\sigma.$
+
+
+Additionally, we say that a simplex has \textit{dimension n} or is an \textit{n-simplex} if it has cardinality \textit{n+1}. We use $\Simplices_n(K)$ to denote the collection of \textit{n}-simplices contained in $K$.% The dimension of $K$ is the highest dimension of its simplices. 
+
+% Intuitively, a simplicial complex structure on a space is an expression of the space as a union of points, edges, triangles, tetrahedrons, and higher dimensional analogs, which provides a simple combinatorial way to describe and approximate complicated topological spaces. 
+
+
+
+While there are a variety of approaches to create a simplicial complex from data, our examples use a standard construction for approximation of point clouds.  Given a metric space $X$ with metric $d$ and real number $\epsilon \ge 0$, the \textit{Vietoris-Rips complex} for $X$, denoted by $\text{VR}_\epsilon(X)$, is defined as $$\text{VR}_\epsilon (X) = \{\sigma \subseteq \Simplices_n(K) \mid d(x,y) \leq  \epsilon \text{ for all } x, y \in \sigma\}.$$
+That is, given a set of discrete points $X$ and a metric $d$, we build a VR complex at scale $\epsilon$ by forming an $n$-simplex if and only if $n+1$ points in $X$ are pairwise within $\epsilon$ distance of each other. 
+
+\noindent \textbf{Chains and chain complexes.}
+Given a simplicial complex $K$ and an abelian group  $G$, the \emph{group of $n$-chains in $K$ with coefficients in $G$} is defined as
+%
+    \begin{align*}
+        \Chains_n(K; G) 
+        :=
+        G^{\Simplices_n(K)}.
+    \end{align*}
+%    
+Formally, we regard $G^{\Simplices_n(K)}$ as a group of functions $\Simplices_n(K) \to G$ under element-wise addition. Alternatively, we may view $\Chains_n(K; G)$ as a group of formal $G$-linear combinations of $n$-simplices, i.e. $\left \{\sum_{\sigma}x_{\sigma} \sigma \mid x_{\sigma} \in G \text{ and } \sigma \in \Simplices_n(K) \right \}$.
+
+An element $\optimalrep = (\orepentry_\sigma)_{\sigma \in \Simplices_n(K)} \in G^{\Simplices_n(K)}$ is called an \emph{$n$-chain} of $K$.   As  in this example, we will generally use a bold-face symbol for the tuple $\optimalrep$ and corresponding light-face symbols for entries $\orepentry_\sigma$.  The \emph{support} of an $n$-chain is the set of simplices on which $\optimalrep_\sigma$ is nonzero: %\LL{on which $\optimalrep$ is nonzero or $\optimalrep_\sigma$ is nonzero?}
+%
+    \begin{align*}
+        \supp(\optimalrep)  :=\{ \sigma \in \Simplices_n(K) \mid \orepentry_\sigma \neq 0 \}.
+    \end{align*}
+%
+The $\ell_0$ norm\footnote{The $\ell_0$ ``norm'' is not a real norm as it does not satisfy the homogeneous requirement of a norm. For example, scaling a vector $\optimalrep$ by a constant factor does not change its $\ell_0$ ``norm''.} and  $\ell_1$ norm  of $\optimalrep$ are defined as 
+    \begin{align*}
+        ||\optimalrep||_0 := |\supp(\optimalrep) |
+        &&
+        \textstyle
+        ||\optimalrep||_1 := \sum_{ \sigma \in \Simplices_n(K)} | \orepentry_\sigma  |.
+    \end{align*}
+
+\begin{remark}
+We will focus on the cases where $G$ is $\Q$ (the field of rationals), $\Z$ (the group of integers), or $\field_2$ (the 2-element field).  Since we are most interested in the case $G = \Q$, we adopt the shorthand $\Chains_n(K) = \Chains_n(K,\mathbb{Q})$. 
+\end{remark}
+
+
+% Given a simplicial complex $K$ and an abelian group $G$, an \textit{$n$-chain with coefficients in $G$} is a formal linear combination of $n$-simplices,  written $\optimalrep = \sum_{\sigma \in \Simplices_n(K)} \orepentry_\sigma \sigma$, where each $\orepentry_\sigma$ is an element of $G$.  As  in this example, we will generally use a bold-face symbol  to denote a formal linear combination $\optimalrep = \sum_{\sigma \in \Simplices_n(K)} \orepentry_\sigma \sigma$, and a corresponding light-face symbol to denote the indexed family of coefficients  $ (\orepentry_\sigma)_{\simga\in \Simplices_n(K)}$. 
+
+
+ 
+
+% In practice, coefficients are often taken to lie in a field $\mathbb{F}$ where the set of all $n$-chains on $K$ form a vector space, $\Chains_n(K,\mathbb{F})$. In this paper we will always take coefficients in the field of rational numbers $\mathbb{Q}$; for economy of notation we therefore drop the field from notation, writing $\Chains_n(K) = \Chains_n(K,\mathbb{Q})$. 
+
+% Given a vector $\optimalrep \in \Chains_n(K)$ with corresponding rational coefficients $ (\orepentry_\sigma)_{\simga\in \Simplices_n(K)}$, we may define the $\ell_1$ norm and  $\ell_0$ norm\footnote{Note that the $\ell_0$ ``norm'' is not a real norm as it does not satisfy the homogeneous requirement of a norm. For example, scaling a vector $\optimalrep$ by a constant factor does not change its $\ell_0$ ``norm''.}  of $\optimalrep$ as
+%     \begin{align*}
+%         ||\optimalrep||_0 = |\{ \sigma \in \Simplices_n(K) | \orepentry_\sigma \neq 0 \} |
+%         &&
+%         \textstyle
+%         ||\optimalrep||_1 = \sum_{ \sigma \in \Simplices_n(K)} | \orepentry_\sigma  |.
+%     \end{align*}
+% The \emph{support} of $\optimalrep$ is the family of indices over which $\orepentry_\sigma$ is nonzero, i.e.
+%     \begin{align*}
+%         \supp(\optimalrep)  =\{ \sigma \in \Simplices_n(K) | \orepentry_\sigma \neq 0 \}.
+%     \end{align*}
+
+
+\begin{remark}[{Indexing conventions for chains and simplices}]
+\label{rmk:indexingchains}
+As chains play a central role in our discussion, it will be useful to establish some special conventions to describe them.  These conventions depend on the availability of certain linear orders, either on the set of vertices or the set of simplices.
+
+\noindent \underline{Case 1:} \emph{Vertex set $V$ has a linear order $\le$. }  Every vertex set $V$ discussed in this text will be assigned a (possibly arbitrary) linear order.  Without  risk of ambiguity, we may therefore write
+    \begin{align*}
+        (v_0, \ldots, v_n)
+    \end{align*}
+for the $n$-chain that places a coefficient of 1 on $\sigma = \{v_0 \leq \cdots \leq v_n\}$ and 0 on all other simplices.% \LL{an (n+1)-chain?}
+
+\noindent \underline{Case 2:} \emph{Simplex set $\Simplices_n(K)$ has a linear order $\le$.}  We will sometimes define a linear order on $\Simplices_n(K)$.  This determines a unique bijection  $\sigma \dimss{n}: \{1, \ldots, |\Simplices_n(K)|\} \to  \Simplices_n(K)$ such that $\sigma_i\dimss{n} \le \sigma_j\dimss{n}$ iff $i \le j$.  This bijection determines an isomorphism
+    $$
+        \phi: 
+        \Chains_n(K;G) = G^{\Simplices_n(K)}
+        \to
+        G^{|\Simplices_n(K)|}
+    $$
+such that $\phi(\optimalrep)_i = \orepentry_{\sigma_i}$ for all $i$.  
+Provided a linear order $\le$,  we will use $\optimalrep$ to denote both $\optimalrep$ and $\phi(\optimalrep)$ and rely on context to clarify the  intended meaning.
+\end{remark}
+
+
+
+%\noindent \underline{Case 3:} \emph{Simplicial complex $K$ has a linear order $\le$.}  In this case we have a canonical bijection $\sigma\dimss{\alldim}: \{1, \ldots, |K|\} \to K$.  Moreover, the total order on $K$ restricts to total orders on $\Simplices_n(K)$, so we obtain bijections $\sigma \dimss{n}: \{1, \ldots, |\Simplices_n(K)|\} \to  \Simplices_n(K)$.  Note, however,  $\sigma\dimss{\alldim}_i \neq \sigma\dimss{n}_i$ in general.
+% that in general $\sigma\dimss{\alldim}_i \neq \sigma\dimss{m}_i  \neq \sigma\dimss{n}_i $ when $m$ and $n$ are distinct integers.  In particular, there is no guarantee that $i < j$ implies $\sigma \dimss{m}_i \le \sigma\dimss{n}_j$.  This point is elementary, but important for applications.
+\
+
+
+For each $n\geq 1$, the \textit{boundary map} $\partial_n: \Chains_n(K) \rightarrow \Chains_{n-1}(K)$ is the linear transformation defined on a basis vector  $(v_0, v_1, \ldots, v_n)$ by 
+    \begin{align*}
+    \textstyle
+        \partial_n(v_0, v_1, \ldots, v_n) = \sum_{i=0}^n (-1)^i (v_0, \ldots, \hat{v_i}, \ldots, v_n)
+    \end{align*}
+where $\hat{v_i}$ omits $v_i$ from the vector. This map extends linearly from the basis of $n$-simplices to any $n$-chain in $\Chains_n(K)$. By an abuse of notation, we also denote the matrix representation of this boundary map, known as the \textit{boundary matrix}, as $\partial_n$. The boundary matrix is parametrized by the $n$-simplices $S_n(K)$ along the columns and $n-1$-simplices $S_{n-1}(K)$ along the rows. 
+
+
+%\GHP{It might be worth considering deleting these worked examples, unless they are used later in the paper (Lori mentioned this before but I wasn't sure).}
+%\LZ{Yes, I think I agree, since this is not really a "tutorial" type paper". Let's talk about it in person.} \LL{Agreed; I commented out the examples.}
+% For example, applying the boundary map to the $2$-simplex $[0,1,4]$ in Figure \ref{fig:example-optimal} (a), we get the three $1$-simplices $[1, 4] - [0, 4] + [0, 1]$ as its boundary: 
+% \[ \qquad \partial_2([0, 1, 4]) = [1, 4] - [0, 4] + [0, 1].\] 
+
+
+The collection  $(\Chains_n(K))_{n\geq 0}$ along with the boundary maps $(\partial_n)_{n\geq 0}$ form a \textit{chain complex}
+\[\ldots \Chains_{n+1}(K) \xrightarrow{\partial_{n+1}} \Chains_{n}(K) \xrightarrow{\partial_{n}} \Chains_{n-1}(K) \xrightarrow{\partial_{n-1}} \ldots \xrightarrow{\partial_3} \Chains_2(K) \xrightarrow{\partial_2} \Chains_1(K) \xrightarrow{\partial_1} \Chains_0(K) \xrightarrow{\partial_0} 0. \]
+% For example,
+% \[ \partial_1 \circ \partial_2([0, 1, 4]) = \partial_1([1,4]) - \partial_1([0, 4]) + \partial_1([0, 1]) = [4] - [1] - [4] + [0] + [1] - [0] = 0.\]
+
+
+% \begin{definition}{Boundary matrix.}
+% Let $\partial_n$ be the $n$th boundary matrix for $K$, i.e. a $|\Simplices_{n-1}| \times |\Simplices_{n}|$ matrix whose rows and columns are labelled by the $(n-1)$-simplices and $n$-simplices, respectively. Its entries are given by \[\partial_n(i,j) = \begin{cases}1 & \text{$\sigma_i$ is a boundary of $\tau_j$.} \\0 & \text{otherwise} \end{cases}.\]
+% \end{definition}
+
+% Where context makes the meaning clear, we will sometimes omit subscripts from the boundary operator, writing $\partial$ in place of $\partial_n$. \LZ{I don't think we ever do this.}
+
+\begin{remark}[{Indexing conventions for boundary matrices}]
+\label{rmk:boundarymatrixindexing}
+In general, boundary matrix $\partial_n$ is regarded as an element of $G^{\Simplices_{n-1}(K) \times \Simplices_{n}(K)}$, that is, as an array with columns labeled by $n$-simplices and rows labeled by $n-1$-simplices.  However, given linear orders on  $\Simplices_{n-1}(K)$ and $\Simplices_{n}(K)$, we may naturally regard $\partial_n$ as an element of $G^{|\Simplices_{n-1}(K)| \times |\Simplices_{n}(K)|}$, see\ Remark \ref{rmk:indexingchains}. 
+\end{remark} 
+
+
+\noindent \textbf{Cycles, boundaries.}  The \emph{boundary} of an $n$-chain $\optimalrep$ is  $\partial_n (\optimalrep)$.
+An \textit{$n$-cycle} is an $n$-chain with zero boundary. The set of all $n$-cycles forms a subspace $\Cycles_n(K) := \textbf{ker}(\partial_n)$ of $\Chains_n(K).$ An \textit{$n$-boundary} is an $n$-chain that is the boundary of $(n+1)$-chains. The set of all $n$-boundaries forms a subspace $\Boundaries_n(K):= \textbf{im}(\partial_{n+1})$ of $\Chains_n(K).$   We refer to $\Cycles_n$ and $\Boundaries_n$ as the \emph{space of cycles} and \emph{space of boundaries}, respectively.
+
+It can be shown that $\partial_n \circ \partial_{n+1}(\optimalrep) = 0$ for all $\optimalrep \in \Chains_{n+1}(K)$; colloquially,  ``a boundary has no boundary''. Equivalently,  $\partial_n \circ \partial_{n+1}$ is the zero map.
+Since the boundary map takes a boundary to $0$, an $n$-boundary must also be an $n$-cycle. Therefore, $\Boundaries_n(K) \subseteq \Cycles_n(K)$. 
+
+
+
+
+\noindent \textbf{Homology, cycle representatives.}  The \emph{$n$th homology group} of $K$ is defined as  the quotient
+    \begin{align*}
+        \Homologies_n(K): = \Cycles_n(K) / \Boundaries_n(K).
+    \end{align*}
+Concretely, elements of $\Homologies_n(K)$ are cosets of the form $[\cycle] = \{ \cycle'  \in \Cycles_n(K) | \cycle' - \cycle \in \Boundaries_n(K)\}$.\footnote{More generally, we denote the groups of cycles and boundaries with coefficients in $G$ as $\Cycles_n(K; G)$ and $\Boundaries_n(K; G)$.  The \emph{(dimension-$n$) homology of $K$ with coefficients in $G$} is $\Homologies_n(K; G) = \Cycles_n(K; G) / \Boundaries_n(K; G)$.}  An element $h \in \Homologies_n(K)$ is called an \emph{$n$-dimensional homology class}.  We say that a cycle $\cycle \in \Cycles_n(K)$ \emph{represents} $h$, or that $\cycle$ is a \emph{cycle representative of $h$} if $h = [\cycle]$.  We say that $\cycle$ and $\cycle'$ are \emph{homologous} if $[\cycle] = [\cycle']$.
+
+\noindent \underline{Example} Consider the example in Figure \ref{fig:boundaryexample} (A), which illustrates two homologous 1-cycles and the example in Figure \ref{fig:boundaryexample} (B), which illustrates two non-homologous cycles. 
+%The $1$-chain $(0,1) + (1,2) + (2,3) + (3,4) - (0,4)$ and the chain $(1,2) + (2,3) + (3,4) - (4,1)$ are cycles.  They  are homologous because their difference is a boundary, $\partial_2(0,1,4)$. However, in Figure \ref{fig:boundaryexample} (B), the $1$-chains $(\sum_{i=0}^4 (i, i+1))-(5,2)+(2,6)-(0,6)$ and  $(2,3) + (3,4)+(4,5)-(2,5)$ are cycles; they are not homologous to each other because they differ by the $1$-chain $(0,1)+(1,2)+(2,6)-(0,6)$, which is not a boundary of a 2-chain. 
+%Consider the example in Figure \ref{fig:boundaryexample} (a). The $1$-chain  $[0,1,2,3,4] = [0, 1] + [1, 2] + [2,3] + [3,4] + [4,0]$ and the second $1$-chain  $[1,2,3,4]=[1,2] + [2,3] + [3,4] + [4,1]$ are cycles because $\partial([0, 1] + [1, 2] + [2,3] + [3,4] + [4,0]) =  \partial([1,2] + [2,3] + [3,4] + [4,1]) = 0$. These cycles are homologous because their difference is a boundary a 2-simplex, $[0, 1] + [1, 2] + [2,3] + [3,4] + [4,0] - ([1,2] + [2,3] + [3,4] + [4,1]) = [0,1] + [4,0] - [4,1] = [1,4] - [0,4] + [0,1] = \partial([0,1,4])$. However, in Figure \ref{fig:boundaryexample} (b), the $1$-chain $[0,1,2,3,4,5,6]$ and $[2,3,4,5]$ are cycles that are not also boundaries. They are not homologous to each other because they differ by the $1$-chain $[0,1,2,6],$ which is not a boundary. 
+
+\begin{remark}
+The term \emph{homological generator} has been used differentially by various authors: to refer to an arbitrary nontrivial homology class, an element in a (finite) representation of $\Homologies_n(K)$, as a set of cycles which generate the homology group, or (particularly in literature surrounding optimal cycle representatives)  interchangeably with cycle representative. We will  favor the term cycle representative, to avoid ambiguity.
+\end{remark}
+
+
+
+
+\noindent \textbf{Betti numbers, cycle bases.}  A \emph{(dimension-$n$) homological cycle basis} for $\Homologies_n(K)$ is a set of cycles $\hcyclebasis = \{ \cycle^1 , \ldots, \cycle^m\}$ such that $[\cycle^i] \neq [\cycle^j]$ when $i \neq j$, and $\{ [\cycle^1] , \ldots, [\cycle^m]\}$ is a  basis for $\Homologies_n(K)$.  Modulo boundaries, every $n$-cycle can be expressed as a unique linear combination in $\hcyclebasis$.  
+
+Homological cycle bases have several useful interpretations.  It is common, for example, to think of a 1-cycle as a type of ``loop,'' generalizing the intuitive notion of a loop as a simple closed curve to include more intricate structures, and to regard the operation of adding boundaries as a generalized form of ``loop-deformation.''  Framed in this light, a homological cycle basis $\hcyclebasis$ for $\Homologies_1(K)$ can be regarded as a basis for the space of loops-up-to-deformation in $K$. Higher dimensional analogs of loops involve closed ``shells'' made up of $n$-simplices.
+
+Another interpretation construes each nontrivial homology class $[\cycle] \neq 0$ as a \emph{hole} in $K$. Such holes are ``witnessed" by loops or shells that are not homologous to the zero cycle. Viewed in this light, $\Homologies_n(K)$ can naturally be regarded as the space of $(n+1)$-dimensional holes in $K$.  The rank of the $n$th homology group
+    \[
+    \beta_n(K) := \text{dim}(\Homologies_n(K)) = \text{dim}(\Cycles_n(K)) - \text{dim}(\Boundaries_n(K)),
+    \]
+therefore quantifies the ``number of independent holes'' in $K$.  We call $\beta_n$ the \emph{$n$th Betti number of $K$}.  
+%Roughly speaking, $\beta_0$ counts the number of connected components, $\beta_1$ counts the number of independent-up-to-boundaries loops, $\beta_2$ counts the number of independent-up-to-boundaries trapped volumes, and so on. 
+
+\noindent \underline{Example} Consider the yellow disks in \fig \ref{fig:generatorExamples} (from  \cite{Carlsson2009TopologyAD}) with different numbers of holes and cycle representatives. 
+
+
+ 
+% \CG{This sentence needs to come after the definition of cycle, or it doesn't make sense to a reader who's not familiar with the definition. Also, I would probably move the discussion of Figure 1 up here to clarify why $n$-cycles correspond to $n+1$ dimensional "holes". This is also a good place to point out that zero boundary is natural because you want to enclose the hole.}
+
+
+% %  The kernel and the image of the boundary map determines two subspaces of $\Chains_n(K)$: 
+% % \[\begin{aligned}[c]
+% % &n\text{-cycles:}\\
+% % &n\text{-boundaries:}\\
+% % \end{aligned}
+% % \qquad 
+% % \begin{aligned}[c]
+% % &\Cycles_n(K):=  \textbf{ker}(\partial_n: \Chains_n(K) \rightarrow \Chains_{n-1}(K)),\\
+% % &\Boundaries_n(K):= \textbf{im}(\partial_{n+1}: \Chains_{n+1}(K)\rightarrow \Chains_{n}(K)).\\
+% % \end{aligned}\]
+
+
+% %\GHP{Another writing principle: authors with the highest standards never start a sentence with a mathematical symbol, or place two symbols side by side, separated by a comma.  This rule is *extremely* aggravating in practice, as you very often want to start with a symbol, or put two symbols side by side, except where writing a sequence.  For example $\optimalrep_1, \optimalrep_2 \in \\Cycles_k$ is fine, but $\Simplices_\epsilon$, $\\Cycles_k$ below is mildly objectionable).  My suggestion is that you don't ever spend more than a few minutes worrying about this rule, but do follow it wherever possible.)} 
+
+% % Thus, $\Cycles_n(K)$ is the subspace of $\Chains_n(K)$ consisting of $n$-chains that are also $n$-cycles, and $\Boundaries_n(K)$ is the subspace of $\Cycles_n(K)$ consisting of $n$-cycles that are also $n$-boundaries. It then follows that $\Boundaries_n(K)$ is a subspace of $\Cycles_n(K)$ since $\partial_n \circ  \partial_{n+1} = 0$. 
+
+
+% We put an equivalence relation on $\Cycles_n(K)$ as follows: two cycles $\optimalrep^1, \optimalrep^2 \in \Cycles_n(K)$ are \textit{homologous} (equivalent), written $\optimalrep^1\sim \optimalrep^2,$ if they differ by a boundary, \textit{i.e.,} $\optimalrep^1 - \optimalrep^2 \in \Boundaries_n(K).$ \LZ{Note to think about notation, do we want these arbitrary cycles to have same notation as homology generators? Superscript/subscript?} \LL{Maybe we can use $\mathbf{z}$ for arbitrary cycles?}
+
+
+
+
+
+% % The equivalence relation $\sim$ defined above partitions the $k$-cycles $\Cycles_k(K)$ into a union of disjoint subsets, called \textit{homology classes.} We let $[z]$ denote the homology class of $z\in \Cycles_k(K)$ and define the $k$th homology group of $K$ as the set of homology classes 
+% % \[\Homologies_k(K) := \{[z] \mid z \in \Cycles_k(K)\}.\]
+
+% Using this equivalence relation, we can define \textit{homology classes} $[\optimalrep] := \{\optimalrep' \in \Cycles_n(K) \mid \optimalrep' \sim \optimalrep\}$. The $n$th homology group, then, is the vector space with basis given by the homology classes in $\Cycles_n$: \GHP{It's important that this is not a basis; it is the set of vectors in the space}
+% \[\mathcal{B}_{\Homologies_n(K)} := \{[\optimalrep] \mid \optimalrep \in \Cycles_n(K)\}.\]
+
+% Algebraically, the\textit{ $n$-dimensional homology group} is defined as $\Homologies_n := \Cycles_n / \Boundaries_n$, a quotient of vector spaces. The $n$th Betti number, $\beta_n$, is defined as the dimension of $\Homologies_n$:
+% \[\beta_n := \text{dim}(\Homologies_n) = \text{dim}(\Cycles_n) - \text{dim}(\Boundaries_n).\]
+% The dimension of the $n$th homology group, which is also known as the $n$th \textit{Betti number}, gives us the number of independent holes of dimension $n.$ In particular, $\beta_0$ is the number of connected components, $\beta_1$ is the number of topological circles, or loops, $\beta_2$ is the number of trapped volumes, and so on. 
+
+
+% COMMENTED OUT BY GREG
+%
+% \textbf{Generators.} An \textit{$n$-dimensional homological generator} for the $n$th homology group $\Homologies_n$ of a simplicial complex $K$ is a basis element $[\optimalrep] \in \mathcal{B},$ where $\mathcal{B}$ is a basis for $\Homologies_n(K)$. Intuitively, this is a cycle that identifies a topological feature or homology class. For example, consider the two disks shown in \fig \ref{fig:generatorExamples} from \cite{Carlsson2009TopologyAD}. The disk on the left contains one topological feature, or ``hole'', and the two loops around it are example generators of the same topological feature. Similarly, the disk on the right has seven ``holes'' and the two loops shown are generators for two different topological features. As we focus on generators in dimension 1 in this paper, we will often use generator and \textit{representative cycle} or \textit{cycle representative} interchangeably. A \textit{generator basis} or \textit{homology basis} is a set containing one generator for each feature of a space $\{\optimalrep^0,\optimalrep^1, \ldots, \optimalrep^m\}$, \LZ{Note to come back to think about this notation} where $m$ denotes the number of features.
+% \GHP{I wouldn't say for each feature.}
+
+\noindent \textbf{Filtrations of simplicial complexes.} A \emph{filtration} on a simplicial complex $K$ is a nested sequence of  simplicial complexes $K_\bullet = (K_{\epsilon_i})_{i \in\{ 1, \ldots, T\}}$ such that
+    $$
+    K_{\epsilon_1} \subseteq K_{\epsilon_2} \subseteq \cdots \subseteq K_{\epsilon_T} = K
+    $$
+where $\epsilon_1 < \cdots < \epsilon_T$ are real numbers. A \emph{filtered simplicial complex} is a simplicial complex equipped with a filtration $K_\bullet$.
+
+\noindent \underline{Example}
+ Let  $X$ be a metric space with metric $d$, and let  $\epsilon_1 < \cdots < \epsilon_T$ be an increasing sequence of non-negative real numbers.  Then the sequence $K_\bullet = (K_{\epsilon_i})_{i \in\{ 1, \ldots, T\}}$ defined by $K_{\epsilon_i} = \text{VR}_{\epsilon_i}(X)$ is a filtration on $K$.
+
+The data of a filtered complex is naturally captured by the \emph{birth} function on simplices, defined
+    \begin{align*}
+        \birth: K \to \R, \; \simplex \mapsto \min\{ \epsilon_i : \simplex \in K_{\epsilon_i} \}.
+    \end{align*}
+We regard the pair $(K, \birth)$ as a simpilicial complex whose simplices are weighted by the birth function.   For convenience, we will implicitly identify the sequence $K_\bullet$ with this weighted complex.   Thus, for example, when we say that $\simplex \in K$ has birth parameter $t$, we mean that  $\sigma\in K$ and  $\birth(\sigma) = t$.
+
+
+\begin{definition}
+A filtration $K_\bullet$ is \emph{simplex-wise} if one can arrange the simplices of $K$ into a sequence $(\simplex_1, \ldots, \simplex_{|K|})$ such that $K_{\epsilon_i} = \{\simplex_1, \ldots, \simplex_i\}$ for all $i$.  
+A \emph{simplex-wise refinement}  of $K_\bullet$ is a simplex-wise filtration $K_\bullet'$ such that each space in $K_\bullet$ can be expressed in form $\{\simplex_1, \ldots, \simplex_j\}$ for some $j$.
+\end{definition}
+ 
+
+
+% are filtrations with injective birth functions.   When the birth function is not injective, it is often convenient to fix a linear order $\le$ on $K$ which satisfies the condition that $\simplex \le \tau$ when either (i) $\birth(\simplex) \le \birth(\tau)$ or (ii) $\simplex \subsetneq \tau$.  This order defines a canonical bijection $\birth': K \to \{1, \ldots, T\}$ and corresponding filtration $K'_\bullet = (K'_{i})_{i \in \{1, \ldots, T\}}$ such that $K'_i = \{ \sigma : \birth'(\sigma) \le i\}$.  Filtration $K'_\bullet$ \emph{refines} $K_\bullet$ in the sense that each  $K_{\epsilon_i}$ can be expressed in form  $K'_{p_i}$ for some integer $p_i$.  We therefore refer to $K'_\bullet$ as a \emph{simplex-wise refinement} of $K_\bullet$. 
+
+% Every simplex-wise filtration determines a linear order on the set of $n$-simplices $\Simplices_n(K)$.  As per Remark \ref{rmk:indexingchains}, this ordering determines a bijection $\simplex\dimss{n}: \{1, \ldots, |\Simplices_n(K)|\} \to  \Simplices_n(K)$.  We refer to the sequence $(\sigma_i\dimss{n})_{\{1, \ldots, |\Simplices_n(K)|\}}$  as the \emph{sequential index on $n$-simplices induced by $\birth'$.}  Note that, in general,  $\birth(\simplex_i) \neq \birth'(\simplex_i) \neq i$.
+
+As an immediate corollary, given a simplex-wise refinement of $K_\bullet$, we may naturally interpret each boundary matrix $\partial_n$ as an element of $G^{|\Simplices_{n-1}(K)| \times |\Simplices_{n}(K)|}$, see Remark \ref{rmk:boundarymatrixindexing}.  Under this interpretation, columns (respectively, rows) with larger indices correspond to simplices with later birth times; that is, birth time increases as one moves left-to-right and top-to-bottom.  
+
+
+% \end{remark}
+
+\noindent \textbf{Filtrations of chain complexes.} If we regard $\Chains_n(K_{\epsilon_i}; G)$ as a family of formal linear combinations in $\Simplices_n(K_{\epsilon_i})$, then it is natural to consider $\Chains_n(K_{\epsilon_i}; G)$ as a subgroup of $\Chains_n(K_{\epsilon_{j}}; G)$ for all $i<j$.  In particular, we have an inclusion map     \begin{align*}
+    \textstyle
+    \iota: \Chains_n(K_{\epsilon_i}; G) \to \Chains_n(K_{\epsilon_j}; G),
+    \quad
+    \sum_{\sigma \in \Simplices_n(K_{\epsilon_i})} x_\sigma \sigma
+    \mapsto
+    \sum_{\sigma \in \Simplices_n(K_{\epsilon_i})} x_\sigma \sigma
+    +
+    \sum_{\tau \notin \Simplices_n(K_{\epsilon_i})}
+    %{\tau \in \Simplices_n(K_{\epsilon_j})-\Simplices_n(K_{\epsilon_i})} 
+    0 \cdot \tau
+    \end{align*}
+%If, instead, we regard $\Chains_n(K_{\epsilon_i}; G)$ as a family of functions $\Simplices_n(K_{\epsilon_i}) \to G$ then  $\iota$ becomes extension by zero:
+%    \begin{align*}
+%        \iota(\chain)(\simplex) = 
+%            \begin{cases}
+%            \chain(\simplex) & \simplex \in K_{\epsilon_i}
+ %           \\
+ %           0 & else.
+ %           \end{cases}
+ %   \end{align*}
+Given a simplex-wise refinement $K'_\bullet$, one can naturally regard $\chain$ as an element  $(c_1, c_2,  \ldots)$ of $ G^{|\Simplices_n(K_{\epsilon_i})|}$.  From this perspective, $\iota$ has a particularly simple interpretation, namely  ``padding'' by zeros:
+    \begin{align*}
+        \iota(\chain) = ( \underbrace{c_1, c_2, \ldots}_{\chain}, 0, \ldots, 0)
+    \end{align*}
+Similar observations hold when one replaces $\Chains_n$ with either $\Cycles_n$, the space of cycles, or $\Boundaries_n$, the space of boundaries.
+
+
+
+\noindent \textbf{Persistent homology, birth, death.} The notion of birth for simplices has a natural extension to chains, as well as a variant called death.  Formally,  the \emph{birth} and \emph{death} parameters of  $\chain \in \Chains_n(K)$ are 
+    \begin{align*}
+    \birth(\chain) = \min \{\epsilon_i : \chain \in \Chains_n(K_{\epsilon_i}) \}
+    &&
+    \death(\chain) 
+    = 
+    \begin{cases}
+    \min \{\epsilon_i : \chain \in \Boundaries(K_{\epsilon_i}) \} & \chain \in \Boundaries(K)
+    \\
+    \infty & else.
+    \end{cases}
+    \end{align*}
+In the special case where $\chain$ is a cycle,  $\birth(\chain)$ is the first parameter value where $[\chain]$ represents a homology class, and $\death(\chain)$ is the first parameter value where $[\chain]$ represents the \emph{zero} homology class.   Thus, the half-open
+\emph{lifespan interval} 
+    \begin{align*}
+        \persinterval(\chain) = [\birth(\chain), \death(\chain))
+    \end{align*}
+is the range of parameters over which $\chain$ represents a well-defined, nonzero homology class.
+
+A \emph{(dimension-$n$) persistent basis of  homological cycle representatives} is a subset $\hcyclebasis \subseteq \Cycles_n(K)$ with the following two properties:
+    \begin{enumerate}
+    \item Each $\cycle \in \hcyclebasis$ has a nonempty lifespan interval.
+    \item For each $i \in \{1, \ldots, T\}$, the set 
+        $$
+        \hcyclebasis_{\epsilon_i} 
+        := 
+        \{\cycle \in \hcyclebasis : \epsilon_i \in \persinterval(\cycle) \}
+        $$
+    is a homological cycle basis for $\Homologies_n(K_{\epsilon_i})$.
+    \end{enumerate}
+
+%It is not clear \emph{a priori} that every filtration of simplicial complexes $ (K_{\epsilon_i})_{i \in\{ 0, \ldots, T\}}$ admits a  persistent homological cycle basis  $\hcyclebasis$.  However, this is indeed the case \cite{zomorodiancarlssoncomputingph}.  
+Every filtration of simplicial complexes $ (K_{\epsilon_i})_{i \in\{ 1, \ldots, T\}}$ admits a  persistent homological cycle basis  $\hcyclebasis$ \cite{zomorodiancarlssoncomputingph}.  
+Moreover, it can be shown that the \emph{multiset} of lifespan intervals (one for each basis vector), called the \emph{dimension-$n$ barcode of $K_\bullet$},
+    \begin{align*}
+        \barcode_n = 
+        \{ \persinterval(\cycle) : \cycle \in \hcyclebasis \}
+    \end{align*}
+is invariant over all possible choices of persistent homological cycle bases $\hcyclebasis$ \cite{zomorodiancarlssoncomputingph}.  
+
+\noindent \underline{Example}  Consider the sequence of simplicial complexes $(K_1, K_2, K_3)$ shown in Figure \ref{fig:example-optimal} (E).  The set
+    $
+        \hcyclebasis = \{\optimalrep^4, \optimalrep^5, \optimalrep^6 \}
+    $
+is a (dimension-1) persistent homological cycle basis of the filtration.  The associated dimension-1 barcode is     
+    $
+    \barcode_1 = \{[1,2), [2,\infty), [3, \infty) \} 
+    $ 
+where $[2,\infty)$ and $[3,\infty)$ are the lifespans of  $\optimalrep^5$ and $\optimalrep^6$, respectively.
+
+Barcodes are among the foremost tools in topological data analysis \cite{barcodeGhrist,  persistenthomologyasurvey}, and they contain a great deal of information about a filtration.  For example, it follows  immediately from the definition of persistent homological cycle bases  that
+    $
+        \beta_n(K_{\epsilon_i})
+        =
+        |\hcyclebasis_{\epsilon_i}|
+    $
+for all $n$ and $i$.  Consequently,
+    \begin{align*}
+        \beta_n(K_{\epsilon_i})
+        =
+        |\{\interval \in \barcode_n : \epsilon_i \in \interval \}|.
+    \end{align*}
+
+\noindent \textbf{Computing PH cycle representatives.} Barcodes and persistent homology bases may be computed via the so-called $R = DV$ decomposition \cite{cohen2006vines} of the boundary matrices $\partial_n$. Details are discussed in the Supplementary Material.
+
+% the function $\persistencediagram_n: $ defined by 
+%     \begin{align*}
+%         \persistencediagram_n(x,y): \R^2 \to \Z, 
+%         \quad
+%         (x,y) \mapsto
+%         |\{\cycle \in \hcyclebasis  : (\birth(\cycle), \death(\cycle)) = (x,y)  \} |
+%     \end{align*}
+% is invariant over all possible choices of persistent homological cycle bases $\hcyclebasis$.  This function is called the \emph{dimension-$n$ persistence diagram of $ (K_{\epsilon_i})_{i \in\{ 0, \ldots, L\}}$} \cite{zomorodiancarlssoncomputingph, persistenthomologyasurvey}.  
+
+%\GHP{I propose we leave it at this.  Software and algorithms can be discussed in the software section. ------------------}
+%\LZ{I think you are saying remove below? Need notation for basis in persistence, or a sentence to say that the notation we use in the Betti number, cycle basis section can be used. I also still think it's important to talk about the boundary matrix specifics a bit here as well...in the next section, we talk about removing columns between birth and death time.}
+
+
+%The Vietoris-Rips complex, $\text{VR}_\epsilon (X)$, constructed from a set of data points relies on a distance threshold $\epsilon$, and different distance thresholds may generate different simplicial complexes with different topological structure. To capture prominent features of a data set, we use \textit{persistent homology} to track topological features of a \textit{filtered simplicial complex}. A filtered simplicial complex is a series of nested simplicial complexes $K_\epsilon$ such that $K_{\epsilon_0} \subseteq K_{\epsilon_1}\subseteq \ldots \subseteq K_{\epsilon_n}=K$, where $\epsilon_0 \leq \epsilon_1 \leq \ldots \leq \epsilon_n$. We will often have $\epsilon_0 = 0$ and $\epsilon_n$ large enough so that the homology of $K_{\epsilon_n}$ is trivial. \CG{This only happens for large values of the parameter in VR complexes in a contractible metric space. Needs clarification.} We apply homology to each of the subcomplexes. The inclusion maps $K_{\epsilon_j} \hookrightarrow K_{\epsilon_{j+1}}$ induce linear maps on homology $\Homologies_n(K_{\epsilon_j}) \to \Homologies_n(K_{\epsilon_{j+1}})$. \textit{Persistent homology} then  tracks the elements of each homology group through the filtration.
+
+%A homology class $[\optimalrep^i]$ \LZ{Come back for notation}\CG{I would suppress the superscript here and throughout this paragraph-- it doesn't make sense without the indexing set already defined.} is born at $b_i$ if it comes into existence in $K_{b_i}$ and dies at $d_i$ if it becomes null-homologous \CG{this term is not yet defined} in $K_{d_i}$. The persistence interval $[b_i,d_i)$ is the interval over which a feature exists. The difference $d_i - b_i$ is known as the \textit{persistence} and can be understood as the lifetime of the homology class. By the Decomposition Theorem \cite{zomorodiancarlssoncomputingph}, we can decompose the persistent homology $PH_n(K)$ to be the collection of all such intervals $I$ for $n$-dimensional generators. An algorithm for computing persistent homology is detailed in \cite{persistenthomologyasurvey}. \CT{Is this how we do it? I haven't looked at this paper thoroughly but maybe it makes sense to cite Eirene here?} \LZ{CHAD AND GREG, what are your thoughts on what more we should cite/say here?}\CG{Something like, "There are a broad range of software packages available for the computation of persistent homology (cite roadmap?). For the computations in this paper, we used (and extended) the Eirene package (cite).}
+
+
+
+% A paragraph talking about persistence algorithm not using R2. 
+
+%The persistent homology of a filtered simplicial complex gives more refined information than just the homology of an individual complex $K_{\epsilon_i}$ as it is a multi-scale approach. It gives complete information about how the homology classes of each space relate to those of the other spaces. A set of generators in persistent homology is a collection of cycle representatives that parametrize the topological features of the space. We can find a cycle representative via linear algebra operations on the boundary matrices.
+
+%\LL{Notation for a basis of generators at each filtration value we have a basis of gens through filtration}\CT{This comment is paraphrased from a meeting, but I'm not sure if we need new notation for this - when we refer to a specific generator it should be clear from context. Maybe I'm misinterpreting the comment.}
+%\LZ{ We have defined $\{\cycle^0,\cycle^1, \ldots, \cycle^m\}$ as a generator basis up above for a fixed simplicial complex. What notation should we use when we have a persistent homological basis?}
+
+%\LZ{After reading Section 4, I think we need something here clearly specifying how we set up our boundary matrices for the filtration}
+
+

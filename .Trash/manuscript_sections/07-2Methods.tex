@@ -1,0 +1,714 @@
+\section{Programs and solution methods}\label{methodsProblems}
+\label{sec:programsandmethods}
+
+The present work focuses on linear  programming (LP) and mixed integer programming (MIP) optimization of 1-dimensional persistent homology cycle representatives with $\Q$ coefficients. As described in Section \ref{problem formulation}, we follow two general approaches: those that measure loss as a function of $1$-simplices, and those that measure loss as a function of $2$-simplices.  We refer to the former as \emph{edge-loss} methods and the latter as \emph{triangle-loss} methods.  
+For our empirical analysis, four variations (corresponding to two binary parameters) are chosen from each approach, yielding a total of 8 distinct optimization problems. %\LZ{Not anymore right? we are doing I/NI for each of 3 methods (Esolar, persistent Escolar, Obyashi) and two weights uniform and length or area. so 12 problems now?} \CG{After our discussion today, is the plan now to move Escolar to the results as a comparison and not present it as part of this narrative?}
+
+Concerning implementation, we find that triangle-loss methods (namely, \cite{Obayashi2018}) can be applied essentially as discussed in that paper.  The greatest challenge to implementing this approach is the assumption of an underlying simplex-wise filtration. This necessitates parameter choices and preprocessing steps not included in the optimization itself; we discuss how to execute these steps below.  
+
+%\LZ{I don't understand what this paragraph is saying...Obayashi doesn't do edge-loss}  \GHP{No but Obayashi does *cite* escolar on edge-loss, and the program he cites is not the one in escolar (it looks like Obayashi corrected it for them without making a fuss about it).)}
+
+Implementation of edge-loss methods is slightly more complex.  For binary coefficients ($G = \field_2$) a variety of combinatorial techniques have been implemented in dimension 1 \cite{chenquantifying, zhang2019heuristic}.  Escolar and Hiraoka \cite{Escolar2016} provide an approach for $\Q$-coefficients, but in general this may not yield a persistent homology cycle basis, see Remark \ref{rmk:filteredversuspersistent}.  %\LZ{Edited slightly, is this correct?} 
+In addition to the triangle-loss method mentioned in \se \ref{sec:volume}, Obayashi \cite{Obayashi2018} introduces a modified form of this edge-loss method which \emph{does} guarantee a persistent homology basis, but assumes a simplex-wise filtration.  We show that this approach can be modified to remove the simplex-wise filtered constraint.
+
+Neither of the approaches presented here is guaranteed to solve the minimal persistent homology cycle basis problem, \eq \eqref{eq:persistentminimalbasis}.  In the case of triangle-loss methods, this is due to the (arbitrary) choice of a total order on simplices.  In the case of edge-loss methods, it is due to the choice of an initial persistent homology cycle basis.  
+
+In the remainder of this section, we present the 8 programs studied, including any modifications from existing work.
+
+\subsection{Structural parameters}
+\label{sec_structuralparams}
+
+Each program addressed in our empirical study may be expressed in the following form
+%\footnote{Our formulation of Program \eqref{eq:generalformofourprgorams} is slightly misleading, in that the constraints do not imply that $|| W \optimalrep||_1 = \sum_i w_{i,i} (x_i^+ + x_i^-)$ in general; however, strict equality will hold for any optimal solution. \LZ{What???}  \GHP{The equation in this footnote fails  whenever $x_i^+ = x_i^- > 0$.  It only holds when $x^+$ and $x^-$ have disjoint support (but this will be the case for every optimal solution).} \LZ{Should we say something along these lines as this definitely made me pause}}
+\begin{align}
+\begin{split}
+    \text{minimize } & || W \optimalrep||_1 = \sum_i w_{i,i} (\optimalrep^+ + \optimalrep^-) \\
+    \text{subject to } 
+    & \optimalrep = \optimalrep^+ - \optimalrep^- \\
+    & \optimalrep^+, \optimalrep^- \ge 0 \\
+    & \optimalrep \in \feasibleset
+\end{split}
+\label{eq:generalformofourprgorams}
+\end{align}
+where $\feasibleset$ is a space of feasible solutions and $W = (w_{ij})$ is a diagonal matrix with nonnegative entries.  These programs vary along 3 parameters:
+    \begin{enumerate}
+        \item \emph{Chain dimension of $x$}.  If $\feasibleset$ is a family of 1-chains, then we say that \eqref{eq:generalformofourprgorams} is an \emph{edge-loss} program.  If $\feasibleset$ is a family of 2-chains, we say that \eqref{eq:generalformofourprgorams} is a \emph{triangle-loss} program.
+        
+        \item \emph{Integrality}  The program is \emph{integral} if each $x \in \feasibleset$ has integer coefficients; otherwise we call the problem \emph{non-integral}.
+        
+        \item \emph{Weighting}  For each loss type (edge vs.\ triangle) we consider two possible values for $W$: identity and non-identity.  In the identity case, all edges (or triangles) are weighted equally; we call this a \emph{uniform}-weighted problem.  In the non-identity case we weigh each entry according to some measurement of ``size'' of the underlying simplex (length, in the case of edges, and area, in the case of triangles).  There is precedent for such weighting schemes in existing literature \cite{dey2011optimal, chenquantifying}.
+    \end{enumerate}
+
+Edge-loss and triangle-loss programs will be denoted $\Edge$ and $\Tri$, respectively.  Integrality will be indicated by a superscript $I$ (integer) or $NI$ (non-integer).  Uniform weighting will be denoted by a subscript $Unif$ (uniform); non-uniform weighting will be indicated by subscript $Len$ (for edge-loss programs) or $Area$ (for triangle-loss programs).  Thus, for example, $\Edge^{I}_{Len}$ denotes a length-weighted edge-loss program with integer constraints.
+
+
+
+\subsection{Edge-loss methods}
+\label{sec:edgelossmethods}
+
+
+
+
+% \begin{enumerate}
+%     \item Compute a persistent homology basis $\hcyclebasis$ for $\Q$-linear persistent homology in dimension 1.
+%     \item Apply an edge-loss minimization procedure to each $b \in \hcyclebasis$ to obtain an optimized cycle $b^*$.
+%     \item Return $\hcyclebasis^* = \{b^* : b \in \hcyclebasis\}.$
+% \end{enumerate}
+
+Our approach to edge-loss minimization, based on work by Escolar and Hiraoka \cite{Escolar2016}, is summarized in Algorithm \ref{alg:edge}.  As in \cite{Escolar2016}, we obtain $\optimalrep$  by taking a linear combination of $\originalrep$ with not only boundaries but \emph{cycles} as well; consequently $\optimalrep$ need not be homologous to $\originalrep$.  
+\begin{algorithm}
+\caption{Edge-loss persistent cycle minimization}
+\label{alg:edge}
+\begin{algorithmic}[1]
+\STATE Compute a persistent homology basis $\hcyclebasis$ for homology in dimension 1, with coefficients in $\Q$,  using the standard matrix decomposition procedure described in the Supplementary Material. Arrange the elements of $\hcyclebasis$ into an ordered sequence $\obasis^0 = (\obasisel^{0,1}, \ldots, \obasisel^{0,m})$.
+\FOR{$j = 0, \ldots, m-1$}
+\STATE Solve Program \eqref{eq:edgelossgeneral} to optimize the $j+1$th element of $\obasis^{j}$.  Let $\optimalrep$ denote the solution to this problem, and define $\obasis^{j+1}$ by replacing the $j+1$th element of $\obasis^{j}$ with $\optimalrep$.  Concretely, $\obasisel^{j+1,j+1} = \optimalrep$, and $\obasisel^{j+1,k} = \obasisel^{j,k}$ for $k \neq j$.
+\ENDFOR
+\STATE Return $\hcyclebasis^*: = \{\obasisel^{m,1}, \ldots, \obasisel^{m,m}\}$, the set of elements in $\obasis^m$.
+\end{algorithmic}
+\end{algorithm}
+
+Our pipeline differs from \cite{Escolar2016} in three respects.  First, we perform all optimizations \emph{after} the persistence calculation has run.   On the one hand, this means that our persistence calculations  fail to  benefit from the memory advantages offered by optimized cycles; on the other hand, separating the calculations allows one to ``mix and match'' one's favorite persistence solver with one's favorite linear solver, and we anticipate that this will be increasingly important as new, more efficient solvers of each kind are developed.  Second, we introduce additional constraints which guarantee that $\hcyclebasis^* \in \setofpersistenthcyclebases$ % is a persistent homology cycle basis 
+(and, moreover, $\persinterval( \optimalrep) = \persinterval( \originalrep)$ for each $\originalrep \in \hcyclebasis$). Third, we remove the hypothesis of a simplex-wise filtration; this requires some technical modifications, whose motivation is explained in the Supplementary Material. The crux of this modification lies with the for loop, which replaces cycles that have been optimized in the cycle basis for later cycle optimization.
+
+Program \eqref{eq:edgelossgeneral} optimizes the $j$th element of an ordered sequence of cycle representatives $\obasis = (\obasisel^1, \ldots, \obasisel^m)$.  In particular, it seeks to minimize $\originalrep := \cycle^j$.  To define this program, we first construct a matrix $A$ such that $A[:, i] = \cycle^i$ for $i = 1, \ldots, m$.  We then define  three index sets, $\goodcycleindices, \goodtriangles, \goodedges$ such that 
+    \begin{align*}
+        % \{\cycle^1, \ldots, \cycle^m\} = 
+        \goodcycleindices &= \{ i :  \birth(\cycle^i) \le \birth(\originalrep), \;  \death(\cycle^i) \le \death(\originalrep), \; i \neq j \} \\
+        \goodtriangles &= \{\sigma \in \Simplices_2(K) : \birth(\sigma) \le \birth(\originalrep)\} 
+        \\
+        \goodedges &= \{\sigma \in \Simplices_1(K) : \birth(\sigma) \le \birth(\originalrep)\}
+    \end{align*} 
+That is, $\goodcycleindices$ indexes the set of cycles $\cycle^i$ such that $\cycle^i$ is born  (respectively, dies) by the time that $\cycle^j$ is born (respectively, dies),  excluding the original cycle $\cycle^j$ itself. Set $\goodtriangles$ is the family of triangles born by $\birth(\originalrep)$, and set $\goodedges$ is the family of edges born by $\birth(\originalrep)$. 
+
+With these definitions in place, we now formalize the general edge-loss problem as Program \eqref{eq:edgelossgeneral}, where  $\partial_2[\goodedges,\goodtriangles]$ denotes the  submatrix of $\partial_2$ indexed by triangles born by $\birth(\originalrep)$ (along columns) and edges indexed by edges born by $\birth(\originalrep)$.  Likewise $A[ \goodedges ,\goodcycleindices]$ is the column submatrix of $A$ corresponding to cycles that are born  before the birth time of $\originalrep$ (and which die before the death time of $\originalrep$), excluding $\originalrep$ itself.
+
+% \LL{It just occured to me that we are also only taking the rows born before the death time of the cycle. Maybe add: $\goodedges &= \{\sigma \in \Simplices_1(K) : \birth(\sigma) \le \death(\originalrep)$ }
+% \GHP{Here is an alternative style for the programs ------------}
+
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \sum_{\simplex \in Q} \alpha_\simplex \partial_{2}^{\simplex} + \sum_{\cycle \in P} \beta_i \cycle^i\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \alpha_\simplex, \beta_i \in G
+%       \end{split}
+%       \label{eq:edgelossgeneral}
+% \end{align}
+
+% % \begin{align}
+% % \end{align}
+% % \begin{split}
+% %     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+% %   \text{subject to  } &  
+% %       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \sum_{i} a_i \partial_{2}^{\cycley^i} + \sum_{j} b_j \cycle^j\\
+% %       & \optimalrep^+, \optimalrep^- \geq 0 \\
+% %       & a_i, b_j \in G
+% %       \end{split}
+% %       \label{eq:edgelossgeneral}
+
+% where $\partial_2^\sigma$ denotes the column indexed by $\sigma$ of $\partial_2$.
+
+
+\begin{align}
+\begin{split}
+    \text{minimize   } & ||W \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+   \text{subject to  } &  
+      (\optimalrep^+ - \optimalrep^- )= \originalrep[\goodedges] +   \partial_2[\goodedges, \goodtriangles]  \q + A[\goodedges, \goodcycleindices] \p \\
+      & \p \in \Q^{\goodcycleindices} \\
+      & \q \in \Q^{\goodtriangles} \\      
+      & \optimalrep \in G^{\goodedges } \\      
+      & \optimalrep^+, \optimalrep^- \geq 0 
+      \end{split}
+      \label{eq:edgelossgeneral}
+\end{align}
+
+
+
+
+ Recall from \se \eqref{sec_structuralparams} that this program varies along two parameters (integrality and weighting).  In \emph{integral} programs $G = \Z$, whereas in \emph{nonintegral} programs $G = \Q$.  The weight matrix $W$ is always diagonal, but in \emph{uniform}-weighted programs $W[i,i] = 1$ for all $i$, whereas in \emph{length}-weighted programs $W[i,i]$ is the length of edge $i$.  Program \ref{eq:edgelossgeneral} thus results in four variants:
+  
+\begin{enumerate}[style=multiline]
+    \item[\namedlabel{itm:edge_NIU}{$\Edge\NI\unif$}] Nonintegral edge-loss with uniform weights.
+    \item[\namedlabel{itm:edge_IU}{$\Edge\I\unif$}] Integral edge-loss with uniform weights.
+    \item[\namedlabel{itm:edge_NIL}{$\Edge\NI\len$}] Nonintegral edge-loss with edges weighted by length. 
+    \item[\namedlabel{itm:edge_IL}{$\Edge\I\len$}] Integral edge-loss with edges weighted by length. 
+\end{enumerate}
+
+    % \begin{enumerate}
+    %     \item $\Edge\NI\unif$: Nonintegral edge-loss with uniform weights.  
+    %     \item $\Edge\I\unif$: Integral edge-loss with uniform weights.         
+    %     \item $\Edge\NI\len$: Nonintegral edge-loss with edges weighted by length. 
+    %     \item $\Edge\I\len$: Integral edge-loss with edges weighted by length. 
+    % \end{enumerate}
+
+%   ALTERNATIVE NOTATIONS
+%
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \sum_{\sigma \in Y} a_\sigma \partial_{2}( \sigma) + \sum_{\cycle \in Z} a_\cycle \cycle\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & a_\sigma, a_\cycle \in G
+%       \end{split}
+%       \label{LP-Unif}
+% \end{align}
+
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \partial_2[:, 0: d_i] \boundingchain +\sum_{j=1}^m a_j \optimalrep^j\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & a_j \in G\\
+%       & \boundingchain \in \Chains_n(K_{d_i}; G)
+%       \end{split}
+%       \label{LP-Unif}
+% \end{align}
+
+
+
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \partial_2[:, 0: d_i] \boundingchain + M \cycley \\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \boundingchain, \cycley \in G
+%       \end{split}
+%       \label{LP-Unif}
+% \end{align}
+
+
+% %  OLDER FORMULATIONS ------------------------------------------------------
+
+% Let $\{\optimalrep^1, \ldots, \optimalrep^m\}$ be a set of cycles born before the birth time of the cycle $\originalrep$. Let $q$ be the number of $1$-simplices, $|\Simplices_1(K)|$ and let $\mathrm{I}_q$ be the $q\times q$ identity matrix. A \textit{uniform-weighted optimal cycle representative} is a solution to the following linear program: 
+
+% % \begin{LP}
+% % \begin{align}
+% % \begin{split}
+% % \text{minimize } & ||W_{Len} \mathbf{x} ||_1 \\
+% % \text{ subject to } & \mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j \\
+% % & \boundingchain \in \Chains_2(K)
+% % \end{split}
+% % \label{LP-Len-original}
+% % \end{align}
+
+
+% % \end{LP}
+
+% % \begin{MIP}
+% % \begin{align}
+% % \begin{split}
+% % \text{minimize } & ||I_m \mathbf{x} ||_1 \\
+% % \text{ subject to } & \mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j \\
+% % & \boundingchain \in \Chains_2(K)\\
+% % & \optimalrep \text{ integral. }
+% % \end{split}
+% % \label{MIP-Unif}
+% % \end{align}
+% % \end{MIP}
+
+% % \begin{LP}
+% % \begin{align}
+% % \begin{split}
+% % \text{minimize } & ||I_m \mathbf{x} ||_1 \\
+% % \text{ subject to } & \mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j \\
+% % & \boundingchain \in \Chains_2(K)
+% % \end{split}
+% % \label{LP-Unif}
+% % \end{align}
+% % \end{LP}
+
+% \begin{LP.Unif}
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \partial_{2} \boundingchain + \sum_{j=1}^m a_j \optimalrep^j\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \boundingchain \in \Chains_2(K_{\birth(\originalrep)})
+%       \end{split}
+%       \label{LP-Unif}
+% \end{align}
+% \end{LP.Unif}
+% \LZ{We definitely should still keep some useful labeling just not numbers when we define the programs}
+% % Similarly, we can formulate the problem of finding uniform-weighted optimal cycle representative as a mixed integer program (MIP) by requiring the $\optimalrep^+$ and $\optimalrep^-$ variables to only contain integer coefficients as below: 
+% We can add the constraint requiring the optimal solution have integral entries and obtain the following MIP problem:
+% \begin{MIP.Unif}
+% % \begin{subequations}
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||\mathrm{I}_q \optimalrep ||_1 = \sum_{i=1}^N  (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +   \partial_{2} \boundingchain + \sum_{j=1}^m a_j \optimalrep^j\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \boundingchain \in \Chains_2(K)\\
+%       & \optimalrep^+, \optimalrep^-  \in \mathbb{Z}
+%       \end{split}
+%       \label{MIP-Unif}
+% \end{align}
+% \end{MIP.Unif}
+% Let $W_{Len}$ be a $q \times q$ diagonal matrix with the $i$th diagonal entry $w_{[i, i]}$ equal to the distance---as designated by the metric $d$ used to define the VR complex---between the two vertices of the $i$th $1$-simplex $\sigma_i$. A \textit{length-weighted optimal cycle representative} is a solution to the following linear program: 
+% \begin{LP.Len}
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||W_{Len} \optimalrep ||_1 = \sum_{i=1}^N w_{[i, i]} (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep + \partial_{2} \boundingchain + \sum_{j=1}^m a_j \optimalrep^j\\ 
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \boundingchain \in \Chains_2(K)
+%       \end{split}
+%       \label{LP-Len}
+% \end{align}
+% \end{LP.Len}
+% Again, we can require the solution to have integral entries and obtain the following MIP problem:
+% \begin{MIP.Len}
+% \begin{align}
+% \begin{split}
+%     \text{minimize   } & ||W_{Len} \optimalrep ||_1 = \sum_{i=1}^N w_{[i, i]} (x^+_i + x_i^-)\\
+%   \text{subject to  } &  
+%       (\optimalrep^+ - \optimalrep^-) = \originalrep +  \partial_{2} \boundingchain + \sum_{j=1}^m a_j \optimalrep^j\\
+%       & \optimalrep^+, \optimalrep^- \geq 0 \\
+%       & \boundingchain \in \Chains_2(K)
+%       \\
+%       & \optimalrep^+, \optimalrep^- \in \mathbb{Z}
+%       \end{split}
+%       \label{MIP-Len}
+% \end{align}
+% \end{MIP.Len}
+
+% Intuitively, one can regard \eqref{LP-Unif} and \eqref{MIP-Unif} as programs that seek to minimize the total number of edges incident to a cycle, while \eqref{LP-Len} and \eqref{MIP-Len} seek to minimize to the total \emph{length} of incident edges.
+
+% \begin{remark}
+% We emphasize that a solution $\optimalrep$ to the Unif and Len problems may not be homologous to $\originalrep$ since we are no longer optimizing within a single homology class but optimizing using a basis of cycle representatives. 
+% \end{remark}
+
+
+%\noindent \textbf{Performance enhancement}  
+Program \eqref{eq:edgelossgeneral} may have many more variables than needed, because $\partial_2$ is often highly singular.  Indeed, in  applications, $\partial_2$ can have hundreds or thousands of times as many columns as rows!
+
+A simple means to reduce the size of Program \eqref{eq:edgelossgeneral}, therefore, is to replace $\goodtriangles$ with a subset $\hat \goodtriangles \subseteq \goodtriangles$ such that $\partial_2[\goodedges, \hat \goodtriangles]$ is a column basis for $\partial_2[\goodedges, \goodtriangles]$.  Replacing $\goodtriangles$ with $\hat \goodtriangles$ will not change the space of feasible values for $\optimalrep$ in Program \eqref{eq:edgelossgeneral}, but it can cut the number of decision variables significantly. In particular, one may take $\hat \goodtriangles : = \{ \simplex : R[:, \simplex] \neq 0\}$ in the $R = \partial_2 V$ decomposition of $\partial_2$ described in the Supplementary material.  We also show correctness of this choice of $\hat \goodtriangles$ there.
+ 
+% \LZ{Greg, OK to comment out this next remark for space?}
+%\begin{remark}
+%Escolar and Hiraoka introduce essentially the same size reduction in \cite{Escolar2016}.  This is why the term $\sum_{r\in R} w_r g^r$ appears among the contraints in Program \eqref{eq:escolarargmin}.  The authors also use $R = \partial_2 V$ decomposition to obtain the column basis $\partial_2[:,\hat \goodtriangles]$ of $\partial_2[:,\goodtriangles]$.
+%\end{remark}
+
+
+%=============================================================================
+%   (START OF) THE ORIGINAL SECTION ON triangle-loss METHODS
+%=============================================================================
+
+% \subsection{Triangle-loss methods}
+
+% % Specifically, we formulate the linear programming for finding the volume-optimal cycle for a given cycle $\originalrep$ born at $b_i$ and get filled in at $d_i$. 
+
+% % Let $\partial_{2_{[b_i,d_i]}}$ denote the boundary matrix of $2$-simplices born between the birth and death time of a cycle $\originalrep$ \LZ{I changed the notation $\partial_{2_{b_id_i}}$ a bit, and should we call this $\originalrep$?} \LL{yes} Then, $\partial_{2_{[b_i,d_i]}}$ is an $q \times r$ matrix where $q$ equals the number of $1$-simplices and $r$ is the number of $2$-simplices born in $[b_i, d_i].$ \LZ{Ugh. Because I used $n$ up above, we cannot use it here. Sorry, maybe I should have used $q$ throughout to denote simplex dimension. Oh, $m$ was also used in number of generators elsewhere. I guess we could change this to $q \times r$  matrices? Notation is hard.} \LL{Yes, I'll change them throughout.}
+
+% % Let $\mathbf{v}$ be an $r \times 1$-dimensional vector which represents the linear combination of the triangles that make up the optimal volume. Let $Z$ be a $l \times l$-dimensional vector where $l$ is the number of triangles born at $d_i$. Let $\mathbf{q}_{b_i}$ be a $l \times 1$-dimensional vector that represents the weight each triangle born at $d_i$ has. Let $Z$ be a $n \times n$-dimensional matrix and let $\mathbf{q}_{b_id_i}$ be a $n \times 1$ vector which represents the weight we put on each triangle. 
+
+% % Let $\mathbf{s}_{b_i}$ be a $q$-dimensional vector with a $1$ for each edge born at $b_i$. Let $\mathbf{s}_{b_id_i}$ be a $q$-dimensional vector with a $1$ for each edge born before $d_i$. 
+% % \GHP{Unless you make reference to specific lines of these equations, there should be a single equation number for the whole program.  This makes it so that you can refer to the program by equation number (which is handy for being specific).}
+% % \begin{LP}
+% % % \begin{subequations}
+% % \begin{align}
+% % \begin{split}
+% %     \text{minimize } & || \mathbf{v} ||_1   \\
+% %     \text{subject to } &  \mathbf{v}  = Y  \mathbf{q}_{d_i} + Z \mathbf{q}_{b_id_i}   \\
+% %      & (\partial_{2_{b_id_i}} \mathbf{v}) \cdot \mathbf{s_{b_i}}  \neq 0  \\
+% %   & (\partial_{2_{b_id_i}} \mathbf{v}) \cdot \mathbf{s_{b_id_i}}  = 0   \\
+% %     & \mathbf{q}_{d_i}  \neq 0
+% %     \end{split}
+% %     \end{align}
+% %     \label{eq:volumeprogram}
+% %     % \end{subequations}
+% % \end{LP}
+
+
+% We now explicitly describe the optimization problem we use to find volume-optimal cycles. One key adjustment we made to this algorithm was to remove the requirement that the filtration be simplex-wise, as there may be multiple simplices entering the filtration at the same filtration step when building a VR complex. \LZ{Next sentence should be stated earlier in section 2}. Thus, we reindex the simplices that are born at the same filtration step and with the same dimension by lexicographical order. Let $\boundsub$ denote the matrix $\partial_2$ with columns corresponding to only the 2-simplices born in the interval $\closedinterval$, and $\textbf{v}\closedinterval$ the tuple corresponding to an n-chain subsampled in the same interval. Also, let $\mathbf{q}_{d_i}$ be a vector of the same length as $\mathbf{v}$ with a 1 for each triangle born at $d_i$ and a 0 elsewhere. Let $\mathbf{s}_{\closedinterval}$ be a vector of 1-simplices with a 1 for each edge born in $\closedinterval$ and 0 elsewhere, and let $\mathbf{s}_{b_i}$ be a vector of 1-simplices with a 1 for each edge born at $b_i$ and a 0 elsewhere. \LZ{Think about notation} Then, our program becomes:
+
+
+% \begin{LP.Vol}
+% \begin{align}
+% \begin{split}
+%     \text{minimize } & || \mathbf{v}\closedinterval ||_0   \\
+%     \text{subject to } & (\partial_2[b_i:b_i \;, \: b_i:d_i]) (\mathbf{v}\closedinterval)   \neq 0  \\
+%   & (\partial_2[b_i+1:d_i \;, \: b_i:d_i])( \mathbf{v}\closedinterval)  = 0   \\
+%     & \mathbf{q}_{d_i} \cdot \mathbf{v}\closedinterval  \neq 0
+%     \end{split}
+%     \label{eq:vol}
+%     \end{align}
+% \end{LP.Vol}
+
+
+% Note here that each step is analogous to a step above, but now we require the cycle representative to contain \textit{an} edge born at $b_i$ and the optimal volume to contain \textit{a} triangle born at $d_i$, since these distinctions are not unique. The term requiring that $\mathbf{v}$ only contain 2-simplices born between $b_i$ and $d_i$ has been absorbed into the notation, since $\boundsub$ and $\mathbf{v}\closedinterval$ in this case only account for such simplices. Our volume-optimal cycle representative, then, is given by $\optimalrep = \boundsub\mathbf{v}\closedinterval$.
+
+% Let $r$ be the number of $2$-simplices born in the interval $[b_i,d_i]$, and let $\mathrm{I}_r$ be the $r\times r$ identity matrix. The cycle $\optimalrep = \boundsub \volvec$ is a \textit{volume-optimal cycle} and $\volvec$ is the corresponding optimal \textit{volume} for the interval $[b_i,d_i)$ if $\volvec$ is a solution to the following program:
+% \begin{LP.Vol}
+% \begin{align}
+% \begin{split}
+%     \text{minimize } & || \mathrm{I}_r \mathbf{v} ||_1 = \sum_{i=1}^N (v_i^+ + x_i^-)   \\
+%     \text{subject to } & (\partial_2[b_i:b_i \;, \: b_i:d_i]) (\mathbf{v}^+ - \mathbf{v}^-)   \neq 0  \\
+%   & (\partial_2[b_i+1:d_i \;, \: b_i:d_i])(\mathbf{v}^+ - \mathbf{v}^-)   = 0   \\
+%     & \mathbf{q}_{d_i} \cdot (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0
+%     \end{split}\label{eq:LP-vol}
+%     \end{align}
+% \end{LP.Vol}
+% We can require the solution $\volvec$ to be integral and convert \ref{eq:LP-vol} to an MIP problem:
+% \begin{MIP.Vol}
+% \begin{align}
+% \begin{split}
+%  \text{minimize } & || \mathrm{I}_r \mathbf{v} ||_1 = \sum_{i=1}^N (v_i^+ + x_i^-)  \\
+%     \text{subject to } & (\partial_2[b_i:b_i \;, \: b_i:d_i]) (\mathbf{v}^+ - \mathbf{v}^-)    \neq 0  \\
+%   & (\partial_2[b_i+1:d_i \;, \: b_i:d_i])(\mathbf{v}^+ - \mathbf{v}^-)  = 0   \\
+%     & \mathbf{q}_{d_i} \cdot (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0 \\
+%     & \mathbf{v}^+, \mathbf{v}^- \in \mathbb{Z}
+%     \end{split}\label{eq:MIP-vol}
+%     \end{align}
+%     \end{MIP.Vol}
+    
+    
+    
+    
+    
+% \begin{MIP.Vol}
+% \begin{align}
+% \begin{split}
+%  \text{minimize } & || \mathrm{I}_r \mathbf{v} ||_1 = \sum_{i=1}^N (v_i^+ + x_i^-)  \\
+%     \text{subject to } & (\partial_2[ \mathbf{s}_{b_i} \;, \: b_i:d_i]) (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0\\
+%   & (\partial_2[b_i+1:d_i \;, \: b_i:d_i]) (\mathbf{v}^+ - \mathbf{v}^-)) =  0   \\
+%     % & \mathbf{q}_{d_i} \cdot (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0 \\
+%     & \mathbf{v}^+, \mathbf{v}^- \in \mathbb{Z}
+%     \end{split}\label{eq:MIP-vol}
+%     \end{align}
+%     \end{MIP.Vol}    
+    
+    
+    
+    
+% Let $W_{Area}$ be an $r\times r$ diagonal matrix with diagonal entries $w_{[i, i]}$ equal to the area of the $i$th $2$-simplex. The cycle $\optimalrep = \partial_2 \volvec$ is an \textit{area-weighted volume-optimal cycle representative} and $\volvec$ is the corresponding optimal \textit{area-weighted volume} if $\volvec$ solves the linear program: 
+% \begin{LP.Area}
+% \begin{align}
+% \begin{split}
+%     \text{minimize } & || W_{Area} \mathbf{v} ||_1 = \sum_{i=1}^N w_{[i, i]} (v_i^+ + x_i^-)   \\
+%     \text{subject to } & (\boundsub) (\mathbf{v}^+ - \mathbf{v}^-)) \cdot \mathbf{s}_{b_i}  \neq 0  \\
+%   & (\boundsub) (\mathbf{v}^+ - \mathbf{v}^-)) \cdot \mathbf{s}_{(b_i,d_i]}  = 0   \\
+%     & \mathbf{q}_{d_i} \cdot (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0
+%     \end{split}\label{eq:LP-Area}
+%     \end{align}
+% \end{LP.Area}
+% We can require the solution $\volvec$ to be integral and convert \ref{eq:LP-Area} to an MIP problem:
+% \begin{MIP.Area}
+% \begin{align}
+% \begin{split}
+%  \text{minimize } & || W_{Area} \mathbf{v} ||_1 = \sum_{i=1}^N w_{[i, i]} (v_i^+ + x_i^-)  \\
+%     \text{subject to } & (\boundsub) (\mathbf{v}^+ - \mathbf{v}^-)) \cdot \mathbf{s}_{b_i}  \neq 0  \\
+%   & (\boundsub) (\mathbf{v}^+ - \mathbf{v}^-)) \cdot \mathbf{s}_{(b_i,d_i]}  = 0   \\
+%     & \mathbf{q}_{d_i} \cdot (\mathbf{v}^+ - \mathbf{v}^-)  \neq 0 \\
+%     & \mathbf{v}^+, \mathbf{v}^- \in \mathbb{Z}
+%     \end{split}\label{eq:MIP-Area}
+%     \end{align}
+% \end{MIP.Area}
+% We compute the area of a $2$-simplex and the area enclosed by a cycle representative using The Surveyor's Area Formula \cite{TheSurveyorsAreaFormula}. We implement this algorithm for computing the area of polygons in a plane and thus, only experiment with the \ref{eq:LP-Area} and \ref{eq:MIP-Area} optimizations on data sets with ambient dimension $2$. Area weighted-volume-optimal cycle representatives are computable for higher dimensions if the modeler has a way to define area of $2$-simplices in higher dimensions to prepare the weight matrix $W_{Area}$. \LL{Talk about area of simplices in higher dimensions area computed is the area of the convex hull of the three points; weighted; GREG please take a look at this!} 
+% % However, $\ell_0$ optimization is also NP-hard \LZ{\cite{NPhardL0}}\LL{This paper talks about l0 optimization is NPhard but didn't supply a citation. Will look more into it. }. Therefore, we can replace the $\ell_0$ norm with the $\ell_1$ norm since the $\ell_1$ norm has good sparsity-promoting behaviors and often gives a good approximation of $\ell_0$ optimization \cite{dohono} \cite{NPhardL0}. For a vector $\mathbf{v} \in \mathbb{R}^m$, the $\ell_1$-norm is defined as:
+% %  $$||\mathbf{v}||_1 = \sum_{i=1}^m|v_i|.$$
+% % Specifically, we solve the following optimization problem as formulated by Dey et al. in \cite{dey2011optimal}: 
+% % \GHP{(i) I don't think notation was introduced for chains with rational coefficients, (ii) should the following have subscript 1 on the norm, instead of 0?}
+% % \GHP{We should give a citation for the first paper that formulates this problem (at least, the first of the papers that we have cited)}
+% % \begin{align}
+% %   \begin{split}
+% %     \text{minimize } & ||\optimalrep||_1  \label{eq:homologous cycle one norm}\\
+% %     \text{ subject to } & \optimalrep = \originalrep + \partial \boundingchain, \\
+% %     & \boundingchain \in \Chains_2(K).
+% %   \end{split}
+% % \end{align}
+% % We can solve this problem very efficiently by state-of-the-art linear solvers such as Gurobi \cite{gurobi}.
+
+% % Another approach is to use integer programming, as proposed by Escolar et al. in \cite{Escolar2016}. The $\ell_1$ norm optimization gives a good approximation, but the solution may not be exact. If all the coefficients of the solution $\optimalrep$ are restricted to $0$ or $\pm 1$ in the optimization problem, then the $\ell_0$ and $\ell_1$ norms are identical. Requiring the solution be integral also allows us to understand the optimal solution more intuitively than having fractional coefficients. Such an optimization problem is called an integer program. Integer programming is known to be much slower than linear programming and is NP-hard \cite{Obayashi2018}.  Many variants of integer programming special to optimal homologous cycles, in particular, have been shown to be hard as well \cite{borradaile2020minimum}.
+
+
+% % Dey et al. \cite{dey2011optimal} gives the \textit{totally-unimodularity} condition which guarantees that linear programming and integer programming give the same optimal solution. For a fixed $n \geq 0,$ the boundary matrix $\partial_{n+1}$ is totally unimodular if $K$ is a finite simplicial complex triangulating a compact, $(n+1)$-dimensional manifold or if $K$ is a finite simplicial complex embedded in $\mathbb{R}^{n+1}$. If the totally-unimodularity condition is not satisfied, then linear programming may not give the desired result. As totally unimodular is not guaranteed for all boundary matrices \cite{henselman2014combinatorial}, we can rely on this condition.
+% %In our case, we cannot use this criterion to guarantee total unimodularity.
+% % Note that since the majority of the data we are dealing has an ambient dimension greater than $3$, and we use $\partial_2$ boundary matrix in the optimization problem, we very rarely have a boundary matrix that is totally unimodular \GHP{more evidence would be required to support this claim; without additional evidence, the best we can say is that we can't use Dey's criterion to guarantee total unimodularity}. 
+
+
+
+
+
+
+% % \subsection{Uniform-Weighted Optimal Cycles and Length-Weighted Optimal Cycles}
+
+
+
+
+% % \subsection{Area-weighted volume-optimal cycles.}\label{areaproblem}
+
+% % In parallel to the length-weighted minimal cycle representative, we can compute the area-weighted volume-optimal cycle by varying the weight matrix $W$. 
+
+
+% % \CT{If we are satisfied with my formulation of the volume-optimal cycle program above, maybe we should change this one to match it. As it is now, it's really describing what Obayashi did + an area weight rather than describing what we did}
+
+% % \begin{MIP.Area}
+% % \begin{align}  
+% %     \begin{split}
+% %     \text{minimize } & ||W_{Area} \mathbf{v}||_1\\
+% %     \text{subject to } 
+% %     & \volvec   = \sigma_{d_i} + \sum_{\sigma_k \in \mathcal{F}_{2}} \alpha_k\sigma_k  \\
+% %     & \tau^*(\partial_{2} \volvec)  = 0 ~ \forall \tau \in \mathcal{F}_1  \\
+% %     & \sigma_{b_i}^*(\partial_{2} \volvec)  \ne 0,  
+% %     \end{split}
+% % \end{align}
+% % \end{MIP.Area}
+% % \LZ{Putting note here to see if later we mention something about how to compute area, at least for points in the plane.}\LL{Would the sentence below work or do we need to be more specific?}
+
+% % We compute the area of a $2$-simplex and the area enclosed by a cycle representative in the plane using the Gauss's area formula. We only implemented the code for computing area of polygons in a plane and thus only tested this algorithm on $2$-dimensional data sets. Area weighted-volume-optimal cycle representatives are computable for higher dimensions if a modeler has a way to define area of $2$-simplices in higher dimensions. \LL{Talk about area of simplices in higher dimensions area computed is the area of the convex hull of the three points; weighted; Greg please take a look at this!} 
+
+
+% % \GHP{This would go in the results section}
+
+% % \section{Optimization Used in Finding Minimal cycle representatives}
+% % To speed up the optimization process, we use basis columns of the boundary matrix instead of the full boundary matrix in the optimization problem. This indeed speed up our computation. 
+
+%=============================================================================
+%   (END OF) THE ORIGINAL SECTION ON triangle-loss METHODS
+%=============================================================================
+
+
+\subsection{Triangle-loss methods}
+\label{sec:trianglelossmethdos}
+
+Our approach to triangle-loss optimization is essentially that of Obayashi \cite{Obayashi2018}, plus a preprocessing step that converts more general problem data into the simplex-wise filtration format assumed in \cite{Obayashi2018}.  There are several noteworthy methods for time and memory performance enhancement developed in \cite{Obayashi2018}  which we do not implement (e.g.  using restricted neighborhoods $\mathcal{F}_q^{(r)}$ to reduce problem size), but which may substantially improve runtime and memory performance.
+%while preserving interesting theoretical guarantees, e.g. \cite[Theorem 7]{Obayashi2018}.
+
+The original method makes the critical assumption that $K_\bullet$ is a simplex-wise filtration, more precisely, that there exists a linear order $\sigma_1 \le \cdots \le \sigma_{|K|}$ such that $K_i = \{\simplex_1, \ldots, \simplex_i\}$. This hypothesis allows one to map each finite-length interval $[i,j) \in \barcode_n(K_\bullet)$ to a unique pair of simplices $(\simplex_i, \simplex_j)$, called a \emph{birth/death pair}, where  $\sigma_i \in \Simplices_n(K)$ and $\sigma_j \in \Simplices_{n+1}(K)$.    This mapping makes it possible to formulate Program \eqref{eq:generalminimalvolume}. Unlike the general edge-loss Program \eqref{eq:generalformofourprgorams}, one can formulate Program \eqref{eq:generalminimalvolume} without ever needing to choose an initial (non-optimal) cycle.  Thus, for simplex-wise filtrations, the method of \cite{Obayashi2018} has the substantial advantage of being ``parameter free.''
+
+% and obtain a cycle representative for bar $[i,j)$ without the need to first construct a (non-optimal)  cycle representative (compare with the general edge-loss program, \eqref{eq:generalformofourprgorams}, which does require a non-optimal cycle to initialize).  Moreover, the construction is ``parameter free'' in the sense that no choices are required.
+
+However, in many applied settings the filtration $K_\bullet$ is not simplex-wise.   Indeed, even accessing information about the filtration can be difficult in modern workflows.  Such is the case, for example, for the filtered Vietroris-Rips (VR) construction. In many VR applications, the user  presents raw data in the form of a point cloud or distance matrix to a ``black box'' solver; the solver returns the barcode without ever exposing information about the filtered complex to the user. Thus, the problem of mapping intervals back to pairs of simplices has practical challenges in common applied settings.
+
+
+
+
+% \begin{algorithm}
+% \caption{Triangle-loss by $R = DV$ decomposition}
+% \label{alg:rdvvolumeoptimization}
+% \begin{algorithmic}[1]
+% \STATE Place a filtration-preserving linear order $\le\dimss{l}$ on $\Simplices_l(K)$ for each $l \in \{0, \ldots, n+1\}$.
+% \STATE Compute an $R_l = \partial_l V_l$ decomposition for each $l \le n+1$, as described in  \se \ref{sec:computingcyclereps}.  For each $l$, we obtain a set $\Gamma_n$ of birth/death pairs.
+% \STATE Put $\simplexpairs = \{(\sigma, \tau) \in \Gamma_n : \birth(\sigma) < \birth(\tau)\}$, where $\birth$ is the birth function of $K_\bullet$.
+% \STATE For each $(\sigma, \tau) \in \simplexpairs$,  put 
+%     \begin{align*}
+%         \mathcal{F}_n &:= \{\sigma' \in \Simplices_n(K) : \birth(\sigma') \le \birth(\tau), \; \sigma \lneq^{(n)} \sigma'\} 
+%         \\
+%         \mathcal{F}_{n+1} &: = \{ \tau' \in \Simplices_{n+1}(K) : \birth(\sigma) \le \birth(\tau'), \; \tau' \lneq^{(n+1)} \tau \} 
+%     \end{align*}
+%     and ${\hat {\mathcal{F}}}_{n+1}:= \mathcal{F}_{n+1} \cup \{\tau\}$.  
+%     Compute a  solution to the corresponding Program \eqref{eq:trianglelossgeneral}, and denote this solution by  $\optimalrep^{\sigma, \tau}$. The family of all such solutions forms a set 
+%         $
+%             \deathbasis: = \{ \optimalrep^{\sigma, \tau} : (\sigma, \tau ) \in \simplexpairs\}
+%         $.
+% \STATE Recall that the sequence of $R_l = \partial_l V_l$ decompositions naturally engender a partition of $\Simplices_n(K)$ as a disjoint union of form $Z_n \sqcup B_n \sqcup H_n$ (see \se \ref{sec:computingcyclereps} for details).  Use the set $H_n$ to define  
+%     \begin{align*}
+%     \deathbasis_\infty :=\{ V_{n}[:, \eta ] : \eta \in H_n \}
+%     \end{align*}
+%     That is, $\deathbasis_\infty$ is the set of column vectors of $V_{n}$ that are indexed by $H_n$.
+% \STATE Return $\hcyclebasis := \deathbasis \cup \deathbasis_\infty$.
+% \end{algorithmic}
+% \end{algorithm}
+
+To accommodate this more general form of problem data, we employ Algorithm \ref{alg:rdvvolumeoptimization}.  This procedure works by (implicitly) defining a simplex-wise refinement $K_\bullet'$ of $K_\bullet$, applying the method of \cite{Obayashi2018} to this refinement, then extracting a persistent homology cycle basis for the subspace of finite intervals from the resulting data.
+%a persistent homology cycle basis from the resulting data.  
+More details, including recovery of a complete persistent homology cycle basis with infinite intervals\footnote{Recall volume is undefined for infinite intervals.}, and a proof of correctness can be found in the Supplementary Material.
+
+\begin{algorithm}
+\caption{Triangle-loss persistent cycle minimization}
+\label{alg:rdvvolumeoptimization}
+\begin{algorithmic}[1]
+\STATE Place a filtration-preserving linear order $\le\dimss{l}$ on $\Simplices_l(K)$ for each $l$.
+\STATE Compute an $R = \partial_{n+1} V$ decomposition as described in \cite{cohen2006vines} and the Supplementary Material.  We then obtain a set $\Gamma$ 
+% \LZ{index was $n$ but should be $l$ right?}
+of birth/death pairs $(\sigma, \tau)$.
+%\STATE Put $\simplexpairs = \{(\sigma, \tau) \in \Gamma_n : \birth(\sigma) < \birth(\tau)\}$, where $\birth$ is the birth function of $K_\bullet$.
+\STATE For each $(\sigma, \tau) \in \Gamma$ such that $\birth(\sigma) < \birth(\tau)$,  put 
+    \begin{align*}
+        \mathcal{F}_n &:= \{\sigma' \in \Simplices_n(K) : \birth(\sigma') \le \birth(\tau), \; \sigma \lneq^{(n)} \sigma'\} 
+        \\
+        \mathcal{F}_{n+1} &: = \{ \tau' \in \Simplices_{n+1}(K) : \birth(\sigma) \le \birth(\tau'), \; \tau' \lneq^{(n+1)} \tau \} 
+    \end{align*}
+    and ${\hat {\mathcal{F}}}_{n+1}:= \mathcal{F}_{n+1} \cup \{\tau\}$.  Compute a  solution to the corresponding Program \eqref{eq:trianglelossgeneral}, and denote this solution by  $\optimalrep^{\sigma, \tau}$. 
+    \STATE Put   
+        $
+            \hat \deathbasis: = \{ \partial_{n+1} (\optimalrep^{\sigma, \tau}) : (\sigma, \tau ) \in  \Gamma \; \text{ and } \; \birth(\sigma) < \birth(\tau)\}$ 
+            and let $\hat \deathbasis' := \{ \cycle \in \calm : \death(\cycle) = \infty  \}$, where $\calm$ is a persistent homology cycle basis calculated by the standard $R=DV$ method.
+    \STATE Return $\deathbasis: = \hat \deathbasis \cup \hat \deathbasis'.$
+\end{algorithmic}
+\end{algorithm}
+
+A key component of Algorithm \ref{alg:rdvvolumeoptimization} is Program \eqref{eq:trianglelossgeneral}, which we refer to as the \emph{triangle-loss program}.
+\begin{align}
+\begin{split}
+ \text{minimize } & ||W \mathbf{v} ||_1 = \sum_{i=1}^N (v_i^+ + v_i^-)  \\
+\text{subject to } &  \partial_{n+1}[ \sigma , \hat {\mathcal{F}}_{n+1} ] \volvec \neq 0     \\
+&  \partial_{n+1}[\mathcal{F}_n, \hat {\mathcal{F}}_{n+1} ] \volvec = 0 \\
+ & \volvec_{\tau} = 1\\
+     & \mathbf{v}^+, \mathbf{v}^- \ge 0 \\
+& \mathbf{v}^+, \mathbf{v}^- \in G^{ \hat {\mathcal{F}}_{n+1}}
+\end{split}
+\label{eq:trianglelossgeneral}
+\end{align} 
+This terminology is motivated by the special case $n=1$, which is our focus for  empirical studies.  As with the general edge-loss program, Program \eqref{eq:trianglelossgeneral} varies along two  parameters (integrality and weighting).  In \emph{integral} programs $G = \Z$, whereas in \emph{nonintegral} programs $G = \Q$.  The weight matrix $W$ is always diagonal, but in \emph{uniform}-weighted programs $W[\upsilon, \upsilon] = 1$ for all $\upsilon$, whereas in \emph{area}-weighted programs $W[\upsilon, \upsilon]$ is the area
+% \footnote{We compute the area of a $2$-simplex and the area enclosed by a cycle representative using The Surveyor's Area Formula \cite{TheSurveyorsAreaFormula}. We implement this algorithm for computing the area of polygons in a plane and thus, only experiment with the triangle-loss optimizations on data sets with ambient dimension $2$. Area weighted-volume-optimal cycle representatives are computable for higher dimensions if the modeler has a way to define area of $2$-simplices in higher dimensions to prepare the weight matrix $W_{Area}$. \LL{Talk about area of simplices in higher dimensions area computed is the area of the convex hull of the three points; weighted; GREG please take a look at this!}  \GHP{It's not too difficult to compute the area of triangles in higher dimensions -- we could probably do this for the revise and resubmit!}} % (this formulation of area only makes sense when $n=1$).  
+ of triangle $\upsilon$.  Program \eqref{eq:trianglelossgeneral} thus results in four variants:
+ 
+ 
+\begin{enumerate}[style=multiline]
+    \item[\namedlabel{itm:tri_NIU}{$\Tri\NI\unif$}] Nonintegral triangle-loss with uniform weights.
+    \item[\namedlabel{itm:tri_IU}{$\Tri\I\unif$}] Integral triangle-loss with uniform weights.
+    \item[\namedlabel{itm:tri_NIA}{$\Tri\NI\area$}] Nonintegral triangle-loss with edges weighted by area. 
+    \item[\namedlabel{itm:tri_IA}{$\Tri\I\area$}] Integral triangle-loss with edges weighted by area. 
+\end{enumerate}
+
+    % \begin{enumerate}
+    %     \item $\Tri\NI\unif$: Nonintegral triangle-loss with uniform weights. 
+    %     \item $\Tri\I\unif$: Integral triangle-loss with uniform weights.         
+    %     \item $\Tri\NI\area$: Nonintegral triangle-loss with edges weighted by area. 
+    %     \item $\Tri\I\area$: Integral triangle-loss with edges weighted by area. 
+    % \end{enumerate}
+
+
+ We compute the area of a $2$-simplex and the area enclosed by a cycle representative using The Surveyor's Area Formula \cite{TheSurveyorsAreaFormula} for data in the plane. %the area of polygons in a plane and thus, only experiment with the \ref{eq:LP-Area} and \ref{eq:MIP-Area} optimizations on data sets with ambient dimension $2$ .
+ Area-weighted optimal cycle representatives are computable for higher dimensions if the modeler has a way to define area of $2$-simplices in higher dimensions to prepare the weight matrix $W_{Area}$. 
+
+
+\begin{remark} Algorithm \ref{alg:rdvvolumeoptimization} offers an effective means to apply the methods of \cite{Obayashi2018} to some of the most common data sets in TDA.  However, they do so at the cost of parameter-dependence; in particular, outputs depend on the choice of linear orders $\le\dimss{l}$.  
+%Proofs of correctness and 
+A brief discussion on how the choice of a total order $\le$ in Algorithm \ref{alg:rdvvolumeoptimization} may impact the difficulty of the linear programs one must solve are discussed in the Supplementary Material.  In particular, we explain why the total order implicitly chosen in Algorithm \ref{alg:rdvvolumeoptimization} is reasonable,  from a computational/performance standpoint.
+\end{remark}
+
+
+% In the remainder of this subsection, we state the four variants of Program \ref{eq:volumeprogram} considered in our empirical study, and prove correctness of Algorithms \ref{alg:simplexwiserefinement} and \ref{alg:rdvvolumeoptimization}.  We also provide a brief discussion of the simplex-wise filtration implicit to \ref{alg:rdvvolumeoptimization}, and why it is a reasonable choice from a computational/performance standpoint.
+
+
+
+% --------------------------------------------------------------
+%  AN OLD REFORMULATION OF THE OBAYASHI PROBLEM (FOR DIY LINEAR ORDERS)
+%
+% Let $(\sigma_i, \tau_i)$ be a birth/death pair, let $\le^{(n)}$ denote the linear order on columns of $\partial_n$, and let $\le^{(n+1)}$ denote the linear order on \emph{the subset of columns of $\partial_{n+1}$ that we actually build}.  Then
+%     \begin{align*}
+%         \mathcal{F}_n &= \{\sigma \in \Simplices_n(K) : \birth(\sigma) \le \birth(\tau_i), \; \sigma_i \lneq^{(n)} \sigma\} 
+%         \\
+%         \mathcal{F}_{n+1} & = \{ \tau \in \Simplices_{n+1}(K) : \birth(\sigma_i) \le \birth(\tau), \; \tau \lneq^{(n+1)} \tau_i \} \\
+%         & = \{ \tau \in \Simplices_{n+1}(K) : \birth(\sigma_i) \le \birth(\tau) < \birth( \tau_i )\} \quad \leftarrow \text{(whole boundary matrix)} \; \\
+%         & \cup \{\tau \in \Simplices_{n+1}(K) : \tau \text{ is a pivot column}, \; \birth(\tau_i) = \birth(\tau), \text{ and }  \tau \lneq^{(n+1)} \tau_i\}
+%     \end{align*}    
+% --------------------------------------------------------------
+
+
+% \subsection{Moved to Methods from related work}
+% \CG{Moved from Related Work per Greg's comment. Will find a way to incorporate into the methods section when I get to this point if no one beats me to it.}
+% \GHP{I feel like this paragraph belongs in the methods section}
+% \LZ{I haven't read the rest, but I imagine that would be OK}
+% Further, Dey et al. \cite{dey2011optimal} formulate their problem of optimizing within a single homology class using \textit{weighted $\ell_1$-optimization}. This formulation achieves different types of optimality by assigning different weights to the simplices. In our present paper, we incorporate this weighting into Escolar and Hiraoka's method on optimizing a cycle representative using other homology classes, as well as Obayashi's algorithm on volume-optimal cycles. Specifically, we explore optimization problems using four notions: uniform-weighted minimal (assigning no weight to the $1$-simplices), length-weighted minimal (assigning the distance $d$ used to construct the Vietoris-Rips complex as the weight to the $1$-simplices), volume-optimal (assigning no weight to the $2$-simplices), and area-weighted volume-optimal (assigning the area as the weight to the $2$-simplices). 
+
+
+
+
+% \section{Materials that might be ok to remove}
+
+
+% \subsection{Weighted minimal cycle representatives}
+
+% In the optimization problems formulated in Equations  \eqref{eq:generalmultiplecyclecase}, and (\ref{eq:vol}), we minimize the number of 1-simplices in a cycle representative or the number of 2-simplices a cycle representative bounds by assigning a uniform weight of one to each simplex. Respectively, we refer to these as the uniform (Unif) and volume (Vol) optimization problems below. Alternatively, Dey et al. \cite{dey2011optimal} propose assigning a coefficient to each $1$-simplex as its weight and solve a \textit{weighted $\ell_1$-optimization} problem.
+
+% We vary the problem of optimizing a cycle using a basis of cycle representatives in \eq (\ref{eq:generalmultiplecyclecase}) from \cite{Escolar2016} to minimize the \textit{total length} of the optimal cycle representative by weighting each $1$-simplex by its length as the distance---as designated by the metric $d$ used to define the VR complex---between the two vertices of the $i$th $1$-simplex $\sigma_i$. Similarly, we assign a weight equal to the area of a $2$-simplex in \eq \eqref{eq:vol} from \cite{Obayashi2018} to find the area-weighted volume-optimal cycle. Respectively, we refer to these as the length (Len) and area (Area) optimization problems below. \\
+
+
+ 
+ 
+ % \LZ{I'm not sure we need the following sentence and can combine a couple paragraphs as I've done}Below, we begin by describing uniform-weighted optimal cycles, which aim to minimize the number of $1$-simplices in a cycle, and length-weighted optimal cycles, which aim to minimize the total Euclidean length of the $1$-simplices in a cycle. 
+% \GHP{Example: By abuse of notation, given a chain $\chain \in C_q(K)$, we use the same symbol $\chain$ for the tuple $(\chain_0, \ldots, \chain_n)$ of coefficients such that $\chain = \sum_i \chain_i \sigma_i$.}
+% By an abuse of notation, given a $1$-chain $\optimalrep \in \Chains_1(K)$, we use the same symbol $\optimalrep$ for the tuple $(x_1, \ldots, x_q)$ of coefficients such that $\optimalrep = \sum_i x_i \sigma_i$.
+
+% \begin{align}
+% \begin{split}
+% \text{minimize } & ||W \mathbf{x} ||_1 \\
+% \text{ subject to } & \mathbf{x} = \originalrep + \partial_2 \boundingchain + \sum_{j=1}^m a_j\optimalrep^j \\
+% & \boundingchain \in \Chains_2(K)
+% \end{split}
+% \label{optimal-basis-one-norm-length}
+% \end{align}
+
+% Note that for $||W \optimalrep||_1$ to represent the total length of the generator, we must restrict the entries of $\optimalrep$ to $\{-1,0,1\}$. In fact, entries not in $\{-1,0,1\}$ do not have a natural geometric meaning \cite{dey2011optimal}.  
+
+
+% We can achieve different types of optimality by choosing different weight matrices. For example, if $W$ is the identity matrix of size $m$, then we assign uniform weights to each $1$-simplex. A solution to the $\ell_1$ optimization that happened to have entries in $\{-1,0,1\}$ would in fact result in an $\ell_0$ optimal chain that has the smallest number of $1$-simplices and thus a solution to \eq (\ref{eq: general-multiple-cycle-case}). 
+
+% In fact, this formulation is more desirable for computation purposes than \eq (\ref{eq: general-multiple-cycle-case}) because 
+
+
+
+
+% \subsection{Eight optimization problems studied}\label{eightproblems}
+
+% Now, we specify the optimization problems used in our present study. We consider the four types of problems: Unif, Vol, Len, and Area described above, solving each as both a linear program and a mixed integer program, for a total of eight optimizations. When solving an optimization problem using the 1-norm in the objective function, it is customary to write the optimal cycle $\optimalrep$ as $\optimalrep^+-\optimalrep^-$, with $\optimalrep^+, \optimalrep^- \geq 0$ corresponding to the positive and negative parts of $\optimalrep.$ Let $x^+_i, x_i^-$ be the entries of the vectors $\optimalrep^+$, $\optimalrep^-$, respectively. 
+
+
+\subsection{Acceleration techniques} \label{acceleratation technique}
+
+% \subsection{Minimizing the number of 1-simplices}
+
+% The general weighted $\ell_1$-optimization problem can be specialized by choosing different weight matrices and constraints. One such specialization is finding a homologous chain with the smallest \textit{number} of simplices. If the matrix $W$ is chosen to be the identity matrix, then we can solve the $\ell_0$-optimization problem if every entry of $\mathbf{x}$ is in $\{-1,0,1\}.$ We add the constraint that the entries of $\x$ and $\mathbf{y}$ be integral and linearize the problem as follows: 
+
+ 
+% \begin{align}
+%     \text{minimize   } & || \mathbf{x} ||_1 = \sum_{i=1}^N (\x^+_i + \K_i^-)\\
+%   \text{subject to  } &  
+%       (\x^+ - \x^-) = \z + [\hat \partial_{q+1}]  \mathbf{\hat y}  + \sum_{j=1}^m a_jg_j \\
+%       & \x^+, \x^- \geq 0, \text{ integral}, \mathbf{y} \text{ integral} 
+% \end{align}
+
+% \subsection{Minimizing the total length of the $1$-simplices}
+
+% Another way to specialize the general weighted $\ell_1$-optimization problem is finding a homologous chain with the smallest total \textit{length} of simplices. If the matrix $W$ is chosen to be the diagonal matrix with diagonal entries $w_i$ corresponding to the length of the $i$-th $1$-simplex, then we can solve the $\ell_1$-optimization problem. We formulate and linearize the problem as follows: 
+
+% \begin{align}
+%     \text{minimize   } & || W \mathbf{x} ||_1 = \sum_{i=1}^N w_i(\x^+_i + \K_i^-)\\
+%   \text{subject to  } &  
+%       (\x^+ - \x^-) = \z + [\hat \partial_{q+1}]  \mathbf{\hat y}  + \sum_{j=1}^m a_jg_j \\
+%       & \x^+, \x^- \geq 0, \text{ integral}, \mathbf{y} \text{ integral} 
+% \end{align}
+
+% In this case, $\optimalrep_6'$ and $\optimalrep_6''$ are two possible minimal cycles and $\optimalrep_6''$ is chosen because $||\optimalrep_6'||_0 > ||\optimalrep_6''||_0$. 
+
+% \GHP{Notation: a couple things: (i) the font and capitalization of the cycles shown in Figure 3(e) differ from the notation used here, (ii) you may want to use different letter for those cycles, just to keep a clear separation between them and \eqref{multiplecyclecase}}  
+
+% \GHP{In order to drive your argument home, you should explicitly state how this example relates to the point you want to make.  This will require a longer discussion, covering the following points: (1) when you add a cycle to another cycle, you may change the homology class that the latter represents, (ii) however, if you begin with a basis of cycles, then you will still have a basis of representatives after adding one cycle to another, (iii) this leads to the following question: given a collection of cycle representatives $\optimalrep_0, \ldots, \optimalrep_m$ representing a basis in homology, what is the min-loss substitute $\optimalrep_0'$ that we can make for $\optimalrep_0$ such that $\optimalrep_0', \optimalrep_1, \ldots, \optimalrep_m$ still represents a homology basis?, (iv) set up an example of such a problem using Figure 3(e), where the initial basis is $\optimalrep_0:=Z_3'$, $\optimalrep_1 :=Z_2$.  Then it can be deduced by inspection that (A) $Z_3''$ optimizes, and (B) $Z_3$ cannot be obtained from $\optimalrep_0$ without adding a cycle -- which is the point you wanted to make. } 
+
+We consider acceleration techniques to reduce the computational costs of Programs \eqref{eq:edgelossgeneral} and \eqref{eq:trianglelossgeneral}.
+
+\emph{Edge-loss methods} The technique used for edge-loss problems aims to reduce the number of decision variables in Program \eqref{eq:edgelossgeneral}.  It does so by replacing a (large) set of decision variables indexed by $\goodtriangles$ with a much smaller set, $\hat \goodtriangles$.  See \se \ref{sec:edgelossmethods} for details.
+% This reduction does not change the optimal value of the program, but substantially reduces the dimension of the space of feasible solutions.
+
+% This technique has two parts, the first of which has already been described in \se \ref{sec:edgelossmethods}.  We first replace a (large) set of decision variables indexed by $\goodtriangles$ with a much smaller set, $\hat \goodtriangles$\footnote{This method is used implicitly in \cite{Escolar2016}.}.  We then delete all rows of $\partial_2$ corresponding to edges born after the birth time of the cycle to be minimized, as these are not needed to contrain the problem.
+
+\emph{Triangle-loss methods}  
+% The technique used for triangle-loss methods focuses on the preprocessing steps needed to formulate inputs to the linear program.  
+When $\partial_n$ is large, the memory and computation time needed to construct the constraint matrix $\partial_{n+1}[\mathcal{F}_n, \hat {\mathcal{F}}_{n+1} ]$ can be nontrivial.  In applications that require an optimal representative for every interval in the barcode, these costs can be incurred for hundreds or even thousands of programs. We consider two ways to generate the constraint matrices $\partial_{n+1}[\mathcal{F}_n, \hat {\mathcal{F}}_{n+1} ]$ for each of the intervals in a barcode: build $\partial_{n+1}[\mathcal{F}_n, \hat {\mathcal{F}}_{n+1} ]$ from scratch for each program, or build the complete boundary matrix $\partial_{n+1}$ in advance; rather than recompute block submatrices for each program, we pass a slice of the complete matrix stored in memory.  
+
+The difference between these two techniques can be seen as a speed/memory tradeoff.  As we will see in \se \ref{accelerateresults}, the first approach is generally faster to optimize the entire basis of homology cycle representatives, but when the data set is large, the full boundary matrix $\partial_{n+1}$ may be too large to store in memory. 
+
+
+
+
+
+% A fundamental challenge in computing cycle representatives and therefore optimal cycle representatives is the size of the underlying data, i.e. simplicial complexes with many simplices. In the worst case, the complexity of the standard persistence algorithm is cubic in the number of simplices. Given a point cloud of $P$ points, there can be $\binom{P}{2}$ $1$-simplices and $\binom{P}{3}$ $2$-simplices. In scientific applications, the boundary matrices $\partial_n$ are often short and wide, with columns (labeled by $n$-simplices) outnumbering rows (labeled by $n-1$-simplices) by several orders of magnitude, often numbering in the thousands or millions. This poses a great computational challenge. Here, we describe some acceleration techniques we use to speed up the computation of optimal cycle representatives. In \se \ref{accelerateresults}, we describe the performance of such acceleration techniques.  
+
+% To speed up the optimization of uniform/length-weighted optimal cycle representatives, we replace the full boundary matrix $\partial_2$ in Equations \eqref{LP-Unif}, \eqref{MIP-Unif}, \eqref{LP-Len}, and \eqref{MIP-Len} with the column basis submatrix of $\partial_{2}$, which we refer to as $\hat \partial_{2}$, which contains only the basis columns of $\partial_2$. This will not affect the optimal solution as every $2$-simplex can be expressed as a linear combination of the basis columns. \LZ{GREG Rephrase previous as you like?} We further reduce the size of $\hat \partial_{2}$ by only including the rows corresponding to $1$-simplices born before the death time of the cycle. This also reduces the optimization problem size, especially for cycles born earlier in the filtration. 
+
+% However, we cannot apply the same acceleration technique for the volume optimal cycles because for volume optimal cycles, we are minimizing the number of $2$-simplices whereas for the uniform/length-weighted optimal cycle representatives, we are minimizing the number of $1$-simplices. \LZ{Greg, maybe put in a couple of sentences describing the subtleties of this.}
+
+% A first attempt to solve the optimization problems Equations \eqref{eq:LP-vol}, \eqref{eq:MIP-vol},  \eqref{eq:LP-Area}, and \eqref{eq:MIP-Area} to find volume/area optimal cycle representatives might be to compute the full boundary matrix $\partial_2$ and zero out columns ($2$-simplices) that are not born between $b_i$ and $d_i$ for a particular original cycle representative $\optimalrep^i$. However, this approach results in a large number of input variables to the optimization problem and leads to a large computation time. Alternatively, we propose two approaches to speed up computations by reducing the number of variables in the optimization. The first approach computes the full boundary matrix and then deletes all columns associated to $2$-simplices not born in the interval $[b_i, d_i]$ for each original cycle representative $\optimalrep^i$, submitting only the remaining columns to the optimization problem. The second approach computes only the boundary columns associated to the $2$-simplices born between $b_i$ and $d_i$ for each original cycle representative $\optimalrep^i$. Both of these approaches result in subsampled boundary matrix $\boundsub$. As we will see in \se \ref{accelerateresults}, the first approach is generally faster to optimize the entire basis of homology cycle representatives, but when the data set is large, the full boundary matrix $\partial_2$ may be too large to construct. In addition, we again reduce the size of $\partial_2$ to only include the rows ($1$-simplices) born before the death time of the cycle, resulting in $\boundsubrow$. This also reduces the optimization time, especially for the earlier cycles. 
+

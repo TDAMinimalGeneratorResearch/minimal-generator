@@ -1,0 +1,50 @@
+\setlength{\tabcolsep}{10pt}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[!h]
+\caption{Summary of the experimental results for the synthetic, randomly generated data sets described in \se \ref{sec: randompointclouds}. For each distribution, we sample $10$ data sets each containing $100$ points in ambient dimensions from $2$-$10$. The computation time in this table averages the $10$ random samples for each dimension and distribution combination. The number of cycle representatives is totaled over the $90$ samples for each distribution. The rows of this table are analogous to those of \tab \ref{tab:realworldata}, excluding the penultimate row of that table, as the time comparison is only done for the large real-world data sets.} 
+\footnotesize
+    \centering
+    \begin{tabular}{ |c || c |c |c |c |}
+ \hline
+ & \textbf{Normal} & \textbf{Gamma}  & \textbf{Logistic} & \textbf{Exponential}  \\[0.5ex] 
+ \hline 
+ \hline
+ \textbf{Ambient dimension} & 2-10 & 2-10    & 2-10 &  2-10  \\\hline  
+ \textbf{Average \# points} &  100 &  100  &  100 &   100  \\\hline  
+  \textbf{Total \# representatives} & 4815 & 3706  & 4456 & 3788 \\ \hline
+ \textbf{Average $T$ persistence (seconds)} &   2.80  & 2.12    & 2.01 & 2.63 \\
+%  Memory (GiB) &   116.16  & 85.23  & 79.24 & 199.52  \\ \hline 
+[0.5ex] 
+\hline
+\multicolumn{1}{c}{\textbf{Edge-loss persistent homological cycle representatives (\pr \eqref{eq:edgelossgeneral})}} && \\
+\hline
+ \textbf{Average total $T\I_{E\text{-}Len}$ optimization} &5.52 & 6.01 & 5.65 & 5.91 \\ \hline
+ \textbf{Average total $T\NI_{E\text{-}Len}$ optimization} &  4.37 & 4.55 & 4.32 & 4.47 \\ \hline 
+ \textbf{Average total $T\I_{E\text{-}Unif}$ optimization} & 5.31 & 5.97 & 5.45 & 5.90 \\ \hline
+ \textbf{Average total $T\NI_{E\text{-}Unif}$ optimization} & 4.08 & 4.58 & 4.23 & 4.51 \\ 
+ [0.5ex] 
+\hline
+\multicolumn{1}{c}{\textbf{Edge-loss filtered homological cycle representatives (\pr \eqref{eq:escolarargmin})}} && \\
+\hline
+ \textbf{Average total $T\I_{E\text{-}Len}$ optimization} &5.32 & 6.46 & 6.27 & 6.88 \\ \hline
+ \textbf{Average total $T\NI_{E\text{-}Len}$ optimization} & 4.07 & 5.05 & 4.78 &5.11 \\ \hline 
+ \textbf{Average total $T\I_{E\text{-}Unif}$ optimization} &5.23 & 6.46 & 6.25 & 6.66\\ \hline
+ \textbf{Average total $T\NI_{E\text{-}Unif}$ optimization} & 4.17 & 4.94 & 4.61 & 5.29\\ 
+[0.5ex] 
+\hline
+\multicolumn{1}{c}{\textbf{Triangle-loss persistent homological cycle representatives (\pr \eqref{eq:trianglelossgeneral})}} &&& \\
+\hline
+ \textbf{Average total $T\I_{T\text{-}Unif}$ optimization} &16.86 & 25.7 &17.55 & 26.30\\ 
+ \hline
+ \textbf{Average total $T\NI_{T\text{-}Unif}$ optimization} &  14.73 & 22.21 & 15.42 & 21.86 \\ 
+ \hline
+   \textbf{Average total $T$ build all} & 1.40 & 1.71 &  1.56 & 1.07 \\ 
+  \hline
+  \textbf{Average total $T$ build part } & 3.51 & 1.54 &    1.61 & 1.56 \\ 
+ \hline
+ 
+\end{tabular}
+\label{tab:distributiondata} %\LL{updated 03/14}
+\end{table}
+

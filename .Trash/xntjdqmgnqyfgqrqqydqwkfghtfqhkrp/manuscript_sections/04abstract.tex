@@ -1,0 +1,39 @@
+%TC:ignore
+
+\maketitle
+
+\begin{abstract}
+
+
+%\GHP{We may want to consider a title with more information content, such as "L1 optimization yields L0 optimal  cycle representatives: an empirical study in persistent homology."  I also like "roadmap to computation of optimal 1-dimensional cycles in persistent homology", or the like.  We can discuss later, if anyone is interested :)} 
+
+%\GHP{We should also emphasize that we are looking at representatives over $\Q$, since most work looks at either $\field_2$ of $\Z$.}
+
+%\GHP{"Roadmap to optimal cycle representatives of 1d topological features, with $\Q$-linear persistent homology"}
+
+%A User's Guide to Optimization with Linear Programming Methods of 1-Dimensional Cycle Representatives in Persistent Homology
+
+
+
+%Using optimization of persistent cycle representatives
+
+
+
+%An Empirical Study on Minimal 1-Dimensional Cycle Representatives in Persistent Homology using Linear Programming
+
+%Minimal Cycle Representatives in Persistent Homology using Linear Programming: a User's Guide with Empirical Study
+
+%Minimal Representatives in Persistent Homology using Linear Programming, with Empirical Study
+
+% ^^^ title drafts
+
+Cycle representatives of persistent homology classes can be used to provide descriptions of topological features in data. However, the non-uniqueness of these representatives creates ambiguity and can lead to many different interpretations of the same set of classes. One approach to solving this problem is to optimize the choice of representative against some measure that is meaningful in the context of the data. In this work, we provide a study of the effectiveness and computational cost of several $\ell_1$-minimization optimization procedures for constructing homological cycle bases for persistent homology with rational coefficients in dimension one, including uniform-weighted and length-weighted edge-loss algorithms as well as uniform-weighted and area-weighted triangle-loss algorithms. We conduct these optimizations via standard linear programming methods, applying general-purpose solvers to optimize over column bases of simplicial boundary matrices. 
+
+Our key findings are: 
+(i) optimization is effective in reducing the size of cycle representatives, though the extent of the reduction varies according to the dimension and distribution of the underlying data, (ii) the computational cost of optimizing a basis of cycle representatives exceeds the cost of computing such a basis, in most data sets we consider (iii) the choice of linear solvers matters a lot to the computation time of optimizing cycles, (iv) the computation time of solving an integer program is not significantly longer than the computation time of solving a linear program for most of the cycle representatives, using the Gurobi linear solver, and, strikingly, (v) whether requiring integer solutions or not, we almost always obtain a solution with the same cost and almost all solutions found have entries in $\{-1, 0, 1\}$ and therefore, are also solutions to a restricted $\ell_0$ optimization problem. 
+    \tiny
+     \keyFont{\section{Keywords:} topological data analysis, computational persistent homology, minimal cycle representatives, generators, linear programming, $\ell_1$ and $\ell_0$ minimization} %All article types: you may provide up to 8 keywords; at least 5 are mandatory.
+\end{abstract}
+    
+    %TC:endignore
+    

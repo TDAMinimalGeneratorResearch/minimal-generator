@@ -1,0 +1,26 @@
+language: rust
+
+before_install:
+    - sudo apt-get install libsuitesparse-dev
+
+matrix:
+  include:
+    - rust: stable
+      env: RUN_RUSTFMT=true
+    - rust: beta
+    - rust: nightly
+
+script:
+    - rustc --version
+    - cargo --version
+    - cargo test --all --verbose
+    - cargo test --features=serde,serde_derive --all --verbose
+    - cargo test --release --all --verbose
+    - cargo run --example heat
+    - ./.travis_rustfmt
+
+notifications:
+  email:
+    - on_success: change
+    - on_failure: always
+

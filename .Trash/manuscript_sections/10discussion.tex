@@ -1,0 +1,30 @@
+\section{Conclusion}\label{discussion}
+
+In this work, we provide a theoretical, computational, and empirical user's guide to optimizing cycle representatives against four criteria of optimality: total length, number of edges, internal volume, and area-weighted internal volume. Utilizing this framework, we undertook a study on statistical properties of minimal cycle representatives for $\Homologies_1$ homology found via linear programming. In doing so, we made the following four main contributions.
+\begin{enumerate}
+    \item We developed a publicly available code library \cite{li_thompson} to compute persistent homology with rational coefficients, building on the software package Eirene \cite{eirene} and implemented and extended algorithms from \cite{Escolar2016, Obayashi2018}  for computing minimal cycle representatives. The library employs standard linear solvers (GLPK and Gurobi) and implements various acceleration techniques described in \se \ref{acceleratation technique} to make the computations more efficient. 
+    \item We formulated specific recommendations concerning procedural factors that lie beyond the scope of the optimization problems per se (for example, the process used to generate inputs to a solver) but which bear directly on the overall cost of computation, and of which practitioners should be aware. %The techniques we used to accelerate the volume optimization problem are described in \se \ref{accelerateresults}.
+    \item We used this library to compute optimal cycle representatives for a variety of real-world data sets and randomly generated point clouds.  Somewhat surprisingly, these experiments demonstrate that computationally advantageous properties are typical for persistent cycle representatives in data. Indeed, we find that we are able to compute uniform/length-weighted optimal cycles for all data sets we considered, and that we are able to compute volume optimal cycles for all but six cycle representatives, which fail due to the large number of triangles (more than $20$ million) used in the optimization problem. Computation time information is summarized in \tab \ref{tab:realworldata} and \tab \ref{tab:distributiondata}. 
+    
+    Consequently, heuristic techniques may provide efficient means to extract solutions to cycle representative optimization problems across a broad range of contexts. For example, we find that edge-loss optimal cycles are faster to compute than triangle-loss optimal cycles for cycle representatives with a longer persistence interval, whereas for cycles with shorter persistence intervals, the triangle-loss cycle can be more computationally expensive to compute.
+    
+    \item We provided statistics on various minimal cycle representatives found in these data, such as their effectiveness in reducing the size of the original cycle representative found by the persistence algorithm and their effectiveness evaluated against different loss functions. In doing so, we identified consistent trends across samples that address the questions raised in \se \ref{intro}.
+    \begin{enumerate}
+        \item Optimal cycle representatives are often significant improvements in terms of a given loss function over the initial cycle representatives provided by persistent homology computations. Interestingly, we find that area-weighted volume optimal cycle representatives can enclose a greater area than length- or uniform-weighted optimal cycle representatives. %(see \se \ref{areaproblem}). %For a more numerical answer to this question, see \se \ref{Comparing the loss of the optimal cycles against the original cycle representative} and \se \ref{Computational cost of the various optimization techniques}. 
+        
+        %We explore various statistical properties of optimal cycle representatives in \se \ref{results} and \se \ref{figures}: in \fig \ref{fig:loopsbreakdown}, we explore the number of loops in optimal representatives, in \se \ref{results}, we discuss how 
+        
+        %we discuss the effectiveness of each algorithm at reducing the length or edge number of our original cycles. 
+        %\fig \ref{fig:effectivenessall},        
+        
+        \item We find that length-weighted edge-loss optimal cycles are also optimal with respect to a uniform-weighted edge-loss function upwards of $99\%$ of the time in the data we studied. This suggests that one can often find a solution that is both length-weighted minimal and uniform-weighted minimal by solving only the length-weighted minimal optimization problem. However, the triangle-loss optimal cycles can have a relatively higher length-weighted edge-loss or uniform-weighted edge-loss than the length/uniform-weighted minimal cycles. Thus, computing triangle-loss optimal cycles might provide distinct information and insights. 
+        \item Strikingly, all $\ell_1$ optimal representatives but one found were also $\ell_0$ optimal. Thus, it appears that solutions to the NP-hard problem of finding $\ell_0$ optimal cycle representatives can often be solved using linear programming in real data.
+    \end{enumerate}
+    
+
+
+\end{enumerate}
+
+
+% \section{Additional Requirements}
+%  In this work, we used Euclidean distances to construct the simplicial complexes. Further research can be done to investigate whether the same results hold for other metrics such as Cosine correlation. \CG{Need to think of a few things to list as future directions besides this. }

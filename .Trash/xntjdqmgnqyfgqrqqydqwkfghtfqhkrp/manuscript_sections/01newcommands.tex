@@ -1,0 +1,136 @@
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\PH}{\ensuremath{\mathrm{PH}}}
+\newcommand{\Chains}{\mathbf{C}}
+\newcommand{\p}[0]{\mathbf{p}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\x}[0]{\mathbf{x}}
+\newcommand{\y}[0]{\mathbf{y}}
+\renewcommand{\u}[0]{\mathbf{u}}
+\renewcommand{\v}[0]{\mathbf{v}}
+\newcommand{\w}[0]{\mathbf{w}}
+\newcommand{\z}[0]{\mathbf{z}}
+\newcommand{\Homologies}[0]{\mathbf{H}}
+\newcommand{\Boundaries}[0]{\mathbf{B}}
+\newcommand{\Simplices}[0]{\mathbf{S}}
+\newcommand{\Cycles}[0]{\mathbf{Z}}
+\newcommand{\originalrep}{\mathbf{x}^{Orig}}
+\newcommand{\optimalrep}{\mathbf{x}}
+\newcommand{\orepentry}{x}
+\newcommand{\chain}{\mathbf{c}}
+\newcommand{\cycle}{{\mathbf z}}
+\newcommand{\cycley}{\mathbf{y}}
+\newcommand{\cyclea}{\mathbf{a}}
+\newcommand{\cycleb}{\mathbf{b}}
+\newcommand{\cycleu}{\mathbf{u}}
+\newcommand{\cyclev}{\mathbf{v}}
+\newcommand{\cyclew}{\mathbf{w}}
+\newcommand{\boundingchain}{\mathbf{w}}
+\newcommand{\hclass}{h} % arbitrary homology class
+\newcommand{\tab}{Table }
+\newcommand{\se}{Section }
+\newcommand{\fig}{Figure }
+\newcommand{\volvec}{\mathbf{v}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\eq}{Equation }
+\newcommand{\cm}{comment }
+\newcommand{\NI}{^{NI}}
+\newcommand{\I}{^I}
+\newcommand{\unif}{_{Unif}}
+\newcommand{\len}{_{Len}}
+\newcommand{\area}{_{Area}}
+\newcommand{\birth}{\mathrm{Birth}}
+\newcommand{\death}{\mathrm{Death}}
+\newcommand{\persistencediagram}{\mathrm{Pers}}
+\newcommand{\barcode}{\mathrm{Barcode}}
+\newcommand{\boundsub}{\partial_2[:,b_i:d_i]}
+\newcommand{\boundsubrow}{\partial_2[1:d_i, b_i: d_i]}
+\newcommand{\persinterval}{\mathcal{L}}
+\newcommand{\closedinterval}{[b_i,d_i]}
+\newcommand{\interval}{J}
+\newcommand{\loss}{\mathrm{loss}}
+\newcommand{\argmin}{\mathrm{argmin}}
+\newcommand{\fcyclebasis}{\mathcal{C}}
+\newcommand{\setoffilteredcyclebases}{\mathrm{FCB}}
+\newcommand{\setofhcyclebases}{\mathrm{HCB}}
+\newcommand{\setofpersistenthcyclebases}{\mathrm{PrsHCB}}
+\newcommand{\dimss}[1]{^{(#1)}} % dimension superscript (marks the dimension of a simplex)
+\newcommand{\pr}{Program }
+
+\newcommand{\spann}{{\mathrm{span}}}
+
+\setlength{\tabcolsep}{1pt}
+\renewcommand{\arraystretch}{1.5}
+
+%   HOMOLOGICAL ALGEBRA
+\newcommand{\hcyclebasis}{\mathcal B}
+
+%   SIMPLICES
+\newcommand{\alldim}{\omega}
+\newcommand{\simplex}{\sigma}
+
+%   LINEAR PROGRAMS
+\newcommand{\feasibleset}{\mathcal{X}}    
+\newcommand{\Edge}{\mathrm{Edge}}
+\newcommand{\Tri}{\mathrm{Tri}}
+
+\newcommand{\goodcycleindices}{\mathcal P}
+\newcommand{\goodtriangles}{\mathcal Q}
+\newcommand{\goodedges}{\mathcal R}
+\newcommand{\goodvolmatrix}{\partial_{2}[\mathcal{F}_1, \hat {\mathcal{F}_2}]}
+
+\newcommand{\simplexpairs}{{\mathcal I}}
+\newcommand{\bdpairs}{{\mathcal I}}
+\newcommand{\deathbasis}{\mathcal D}
+
+\newcommand{\obasis}{Z} % ordered basis
+\newcommand{\obasisel}{\mathbf{z}}  % element of an ordered basis
+
+%   FONTS
+
+\newcommand{\cald}{\mathcal D}
+\newcommand{\cale}{\mathcal E}
+\newcommand{\calf}{\mathcal F} 
+\newcommand{\calm}{\mathcal M}
+\newcommand{\caln}{\mathcal N}
+
+
+%   ENVIRONMENTS
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\LZ}[1]{{\textcolor{magenta}{\small {\sf [[LZ: #1]]}}}}
+\newcommand{\GHP}[1]{{\textcolor{purple}{\small {\sf [[GHP: #1]]}}}}
+\newcommand{\LL}[1]{{\textcolor{blue!50}{\small {\sf [[LL: #1]]}}}}
+\newcommand{\CG}[1]{{\textcolor{blue}{\small {\sf [[CG: #1]]}}}}
+\newcommand{\CT}[1]{{\textcolor{YellowGreen}{\small {\sf [[CT: #1]]}}}}
+
+% 1-d generator to replace loops
+% cycle in homology 
+% a generator is a union of simple closed paths
+
+
+
+%   GENERATOR COMPUTATION
+
+\newcommand{\low}{\mathrm{low}}
+\newcommand{\hatgraph}{{\hat{\Gamma}}}
+
+% reference labels in lists
+
+\makeatletter
+\def\namedlabel#1#2{\begingroup
+    #2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup:
+}
+\makeatother

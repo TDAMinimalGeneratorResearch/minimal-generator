@@ -1,0 +1,23 @@
+[package]
+name = "npy"
+version = "0.4.0"
+authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
+license = "MIT"
+description = "NumPy file format (de-)serialization"
+repository = "https://github.com/potocpav/npy-rs"
+homepage = "https://github.com/potocpav/npy-rs"
+documentation = "https://docs.rs/npy/"
+keywords = ["numpy", "npy"]
+categories = ["encoding"]
+readme = "README.md"
+
+[workspace]
+members = [ "npy-derive" ]
+
+[dependencies]
+byteorder = "1"
+nom = "3"
+
+[dev-dependencies]
+memmap = "0.6"
+npy-derive = { path = "npy-derive", version = "0.4" }

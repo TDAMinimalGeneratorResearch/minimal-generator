@@ -1,0 +1,43 @@
+\newcolumntype{L}{>{\centering\arraybackslash}m{3cm}}
+
+% \setlength{\tabcolsep}{7pt}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[!h]
+\centering
+\caption{Computation time of three differently sized input boundary matrices to edge-loss and triangle-loss methods. The superscripts denote whether the program requires an integral solution or not, and the subscripts indicate the type of optimal cycle. All time is measured in seconds. We perform experiments on a small-sized data set (\textbf{Senate}) that consists of $103$ points in dimension $60$ and a medium-sized data set (\textbf{House}) that contains $445$ points in dimension $261$. For edge-loss methods, we consider three implementations to solve these optimization problems: using the full boundary matrix $\partial_2$, using the basis columns and all rows $\partial_2[:, \hat \goodtriangles]$, and using the basis columns and deleting rows corresponding to edges born after the birth time of the cycle $\partial_2[\goodedges, \hat \goodtriangles]$. For triangle-loss methods, we consider three approaches to solve these optimization problems: zeroing out the columns in the boundary matrix outside of $[b_i,d_i]$ denoted as $\partial_{2_{zero}}$, deleting columns outside of this range $\partial_2[:,\hat {\mathcal{F}}_{2}]$, and deleting both columns outside of $[b_i, d_i]$ and rows born after $d_i$ denoted $\goodvolmatrix$. The \textbf{House} data set was too large to implement the first method.}\label{unif-acceleration-table}
+\footnotesize
+\begin{tabular}{ |>{\centering}m{11em}   >{\centering\arraybackslash}m{8em}>{\centering\arraybackslash}m{8em}  >{\centering\arraybackslash}m{8em} >{\centering\arraybackslash} m{8em}|}
+ \hline
+ & \multicolumn{4}{c|}{\textbf{Edge-loss Optimal Cycles (\pr \eqref{eq:edgelossgeneral})}} \\
+\cline{3-4}
+  & \textbf{T}  & \textbf{$ \partial_2$}  & \textbf{$\partial_2[:, \hat \goodtriangles]$}  & \textbf{$\partial_2[\goodedges, \hat \goodtriangles]$}  \\  [0.5ex]  \hline \hline
+    \multirow{4}{*}{\textbf{Small Data Set (Senate)}} & 
+ $T_{E\text{-}Unif}\NI$ & 1.06& 1.03 &	0.41  \\  &
+  $T_{E\text{-}Unif}\I$ &1.25 &1.23	& 0.60 \\  &
+    $T_{E\text{-}Len}\NI$ &1.05&  1.05 &	0.41   \\   &
+  $T_{E\text{-}Len}\I$  & 1.23 &1.19 & 0.65 \\ 
+  \hline 
+  \multirow{4}{*}{\textbf{Medium Data Set (House)}} & 
+ $T_{E\text{-}Unif}\NI$ & 184.70 & 122.72 &	47.10  \\ &
+  $T_{E\text{-}Unif}\I$ &188.88 & 147.27	&  64.64 \\  &
+    $T_{E\text{-}Len}\NI$ &184.41&  121.80 &	46.02    \\   &
+  $T_{E\text{-}Len}\I$ & 193.01 & 146.46 & 63.87 \\ [0.5ex] \hline \hline
+   & \multicolumn{4}{c|}{\textbf{Triangle-loss Optimal Cycles (\pr \eqref{eq:trianglelossgeneral})}} \\ \cline{3-4}
+  & \textbf{\textbf{T}}  & \textbf{$\partial_{2_{zero}}$}  & \textbf{$\partial_2[:,\hat {\mathcal{F}}_{2}]$}  & \textbf{$\goodvolmatrix$} \\[0.5ex] 
+ \hline 
+ \hline
+ \multirow{2}{*}{\textbf{Small Data Set (Senate)}}& 
+ $T_{T\text{-}Unif}\NI$    & 23.25   & 0.99  & 0.59 \\  &
+  $T_{T\text{-}Unif}\I$   & 25.31  & 1.06   & 0.66   \\ \hline
+  \multirow{2}{*}{\textbf{Medium Data Set (House)}} & 
+ $T_{T\text{-}Unif}\NI$   
+   &  -  &	286.10 &   194.70 \\ &
+  $T_{T\text{-}Unif}\I$  
+    & -	& 317.45  &  237.73\\\hline 
+\end{tabular}
+
+
+%\caption{Computation time of three differently sized input boundary matrices optimization to find volume optimal cycles when solving Equations \eqref{eq:LP-vol} and \eqref{eq:MIP-vol}. The superscripts denote whether the program requires an integral solution or not, and the subscripts indicate the type of optimal cycle. All time is measured in seconds. We perform experiments on a small-sized data set (\textbf{Senate}) that consists of $103$ points in dimension $60$ and a medium-sized data set (\textbf{House}) that contains $445$ points in dimension $261$.  We consider three approaches to solve these optimization problems: zeroing out the columns in the boundary matrix outside of $[b_i,d_i]$, deleting columns outside of this range, and deleting both columns outside of $[b_i, d_i]$ and rows born after $d_i$. We do not include the computation time for zeroing out for the medium data set because it was too large.}
+\label{tab:implementationcompare}
+\end{table}

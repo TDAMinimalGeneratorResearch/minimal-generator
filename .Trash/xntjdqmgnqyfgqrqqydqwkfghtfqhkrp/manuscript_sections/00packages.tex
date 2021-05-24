@@ -1,0 +1,64 @@
+\setcitestyle{square} % for Physics and Applied Mathematics and Statistics articles
+\usepackage{url,hyperref,lineno,microtype,subcaption}
+\usepackage[onehalfspacing]{setspace}
+\linenumbers
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{amsmath}
+\usepackage{amssymb, amsfonts}
+\usepackage{blkarray}
+\usepackage{bigstrut}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{lscape} 
+\usepackage{mathtools,amssymb}                % <---
+\usepackage{booktabs, makecell}
+\usepackage{array}
+\usepackage{algorithm,algorithmic}
+\usepackage{bm}
+
+
+
+% ----- GREG ADDED THIS TO CREATE CUSTOM COUNTERS FOR THE MIP PROGRAMS
+
+
+
+
+\usepackage{environ}
+\newif\ifsolution
+\solutiontrue
+\newcounter{fakeequation}
+\newcounter{fakeeqtmp}
+\NewEnviron{MIP.Len}{\setcounter{fakeeqtmp}{\value{equation}}\setcounter{equation}{\value{fakeequation}}%
+    \renewcommand\theequation{Edge${}\I_{Len}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequation}{\value{equation}}\setcounter{equation}{\value{fakeeqtmp}}\renewcommand\theequation{\arabic{equation}}}
+    \NewEnviron{MIP.Unif}{\setcounter{fakeeqtmp}{\value{equation}}\setcounter{equation}{\value{fakeequation}}%
+    \renewcommand\theequation{Edge${}\I_{Unif}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequation}{\value{equation}}\setcounter{equation}{\value{fakeeqtmp}}\renewcommand\theequation{\arabic{equation}}}
+\newcounter{fakeequationLP}
+\newcounter{fakeeqtmpLP}    
+\NewEnviron{LP.Len}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Edge${}\NI_{Len}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    \NewEnviron{LP.Unif}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Edge${}\NI_{Unif}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    \NewEnviron{LP.Vol}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Triangle${}\NI_{Unif}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    
+    \NewEnviron{MIP.Vol}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Triangle${}\I_{Unif}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    \NewEnviron{LP.Area}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Triangle${}\NI_{Area}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    
+    \NewEnviron{MIP.Area}{\setcounter{fakeeqtmpLP}{\value{equation}}\setcounter{equation}{\value{fakeequationLP}}%
+    \renewcommand\theequation{Triangle${}\I_{Area}$}\ifsolution\BODY\fi%
+    \setcounter{fakeequationLP}{\value{equation}}\setcounter{equation}{\value{fakeeqtmpLP}}\renewcommand\theequation{\arabic{equation}}}
+    
+    

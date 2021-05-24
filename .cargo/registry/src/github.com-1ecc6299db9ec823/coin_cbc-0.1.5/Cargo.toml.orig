@@ -1,0 +1,26 @@
+[package]
+name = "coin_cbc"
+version = "0.1.5"
+authors = ["Kardinal <guillaume.pinot@kardinal.ai>"]
+edition = "2018"
+description = "Rust bindings to the CoinOR CBC MILP Solveur using the C API."
+documentation = "https://docs.rs/coin_cbc"
+repository = "https://github.com/KardinalAI/coin_cbc"
+keywords = ["MILP", "MIP", "linear-programming"]
+categories = ["api-bindings", "mathematics", "science"]
+license = "MIT "
+readme = "README.md"
+
+[workspace]
+members = ["coin_cbc_sys"]
+
+[features]
+default = ["singlethread-cbc"]
+# The `singlethread-cbc` feature MUST be activated if this crate is going to be used with
+# a cbc dynamic library that has not been explicitly compiled with `-DCBC_THRED_SAFE`.
+# For more information, see https://github.com/KardinalAI/coin_cbc/issues/9
+singlethread-cbc = ["lazy_static"]
+
+[dependencies]
+coin_cbc_sys = { version = "0.1.1", path = "coin_cbc_sys" }
+lazy_static = { version = "1.4", optional = true }

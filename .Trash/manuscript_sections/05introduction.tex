@@ -1,0 +1,39 @@
+
+\section{Introduction}
+\label{intro}
+
+Topological data analysis (TDA) uncovers 
+mesoscale structure in data by quantifying its shape using methods from algebraic topology. 
+Topological features have proven effective when characterizing complex data, as they are qualitative, independent of choice of coordinates, and robust to some choices of metrics and moderate quantities of noise \cite{ghrist2014elementary,Carlsson2009TopologyAD}. 
+As such, topological features extracted from data have recently drawn attention from researchers in various fields including, for example, neuroscience \cite{giusti2016two, bendich2016persistent, robert}, computer graphics \cite{pointcloud-topo, singh2007topological}, robotics \cite{pathplanning, VASUDEVAN20113292},  and computational biology \cite{collectivemotion, selectingbiologicalexperiments/journal.pone.0213679, zebrafish} (including the study of protein structure   \cite{ Usingpersistenthomologyanddynamicaldistancestoanalyzeproteinbinding,xia2016multiscale,xia2014persistent}.)  
+
+The primary tool in TDA is \textit{persistent homology} (PH) \cite{Ghrist08}, which describes how topological features of data, colloquially referred to as ``holes", evolve as one varies a real-valued parameter. Each hole comes with a geometric notion of  \emph{dimension} which describes the shape that encloses the hole: connected components in dimension zero, loops in dimension one, shells in dimension two, and so on. From a parameterized topological space $X = (X_t)_{t \in S \subset \R_{\ge 0}}$, for each dimension $n$, PH produces a collection $\barcode_n(X)$ of lifetime intervals $\persinterval$ which encode for each topological feature the parameter values of its birth, when it first appears, and death, when it no longer remains.
+
+A basic problem in the practical application of PH is interpretability: given an interval $\persinterval \in \barcode_n(X)$, how do we understand it in terms of the underlying data? A reasonable approach would be to find an element of the homology class, also known as a cycle representative, that  witnesses structure in the data that has meaning to the investigator. In the context of geometric data, this takes the form of an ``inverse problem,"  constructing  geometric structures corresponding to each persistent interval in the original input data.
+For example, a representative for an interval $\persinterval \in \barcode_1(X)$ consists of a closed curve or linear combination of closed curves which enclose a set of holes across the family of spaces $(X_t)_{t \in \persinterval \subset S}$. Cycle representatives are used in \cite{emmett2015multiscale} to annotate particular loops as chromatin interactions, and  \cite{wu} uses cycle representatives to study and locate and reconstruct fine muscle columns in  cardiac trabeculae restoration.
+
+An important challenge, however, is that cycle representatives are not uniquely defined. For example, in the left-hand image in \fig \ref{fig:generatorExamples} from \cite{Carlsson2009TopologyAD}, two curves enclose the same topological feature and thus, represent the same persistent homology class. We often want to find a cycle that captures not only the existence but also information about the location and shape of the hole that the homology class has detected. This often means optimizing an application-dependent property using the underlying data, e.g. finding a minimal length or bounding area/volume using an appropriate metric. The algorithmic problem of selecting such optimal representatives is currently an active area of research \cite{dey2011optimal,dey2018,Obayashi2018,wu,chen2010measuring}. 
+
+There are diverse notions of optimality we may wish to consider in a given context, and which may have significant impact on the effectiveness or suitability of  optimization, including  
+\begin{itemize}
+    \item weight assignment to chains (uniform versus length or area weighted), 
+ \item choice of loss function ($\ell_0$ versus $\ell_1$), 
+ \item formulation of the optimization problem (cycle size versus bounded area or volume), and \item restrictions on allowable coefficients (rational, integral, or $\{0,1,-1\}$).  
+ \end{itemize}
+ Each has a unique set of advantages and disadvantages. For example, optimization using the $\ell_0$ norm with $\{0, 1, -1\}$-coefficients is thought to yield the most interpretable results, but $\ell_0$ optimization is NP-hard, in general \cite{chenhardness}. 
+The problem of finding $\ell_1$ optimal cycles with rational coefficients, can be formulated as a more tractable linear programming problem.
+While some literature exists to inform this choice \cite{dey2011optimal,Escolar2016,Obayashi2018}, questions of basic importance remain, including: 
+
+\begin{enumerate}
+  \item[Q1] How do the computational costs of the various optimization techniques compare? How much do these costs depend on the choice of a particular linear solver? 
+  \item[Q2] What are the statistical properties of optimal cycle representatives? For example,  how often does the support of a representative form a single loop in the underlying graph? And,  how much do optimized cycles coming out of an optimization pipeline differ from the representative that went in?     
+    \item[Q3] To what extent does choice of technique matter? For example, how often does the length of a length-weighted optimal cycle match the length of a uniform-weighted optimal cycle? 
+    And, how often are $\ell_1$ optimal representatives $\ell_0$ optimal? 
+\end{enumerate}
+
+Given the conceptual and computational complexity of these problems (see \cite{chenhardness}), the authors expect that formal answers are unlikely to be available in the near future. However, even where theoretical results are available, strong \emph{empirical} trends may suggest different or even contrary principles to the practitioner. For example, while the persistence calculation is known to have matrix multiplication time complexity  \cite{primoz}, in practice the computation runs almost always in linear time. Therefore, the authors believe that a careful empirical exploration of questions 1-3 will be of substantial value. 
+
+In this paper, we undertake such an exploration in the context of one-dimensional persistent homology over the field of rationals, $\Q$. We focus on linear programming (LP) and mixed-integer programming (MIP) approaches due to their ease of use, flexibility, and adaptability. In doing so, we present a new treatment of parameter-dependence (vis-a-vis selection of simplex-wise refinements) relevant to common cases of rational cycle representative optimization \cite{Obayashi2018, Escolar2016}, such as finding optimal cycle bases for the persistent homology of the Vietoris-Rips complex of a point cloud.
+
+The paper is organized as follows. \se \ref{background} provides an overview of some key concepts in TDA to inform a reader new to algebraic topology and establish notation. Then, we provide a survey of previous work on finding optimal persistent cycle representatives in \se \ref{problem formulation}, and formulate the methods used in this paper to find different notions of minimal cycle representatives via LP and MIP in 
+\se \ref{methodsProblems}. \se \ref{methods} describes our experiments, including overviews of the data and the hardware and software we use for our analysis. In \se \ref{results},  we discuss the results of our experiments. We conclude and describe possible future work in \se \ref{discussion}.

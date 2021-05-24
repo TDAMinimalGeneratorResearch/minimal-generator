@@ -1,0 +1,6 @@
+grbgetkey d3ef2e6a-b821-11eb-8d4d-0242ac130002
+cargo doc --no-deps --open
+cd
+cd
+cd Developer/exhact_rust-devel_haibin_comments/
+cargo doc --no-deps --open

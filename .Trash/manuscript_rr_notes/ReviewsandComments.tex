@@ -1,0 +1,233 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\begin{document}
+
+REVIEW 1
+
+The paper is an impressively thorough survey of the multitude of disparate approaches to a problem that is fundamental to the
+interpretability of persistent homology in applications, as well as a very systematic empirical analysis of the efficacy of these apporaches. It serves both as a very useful collation of this area of research, recasting a range of approaches into a common language, notation and setup, and as an introduction to the area by means of being very comprehensive and self-contained in its presentation.
+
+The problem at hand is that of finding meaningful representatives of (persistent) homology classes. What is meaningful is often dependent on the problem domain, but the paper covers a large swath of these by considering both l_0-minimization and a quite flexible set of weighted l_1-minimizations, both integer and rational.
+
+The authors present much of what is known about this problem in a common, consistent framework, and offer implementations of these. The implementations are then benchmarked on real and on synthetic data, while varying a multitude of parameters (choice of norm, along with a multitude of weighting schemes). The authors demonstrate that the outputs and computation times are reasonable for use in real world applications.
+
+*Some* of the observations, such as those of the algorithms providing integer solutions almost always in the non-integer case, are unexplained. It would be beyond the scope of the paper to attempt to explain these phenomena, which are likely deep, but some further discussion or speculation would be useful. Do the authors have potential counterexamples in mind, for example?
+
+    *** Intro to Erdos-Renyi SEction 5.3 100 100x100 matrices drawn from uniform distribution
+    
+    - Definition
+    - Naturally arise from iid dissim matrices
+    - Limiting betti statistics have been shown empirically (and in some cases formally) to differ from other random complexes (cite Chad)
+    - Moreover, for certain values of p and n Erdos-Renyi(p,n) complexes have torsion with high probability (cite Costa et al). 
+    - We therefore chose to include these spaces in our study in order to test whether their cycle representative statistics (like their bett number statistics) differ substantially from those of the other random models and from empirical data.  
+    
+    ** General results
+    
+    Since known to behave differently along other dimensions (e.g. betti number statistics) from empirical data (which is main focus of text), we do not include in Figures X, Y, Z
+    
+    *** Discussion
+    
+    - In text we saw that representatives tend to be ``well behaved'' in sense that they generally take coefficients in 0,1,-1
+    - This seems in keeping with anecdotal observations about VR complexes generally -- that they are well behaved
+        - integer extension for circular coordinates
+        - persistence computation runs quickly
+    - However, consistent with predictions, Erdos-Renyi complexes produced a large number of cycle reps with non-zero, non-unit coefficients.
+
+With regards to section 6.6, I am not sure it is worth noting empirical behavior of the two off-the-shelf solvers when it comes to providing integer solutions in the non-integral case, unless this is behavior that is documented or "official". Otherwise, it sounds like a potential accident of implementation that could change at any time. I'd prefer to see this section scaled down or removed (or substantiated by references!).
+***Done
+It is certainly true that behavior depends on quirks of implementation, and that these are subject to change whenever a solver is updated.  Moreover, there is no way (that we know) to draw a direct connection between a particular implementation/design decision and integrality/l0 minimality/etc. of the output.  The purpose of this section is simply to quantify the range of different behaviors possible (without making predictions about how specific solvers will perform in the future).
+
+
+
+Added at beginning of paragraph:  \LZ{Our experiments demonstrate that the choice of linear solver may impact speed, frequency of obtaining integer solutions, and frequency of obtaining $\ell_0$ optimal solutions.}
+Added at end of paragraph: \LZ{\emph{Thus, the choice of linear solver may affect the optimization results.}}
+
+Further comments and feedback follow.
+
+- With such comprehensive background material, it may well be worth taking some time to discuss why the focus for these methods is homology in *dimension 1*.
+*** Done
+Added in intro: 
+\LZ{We restrict our attention to one-dimensional homology for clarity of experiment presentation, although the methods discussed in \se \ref{methods} could be applied to any homological dimension.}
+Made subscripts more general
+Added in section 4 
+\LZ{While the methods discussed below can be applied to any homological dimension, we limit the scope of the present work to dimension one. As described in Section \ref{problem formulation}, we follow two general approaches: those that measure loss as a function of $n$-simplices, and those that measure loss as a function of $n+1$-simplices.  Motivated by the $n=1$ case, we refer to the former as \emph{edge-loss} methods and the latter as \emph{triangle-loss} methods.}
+Added in section 5
+\LZ{in dimension one}
+\LZ{in homological dimension one}
+
+- The same goes for the the choice of norms: while l_0 and l_1-with-weighting definitely are the most important versions of the problem, such a comprehensive introduction and background discussion might find space to discuss also l_2 (with real coefficients), which lends itself to quite different approaches (I am not suggesting that the authors actually include l_2 optimization in the experiments or the rest of their study, but I do think it is worthy of mention in the general discussion).
+****Done
+Footnote in Section 4:
+\LZ{Other choices of loss function, e.g. $\ell_p$ norm, are common throughout mathematical optimization.  While we focus on $\ell_0$ and $\ell_1$ due to their tendency to produce sparse solutions, other choices may be better or worse suited, depending on the intended application.  For example, since $\ell_2$ loss  imposes lighter penalties on small errors and heavier penalties on large ones (as compared to $\ell_1$), it is especially sensitive to outliers; this makes it useful for tasks such as function estimation.  On the other hand, by imposing relatively heavy penalties on small errors, $\ell_1$ loss encourages sparcity \cite{dohono,NPhardL0}.}
+In Conclusion:
+***\GHP{Several questions lie beyond the scope of this text and merit future investigation.  For example, while the methods discussed in \se \ref{sec:programsandmethods} apply equally to homology in any dimension, we have focused our empirical investigation exclusively in dimension 1; it would be useful and interesting to compare these results with homology in higher dimensions.  It would likewise be interesting to compare with different weighting strategies on simplices, and loss functions other $\ell_0$ and $\ell_1$, e.g. $\ell_2$.  Future work may also consider whether the modified approach to edge-loss minimization (Program \eqref{eq:edgelossgeneral}) could be incorporated into persistence solvers themselves, as has been explored in prior work \cite{Escolar2016}. }
+
+- Are two alternative definitions of chain complexes really needed for this work?
+***Done. We felt the alternative viewpoints could be helpful for readers.
+
+- Line before 110: what is meant by $|x_\sigma|$ for $x_\sigma$ in an arbitrary abelian group? (Alternatively: is anything gained from not letting G=Z, Z/2Z or Q right away?)
+***Done 
+Move Remark earlier and Added: \footnote{See Remark \cite{rm:group}. These choices of groups have a natural notion of absolute value.}
+
+- Figure 3 (or its caption) seems broken or accidentally replaced by a different figure? It seems to reappear as "Figure 4.JPEG" in the attachments, but it's not entirely clear what's going on here (this could be an artifact of the journal's review system!) This breaks the discussion starting on line 260 a bit too. 
+***Done
+
+- The example on line 182 refers to a lost figure.  
+***Done
+
+
+- The weighting scheme's relationship to the field of coefficients should be mentioned (e.g. in section 4.1). Notions like length don't make sense for all coefficient fields. 
+- It should be made clearer under what circumstances the geometric weighting schemes (length, area, volume) make sense. The simplicial complexes under discussion in general are not necessarily subsets of Euclidean space.
+- Is the enclosed area as defined by the surveyor's method really the appropriate notion in general? (And: precisely in what circumstances do you propose it as a weighting scheme?) Are there other notions of "enclosed area" that may be meaningful?
+***Done 
+Added: \footnote{\LZ{These notions make sense due to our use of coefficient field $\Q$. The distance used to form a simplicial complex can be used to define length. We restrict our attention of area to points in the Euclidean plane.}}
+***Point out that we say, "Area-weighted optimal cycle representatives are computable for higher dimensions if the modeler has a way to define area of $2$-simplices in higher dimensions to prepare the weight matrix $W_{Area}$."
+
+
+
+- Figure 6 has a very low density of information. I do not have a concrete proposal, but it must be possible to convey this information in a better way! 
+***Done Lu, change vertically align in length, shrink figures b,d,f horizontally to increase information density Done
+
+
+- The same goes for Figure 8. Almost all the space spent on this page is whitespace or an almost indiscernable sequence of outliers.
+***Done
+We like it how it is!
+
+
+- Regarding the outliers presented in Figure 8: could a few be presented as explicit examples?
+*** Done.
+This is a nice idea, but given the figure limitations, there is not additional space for this. Further, as most of these data are high-dimensional (these plots aggregate all data from Section 5.1 and 5.2), visualizing these as examples would be complicated.
+
+
+- The discussion of duplicate bars starting on line 820: it would be interesting to see what happens if the real world filtrations are coarsely discretized. Do more duplicates appear then, and how does this affect the related analysis?
+***Done
+We agree this would be a really interesting exploration, but it is beyond the scope of our paper.
+
+Some minor problems (typos etc.) follow:
+
+- Typo in section 2 header, "persitent".
+***Done
+
+- The first $\subseteq$ in the equation before l. 105 should be an $\in$, but it's also a bit of an ambiguous definition for a reader who does not know what a VR complex is (they might ask what the n is).
+***Done
+
+- Using the word "differentially" with the meaning "relating to a difference" in a sentence pertaining to algebraic topology seems... risky.
+***Done
+
+- Schweinhart's name is misspelled on line 316.
+***Done
+
+- The spelling of "Q-coefficients" is inconsistet (with v without hyphen).
+***Done
+Thank you for pointing this out. We have now tried to make it consistently $\Q$-coefficients
+
+- Typography: unwanted spaces often appear after comma as a
+thousands-separator.
+***Done
+
+- The typography of $T_optimization$ et al. are not great to look at and should be reconsidered.
+***We thought about this a lot and settled on this notation, even if not ideal.
+
+- Line 768: broken ref. *** Done
+
+- Line 795: broken ref. *** Done
+
+- Line 796: this should be "the first Betti number of the 1-skeleton of the support of...". 
+    ***Done 
+    Greg
+    - Modified footnote to Figure 10
+    - Also, made the following modification to main text: As illustrated in \fig \ref{fig:areaExample}, $\supp(\originalrep)$ need not be a cycle in the graph-theoretic sense.  Concretely, this means that the nullity, $p$, of column submatrix $\partial_1[:,\originalrep]$ may be strictly greater than 1 (in \fig \ref{fig:areaExample}, for example, $p=2$).  We refer to $p$ informally as the ``number of loops'' in $\originalrep$. 
+
+Regarding the checklist in Q4 of the review form:
+
+- Figures: some of these are too fuzzy or have too small details. See also the comments about lost figures below. *** Done
+
+- Data: the data seems to be openly available elsewhere, but I do not know whether this question asks implicitly about whether the authors themselves have collated the data in a repository of their own (they have not). *** Lu will put all data on the github -- Done
+
+
+Regarding the quality assessment in the form's Q7: I scored it
+mid-range for rigor. The mathematical and algorithmic rigor is high, but the empirical study is of course just that - empirical. I am not sure what sort of rigor the editors mean.
+
+
+
+
+
+REVIEW 2
+It seems that the hyperlinks to Figure 3 should go to Figure 4 on page 53 of the manuscript. The caption on where the hyperlink takes should be connected to Figure 4 on page 53.
+***Done
+
+
+The background on Section 2 has a good number of pages devoted to basic simplicial homology and persistence, which is quite straightforward for anyone in TDA. However, the paper focuses on optimising cycle representatives and almost no space is given to basic background in optimisation, which readers in TDA might not have. I would like the paper to include some background on basic optimisation: problem formulation, what are linear program and mixed integer program, what's the difference/difficulty in solving a linear program and an integer program, and, if possible, reasonably easy but illustrative example on how to solve an optimisation problem, maybe related to one of those summarised in Section 3.
+***Done
+    Lori: added new subsection 3.1
+    Greg 
+    - It turns out that we can just **delete** a bunch of the paragraphs on indexing (you don't even need it for the supplementary material).  I've marked the paragraphs that I think can be removed.
+    
+
+Section 3.5: why l_1 norm promotes sparsity? This is interesting but not clear so I would propose adding more details.
+    ***Done 
+    Greg 
+    added footnote:
+    - Other choices of loss function, e.g. $\ell_p$ norm, are common throughout mathematical optimization.  While we focus on $\ell_0$ and $\ell_1$ due to their tendency to produce sparse solutions, other choices may be better or worse suited, depending on the intended application.  For example, since $\ell_2$ loss  imposes lighter penalties on small errors and heavier penalties on large ones (as compared to $\ell_1$), it is especially sensitive to outliers; this makes it useful for tasks such as function estimation.  On the other hand, by imposing relatively heavy penalties on small errors, $\ell_1$ loss encourages sparsity \cite{dohono,NPhardL0}.
+
+Concerning the main findings in Section 6.2, it seems intuitive that optimising a basis of cycle representatives is more expensive than finding a basis in the first place, i.e. computing persistence. The paragraph starting from 627 could be expanded to provide more detail on why/why not this intuition is generally correct.
+    ***Done
+    Greg
+    - This somewhat surprising result highlights the complexity of the algorithms used both to compute persistence and to optimize generators.  A common feature of both the persistence computation and linear optimization is that empirical performance  typically outstrips asymptotic complexity by a wide margin; the persistence computation, for example, has cubic complexity in the size of the complex, but usually runs in linear time.  Thus worst-case complexity paints an incomplete picture.   Moreover, naive ``back of the envelope'' calculations are often hindered by lack of information.  For example, the peristence computation (which essentially reduces to Gaussian elimination) typically processes each of the $m$ columns of a boundary matrix $\partial_n$ in sequence. The polytope of feasible solutions for an associated linear program (edge-loss or triangle-loss) may have many fewer or many more vertices than $m$, depending on the program; moreover, even if the number of vertices is very high, the number of \emph{visited} vertices (e.g., by the simplex algorithm) can be much lower.  Without knowing these numbers a-priori, run times can be quite challenging to estimate.
+
+
+
+Figure ?? on lines 768 and 795, and on the last line of caption of Figure 8. *** Done
+
+Two further points I would welcome to be added as discussion: The question of optimising cycle representatives beyond dimension 1, and do the results of the paper imply anything on this problem? 
+*** Done
+
+Based on the paper findings, is it reasonable to combine cycle optimisation on the fly with persistence algorithm into a software that directly outputs geometrically interpretable barcode? Related to the first question, is this computationally at all sensible beyond dimension 1? There is some discussion on this in the paragraph starting on line 419, but further end discussion would put the results of the paper into a wider context of geometric data analysis with persistence.
+    *** Done 
+    Greg
+    Added in Conclusion:
+    - Several questions lie beyond the scope of this text and merit future investigation.  For example, while the methods discussed in \se \ref{sec:programsandmethods} apply equally to homology in any dimension, we have focused our empirical investigation exclusively in dimension 1; it would be useful and interesting to compare these results with homology in higher dimensions.  It would likewise be interesting to compare with different weighting strategies on simplices, and loss functions other $\ell_0$ and $\ell_1$, e.g. $\ell_2$.  Future work may also consider whether the modified approach to edge-loss minimization (Program \eqref{eq:edgelossgeneral}) could be incorporated into persistence solvers themselves, as pioneered in \cite{Escolar2016}.  Unlike the programs formulated in this earlier work, \pr \ref{eq:edgelossgeneral} requires information about the death times of cycles in addition to their births; typically this information is not available until after the persistence computation has already finished, so new innovations would probably be needed to make progress in this direction. 
+
+
+Overall I found the paper well written and the results to be relevant and extensively presented. After the authors have considered and replied to the few comments above, I can recommend this paper for publication
+
+
+REVIEWER US
+
+- comment on Erdos Renyi?
+***Done
+
+- Replace figures 6 and figure 11
+***Done 
+
+- In the conclusion, we should note that the l0 problem we solve is the one where we restrict solutions to the unit cube
+    ***Done
+    Greg
+    -- conclusion: (that is, $\ell_0$ optimal among cycles taking $\{0,1,-1\}$ coefficients!)
+    -- section 6.4: \emph{Caveat lector} Recall that, in this context, $\ell_0$ optimality refers to the \emph{restricted} integer problem where coefficients are constrained to lie in $\{0,1,-1\}$.  The unrestricted problem (about which we have nothing to say) may have quite different properties. 
+    
+- Section 6.7: "We do not have a way to measure the effectiveness of the volume optimal cycles."  Greg thinks we can!
+
+
+- Could we also look at the effectiveness of the optimization as a function of the number of loops in the original cycle representative?  It would be interesting if most of the savings came from there.
+    *** Done
+
+- Figure 8: the subplot in the top left corner might need a different heading
+    *** Done
+    
+- in Lu's presentation it looked as though the compression rations (effectiveness of optimization) was a bit higher than shown in Figure 11?
+    *** Done (double checked that current figures are up to date) :)
+
+
+- for some other time: look to see if the diagonal elements of the change of basis matrices are all +1/-1 (if they are, then we can actually answer the question that was asked earlier about Z_n coefficients)
+
+- for some other time: look at number of loops in erdos renyi complexes
+
+\end{document}
+4.29.2021
+1. duplicated bars
+2. update one generator not in {0,1,-1}
+3. update the text: only area for dimension 2 (sentence: non euclidean distances could be triangles that do not obey tri inequality so we just look at eulicdean distance matrix)
+4. text: change words for area
+
+# note:2x100-Gamma-4-gen17

@@ -1,0 +1,106 @@
+\begin{figure}[h]
+\begin{minipage}[h]{0.5\textwidth}
+\hspace{0.45in}
+  \begin{tikzpicture}[
+roundnode/.style={circle, draw=black, fill=black!5, ultra thick, minimum size=7mm},
+]
+%Nodes
+\node[roundnode]      (maintopic)                              {$\mathbf{v}_2$};
+\node[roundnode]        (uppercircle)       [above=of maintopic] {$\mathbf{v}_1$};
+\node[roundnode]      (rightsquare)       [right=of maintopic] {$\mathbf{v}_3$};
+\node[roundnode]        (lowercircle)       [above=of rightsquare] {$\mathbf{v}_4$};
+
+%Lines
+\draw[-] (uppercircle.south) -- (maintopic.north) node[pos=0.5, left] {$\mathbf{e}_5$};
+\draw[-] (maintopic.east) -- (rightsquare.west) node[pos=0.5, below] {$\mathbf{e}_6$};
+\draw[-] (rightsquare.north) -- (lowercircle.south)node[pos=0.5, right] {$\mathbf{e}_7$};
+\draw[-] (lowercircle.west) -- (uppercircle.east)node[pos=0.5, above] {$\mathbf{e}_8$};
+\end{tikzpicture}\\
+\centering
+$X$
+ \end{minipage}
+ \begin{minipage}[h]{0.45\textwidth}
+ \hspace{0.1in}
+  \begin{blockarray}{r c c c c}
+    & $\mathbf{e}_5$ & $\mathbf{e}_6$ & $\mathbf{e}_7$ & $\mathbf{e}_8$
+    \\
+    \begin{block}{r [>{\medspace}c c c c<{\medspace}]}
+        $\mathbf{v}_1$ & 1 &   &   & 1\bigstrut[t]
+        \\
+        $\mathbf{v}_2$ & 1 & 1 &   &  
+        \\
+        $\mathbf{v}_3$ &  & 1 & 1 &  
+        \\
+        $\mathbf{v}_4$ &  &  & 1 & 1\bigstrut[b]
+        \\
+    \end{block}
+\end{blockarray}\\
+\centering
+$D$
+ \end{minipage}
+\caption{\textit{Left} A 1-dimensional simplicial complex. Every 1-dimensional simplicial complex is a combinatorial graph. \textit{Right} The boundary matrix of $X$.}
+    \label{fig:my_label}
+\end{figure}
+% \begin{tikzpicture}[scale = .45]
+% \foreach \x in {16,24,32} %put here so triangles aren't on top of vertices
+%     \draw[fill = gray] (0+\x,0) -- (1 + \x,2) -- (2 + \x,0) -- (0 + \x,0);
+% \foreach \x in {32} %put here so triangles aren't on top of vertices
+%     \draw[fill = gray] (2+\x,0) -- (3 + \x,2) -- (1 + \x,2) -- (2 + \x,0);
+% \foreach \x in {0,8,16,24,32}
+%     {
+%     \node[circle, fill = black, minimum size = .1cm, inner sep =1.5pt] (a\x) at (0 + \x,0){};
+%     \node[left=1.5pt of a\x] {$a$};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep =1.5pt] (b\x) at (1 + \x,2)  {};
+%     \node[left=1.5pt of b\x] {$b$};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep =1.5pt] (c\x) at (2 + \x,0) {};
+%     \node[below=1.5pt of c\x] {$c$};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep =1.5pt] (d\x) at (3 + \x,2) {};
+%     \node[right=1.5pt of d\x] {$d$};
+%     \node[circle, fill = black, minimum size = .1cm, inner sep =1.5pt] (e\x) at (4 + \x,0) {};
+%     \node[right=1.5pt of e\x] {$e$};
+%     \draw[black, thick] (a\x) -- (b\x) -- (d\x) -- (e\x) -- (c\x) -- (a\x);
+%     }
+% \foreach \x in {8,16,24,32}
+%     {
+%     \draw[black, thick] (b\x) -- (c\x);
+%     \node[draw = none] at (\x - 2,1) {$\hookrightarrow$};
+%     }
+% \foreach \x in {24,32}
+%     \draw[black, thick] (d\x) -- (c\x);
+% \end{tikzpicture}
+
+% \begin{blockarray}{r c c c c c c c}
+%     & $ab$ & $ac$ & $bd$ & $ce$ & $de$ & $bc$ & $cd$
+%     \\
+%     \begin{block}{r [>{\medspace}c c c c c c c<{\medspace}]}
+%         a & -1 & -1 & 0 & 0 & 0 & 0 & 0
+%         \\
+%         b & 1 & 0 & -1 & 0 & 0 & -1 & 0
+%         \\
+%         c & 0 & 1 & 0 & -1 & 0 & 1 & -1
+%         \\
+%         d & 0 & 0 & 1 & 0 & -1 & 0 & 1
+%         \\
+%         e & 0 & 0 & 0 & 1 & 1 & 0 & 0
+%     \end{block}
+% \end{blockarray}
+
+% \begin{blockarray}{r c c c }
+%     & $abc$ & $bcd$ \\
+%     \begin{block}{r [>{\medspace}c c c  c<{\medspace}]}
+%         ab & 1 & 0 
+%         \\
+%         ac & -1 & 0  
+%         \\
+%         bd & 0 & 1  
+%         \\
+%         ce & 0 & 0  
+%         \\
+%         de & 0 & 0 
+%         \\
+%         bc & 1 & -1  
+%         \\
+%         cd & 0 & 1 
+%     \end{block}
+% \end{blockarray}
+

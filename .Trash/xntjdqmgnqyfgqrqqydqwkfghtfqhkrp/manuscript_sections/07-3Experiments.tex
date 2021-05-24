@@ -1,0 +1,83 @@
+\section{Experiments}\label{methods}
+
+
+In order to address the questions raised in \se \ref{intro}, we conduct an empirical study of minimal homological cycle representatives---as defined by the optimization problems detailed in Section \ref{sec:programsandmethods}---on a collection of point clouds, which includes both real world data sets and point samples drawn from four common probability distributions of varying dimension. 
+%The samples studied are described in \se \ref{sec: realworlddata} and \se \ref{sec: randompointclouds}. Hardware and software are described in \se\ref{subsec:hardwaresoftware}. The linear and integer-linear solvers deployed, as well as other properties used for comparison, are described in \se \ref{linear solvers}. 
+
+%The acceleration techniques employed in our program are described in \se \ref{acceleratation technique}.\\
+
+% Further, we explore structural properties that are directly relevant to the interpretability and usefulness of the outputs (such as cyclicity). We also examine the time cost of computation as compared against two different solvers.  
+
+% \GHP{In order to address questions (i)-(v) laid out in the introduction, we compared the results of a state-of-the-art optimization techniques to a collection of point clouds that includes both real world data sets and point samples drawn from four common probability distributions on $R^n$, for $n = 2, \ldots, 10$.  Comparisons were made both against standard loss functions and several structural properties that are directly relevant the interpretability and usefulness of the outputs (such as cyclicity).  We also examined the time cost of computation as compared against several different solvers.   The samples studied are described in \S\ref{subsec:data}.  Hardware and software are described in \S\ref{subsec:machines}.  The linear and integer-linear programs deployed, as well as other properties used for comparison, are described in \ref{sec:minimalcycle representatives}. }
+
+
+% \subsection{Data}
+% \label{subsec:data}
+
+\newcommand{\sample}{\mathbf{S}}
+
+
+\subsection{Real-World Data Sets.} \label{sec: realworlddata}
+We consider $11$ real world data sets from \cite{roadmap2017}, a widely used reference for benchmark statistics concerning persistent homology computations. There are $13$ data sets considered by \cite{roadmap2017}, however, one of them (gray-scale image) is not available, and one of them is a randomly generated data set %with $50$ points drawn from $\mathbb{R}^{16}$ of a uniform distribution, 
+similar to our own synthetic data. We summarize information about the dimension, number of points, persistence computation time of each point cloud in Table \ref{tab:realworldata}. Below we provide brief descriptions of each data set, but we refer the interested reader to \cite{roadmap2017} for further details. In each case, we use Euclidean distance to measure dissimilarity between points.
+%\LZ{Lu, can you put in a citation from the github repo to the roadmap paper? In our own github repo, we may want to create a read me that gives more specifices on the data.}
+
+\begin{enumerate}
+    \item Vicsek biological aggregation model. The Vicsek model is a dynamical system describing the motion of particles. %interacting in a square with periodic boundary conditions
+    It was first introduced in \cite{vicsek} and was analyzed using PH in \cite{TZH15}. We consider a snapshot in time of a single realization of the model %consisting of $300$ points in $3$-dimensional Euclidean space 
+    with each point specified by its $(x,y)$ position and heading. We denote this data by \textbf{Vicsek}. 
+    \item Fractal networks. These networks are self-similar and are used to explore the connection patterns of the cerebral cortex \cite{fractr}. The distances between nodes in this data set are defined uniformly at random by \cite{roadmap2017}. In another data set, the authors of \cite{roadmap2017} define distances between nodes by using linear weight-degree correlations. We consider both data sets and found the results to be similar. Therefore, we opt to use the one with distances defined uniformly at random. %It contains $512$ points with ambient dimension of $259$. 
+    We denote this data set by \textbf{fract r}.  
+    \item C.elegans neuronal network. This is an undirected network in which each node is a neuron, and edges represent synapses. It was studied using PH in \cite{celegans}. Each nonzero edge weight is converted to a distance equal to its inverse by \cite{roadmap2017}. %It contains $297$ points of dimension $202$. 
+    We denote this data by \textbf{eleg}.
+    \item Genomic sequences of the HIV virus. This data set is constructed by taking $1,088$ different genomic sequences of dimension $673$. The aligned sequences were studied using PH in \cite{hiv} with sequences retrieved from \cite{HIVdata}. We denote this data by \textbf{HIV}. 
+    \item Genomic sequences of H3N2. This data set contains $1,173$ genomic sequences of H3N2 influenza in dimension $2,722$. We denote this data set as \textbf{H3N2}. 
+    % \item Genomic sequences of H3N2. This data set is constructed by taking $1,000$ different genomic sequences of H3N2 influenza and computing distances between them by using the Hamming distance by \cite{roadmap2017} using the aligned sequences studied using PH in \cite{hiv}. We denote this data set by \textbf{H3N2}. 
+    \item Human genome. This is a network representing a sample of the human genome studied using PH in \cite{celegans}, which was created using data retrieved from \cite{genome}. %This data set has ambient dimension of $688$ and contains $1397$ data points. 
+    The weight of the edges are taken as the inverse of the correlation between the expression levels of the corresponding genes of the two vertices. We denote this data set by \textbf{genome}.
+    \item US Congress roll-call voting networks. In the two networks below, each node represents a legislator, and the edge weight is a number in $[0,1]$ representing the similarity of the two legislators' past voting decisions.
+    \begin{enumerate}
+        \item \textbf{House}. This is a weighted network of the House of Representatives from the 104th United States Congress. %It contains $445$ points with ambient dimension of $261$. 
+        \item \textbf{Senate}. This is a weighted network of the Senate from the 104th United States Congress. %It contains $103$ points with ambient dimension of $60$.
+    \end{enumerate}
+    \item Network of network scientists. This data set represents the largest connected component of a collaboration network of network scientists \cite{newman2006finding}. %It contains $379$ points with ambient dimension of $300$. 
+    We denote this data set by \textbf{network}. 
+    \item Klein. The Klein bottle is a non-orientable surface with one side. This data set was created in \cite{roadmap2017} by linearly sampling $400$ points from the Klein bottle using its  `figure-8' immersion in $\mathbb{R}^3$. This data set originally contains $39$ duplicate points, which we remove. %This data set has one connected component and one loop \LZ{a standard klein bottle does, but if there is noise, this may not be the case.}. 
+    We denote this data set by \textbf{Klein}. 
+    \item Stanford Dragon graphic. This data set contains $1000$ points sampled uniformly  at random by \cite{roadmap2017} from $3$-dimensional scans of the dragon \cite{drag}. We denote this data set \textbf{drag}.
+\end{enumerate}
+\vspace{0.2cm} % remove if the spacing fixes itself
+\subsection{Randomly Generated Point Clouds.}\label{sec: randompointclouds}
+We also generate a large corpus of synthetic point clouds, each containing $100$ points in $\mathbb{R}^q$ with $q = 2,\ldots,10$, drawn from normal, exponential, gamma, and logistic distributions. We produce $10$ realizations for each distribution and dimension combination, for a total of $360$ randomly generated point clouds. Again, Euclidean distance is used to measure similarity between points.
+
+\subsection{Computations}
+
+For each of the data sets, we perform Algorithms \ref{alg:edge} and \ref{alg:rdvvolumeoptimization} (using Vietoris-Rips complexes with $\Q$ coefficients) to find optimal bases $\hcyclebasis^*, \deathbasis \in \setofpersistenthcyclebases$.  For comparison to the edge-loss problem in Algorithm \ref{alg:edge}, we also apply \pr \eqref{eq:escolarargmin} to each representative in the persistent homology cycle basis to find a basis $\fcyclebasis \in \setoffilteredcyclebases$.
+
+\subsection{Hardware and Software}
+\label{subsec:hardwaresoftware}
+
+We test our programs on an iMac (Retina 5K, 27-inch, 2019) with a 3.6 GHz Intel Core i9 processor and 40 GB 2667 MHz DDR4 memory.
+
+
+Software for our experiments is implemented in the programming language Julia; source code is available at \cite{li_thompson}.  This code specifically implements Algorithms \ref{alg:edge}\footnote{ \pr \eqref{eq:escolarargmin} is implemented analogously.} and \ref{alg:rdvvolumeoptimization}.
+
+
+Since our interest lies not only with the outputs of these algorithms but with the structure of the linear programs themselves, \cite{li_thompson} implements a standalone workflow that exposes the objects built internally within each pipeline.  This library is simple by design, and does not implement the performance-enhancing techniques  developed in \cite{Escolar2016, Obayashi2018}. Users wishing to work with optimal cycle representatives for applications may consider these approaches %; details regarding existing implementations and how to access them can be found 
+discussed in \se \ref{sec:existingimplementations}.
+
+
+To implement  Algorithms \ref{alg:edge} and \ref{alg:rdvvolumeoptimization}, the test library \cite{li_thompson} provides three key functions: %(i) an algebraic solver is used to compute persistent cycle representatives, (ii) cycle and boundary matrix data is formatted for each of the linear programs, (iii) optimal solutions are computed via general-purpose linear solvers.
+
+\emph{A novel solver for persistence with $\Q$ coefficients.} To compute cycle representatives for persistent homology with $\Q$ coefficients, we implement a new persistent homology solver adapted from  \url{Eirene}  \cite{eirenecode}.  The adapted version uses native Eirene code as a subroutine to reduce the number of columns in the top dimensional boundary matrix in a way that is guaranteed not to alter the outcome of the persistence computation \cite{eirene}.
+
+\emph{Formatting of inputs to linear programs.} 
+Having computed barcodes and persistent homology cycle representatives, library \cite{li_thompson}  provides built-in functionality to format the linear Programs \eqref{eq:edgelossgeneral} and \eqref{eq:trianglelossgeneral} for input to a linear solver.  This ``connecting'' step is executed in pure Julia.
+% by, and then constructing the $\partial_2$ matrix needed by different optimization problems. We construct $\boundsub$ for the optimization problems  Equations (\ref{eq:MIP-vol}) and (\ref{eq:LP-vol}) and the basis boundary matrix  $\hat{\partial_2}$ for Equations (\ref{LP-Unif}), (\ref{MIP-Unif}), (\ref{LP-Len}), (\ref{MIP-Len}). \LZ{Have not defined $\boundsub$ and $\hat{\partial_2}$ yet, move after acceleration techniques?}
+
+
+\emph{Wrappers for linear solvers.} \label{linear solvers}
+%After computing a basis of cycle representatives from the persistence algorithm \cite{eirene} and constructing the input to the algorithms discussed in \se \ref{eightproblems}, we minimize the original cycle representatives to obtain an optimal homology basis using the eight optimization problems listed in \se \ref{eightproblems}. 
+We use the Gurobi linear solver \cite{gurobi} and the GLPK  solver \cite{glpk}. Both solvers can optimize both LPs and MIPs. Experiments indicate that Gurobi executes much faster than GLPK on this class of problems, and thus, we use it in the bulk of our computations. Both solvers are free for academic users. 
+
+
