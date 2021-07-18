@@ -56,7 +56,7 @@ function prsb_Edge(C)
     return optimied
 end
 
-findEdge()
+findEdge(C)
 
 
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen) # plots the optimal generator
@@ -76,7 +76,7 @@ function tri_loss(C)
     return optimied
 end
 
-findTri()
+tri_loss(C)
 
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen)
 

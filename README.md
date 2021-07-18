@@ -7,7 +7,7 @@
 1. Download Julia from https://julialang.org/downloads/ and double click to install.
 2. Download Atom from https://atom.io/.
 3. Open Atom, go to preference -> packages, install package: `uber-juno`.
-4. Download Gurobi and obtain a free academic license at https://www.gurobi.com/academia/academic-program-and-licenses/. Run: ENV["GUROBI_HOME"] = "/Library/gurobi912/mac64"
+4. Download Gurobi and obtain a free academic license at https://www.gurobi.com/academia/academic-program-and-licenses/. Open a Julia cones ENV["GUROBI_HOME"] = "/Library/gurobi912/mac64"
 5. Open the folder containing all the scripts in Atom.
 6. Open the file named `installRequirements.jl`, run this file to install required packages and load all the other scripts into the environment. I had to run Pkg.build("HDF5") to compile Eirene.
 
