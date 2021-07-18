@@ -145,7 +145,7 @@ function volumeOptimize(D, d, l, dd, triVerts, secondTime, positive, Area, integ
 
 
     success = (firstcol in (dropzeros(dd[:,1:xlen] * xx[:,:]).rowval))
-    totalarea = -1# transpose(totalareaVec) * a
+    totalarea = transpose(totalareaVec) * a
     numOfTri = length(findall(x -> x!= 0, xx))
     numEdge = length(findall(x->x!=0, volGens.nzval))
     a = spzeros(length(volGens),1)
