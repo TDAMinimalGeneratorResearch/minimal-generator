@@ -1,5 +1,5 @@
 include("EireneCode.jl")
-using Distances
+
 function transpose_sparse(M)
 	"""
 	Takes in an array A, returns the transpose of it in sparse form.

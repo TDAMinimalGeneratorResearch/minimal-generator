@@ -76,7 +76,7 @@ function volumeOptimize(D, d, l, dd, triVerts, secondTime, positive, Area, integ
     xlen = size(dd,2)
     zlen = 1
 	ylen = xlen  -zlen
-    m2 = Model(Gurobi.Optimizer) # Clp.Optimizer
+    m2 = Model(GLPK.Optimizer) # Clp.Optimizer
     ## create variable x which is the optimal volumD.
 	println("variable")
 	println(xlen)

@@ -6,9 +6,9 @@ we compute the homology as well as its dimension one minimal generators.
 #              COMPUTE HOMOLOGY          #
 ##########################################
 # 1. read in file:
-pc = readdlm("pointcloud.csv")
+pc = readdlm("data/Synthetic-data/Gamma/Gamma-pointcloud/8x100-Gamma-8.csv")
 # 2. call computeHomology
-C = computeHomology(pc, 1) # <- compute homology of pc in dimension 1
+C = computeHomology(pc, false, 1) # <- compute homology of pc in dimension 1
 plotBarCode(C) # plots the bar code for a pointcloud
 # 3.Some outputs we might be interested in:
 m_th_point = C_m__coord(C, 1)
@@ -46,12 +46,38 @@ output:
 2. the length weighted cost of the optimal generator
 3. the uniform weighted cost of the optimal generator
 """
-uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findUniformWeightedOptimalCycles(C, d, l, requireIntegralSol)
+
+function prsb_Edge(C)
+    optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+    for l in 1: length(C.generators[1])
+        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findUnifEdgeOptimalCycles_prs(C, d, l, optimied, requireIntegralSol, true, true)
+        optimied[l] = vcat(uniform_weighted_minimal_gen, zeros(length(C.generators[1][1]) - length(uniform_weighted_minimal_gen.nzval)))
+    end
+    return optimied
+end
+
+findEdge()
+
+
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen) # plots the optimal generator
 plotGenerators(C,d,l) # plots the original generator
 ## requiring integral solutions
 requireIntegralSol = false
 uniform_weighted_minimal_gen, uniform_Len, uniform_zeroNorm = findUniformWeightedOptimalCycles(C, d, l, requireIntegralSol)
+
+function tri_loss(C)
+    optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+    for l in 1: length(C.generators[1])
+        lower, upper = C.barCode[1][l]
+        dd, hverts=  findbasis(C, C.pointCloud, lower, upper, false)
+        optimal = findVolumeOptimalCycle(C,d,l,dd, hverts)
+        optimied[l] = optimal[1]
+    end
+    return optimied
+end
+
+findTri()
+
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen)
 
 # 2. length-weighted minimal generator: (minimizing the length of the generators)

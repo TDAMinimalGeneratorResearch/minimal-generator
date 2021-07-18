@@ -166,7 +166,7 @@ function findbasis(D, pc, lower, upper, distmat=false)
 	if distmat
 		distance_matrix= pcreorder[vecverts,:]
 	else
-		distance_matrix = pairwise(Euclidean(), pcreorder)
+		distance_matrix = Distances.pairwise(Euclidean(), pcreorder)
 	end
 	di=upper
 	x = distance_matrix__bdrMatrix(distance_matrix, vecverts, 0, di)
@@ -175,5 +175,5 @@ function findbasis(D, pc, lower, upper, distmat=false)
 	a = signbdrMatrix(verts, lowverts, higverts, 1, triangles, edge, grainsone, grainstwo)
 	filtrationorder = bdrMatrices__filtrationorder(a,1)
 	bdr = SparseMatrixCSC(length(filtrationorder["cp"][1]) - 1, length(filtrationorder["cp"][2]) - 1, filtrationorder["cp"][2], filtrationorder["rv"][2], filtrationorder["vl"][2])
-	return bdr, sort!(grainstwo, rev = true), sort!(distances), filtrationorder["hverts"], sort!(edgeLength)
+	return bdr, filtrationorder["hverts"] 
 end

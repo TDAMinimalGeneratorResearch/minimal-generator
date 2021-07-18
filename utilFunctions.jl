@@ -1,5 +1,4 @@
-using Plots
-using JuMP,GLPK
+
 
 ######### visualize in 3D
 function plotGenerators(C, d, k, plotAllGens = false)

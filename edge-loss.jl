@@ -3,7 +3,9 @@ Compute uniform/length weighted edge-loss optimal cycles.
 prs: persistent homological cycle basis
 fcb: filtered complex basis
 """
-function findUnifEdgeOptimalCycles_prs(C, d, l,optimized_gens, intSol = false, verbose = false, pivot = true)
+
+
+function findUnifEdgeOptimalCycles_prs(C, d, l, optimized_gens, intSol = false, verbose = false, pivot = true)
 	bi,di = C.barCode[1][l]
 	bcVec = hcat(C.barCode[1]...)
 	biVec = bcVec[1,:] # all the birth distances as a vector
