@@ -88,15 +88,15 @@ function findLenEdgeOptimalCycles_prs(C, d, l,optimized_gens, intSol = false, ve
 end
 
 
-function C_d_l__minimal(C,d,l, with_length, int_sol, existing_gens = [], pivot = true)
+function C_d_l__minimal(C,d,l, with_length_or_custom, int_sol, existing_gens = [], pivot = true)
 	"""
 	* (C,d,l) 	  --> vector xx which is a minimal generator homologous to the
 						lth d-dimensional generator (c_l) of C, unless existing gens
 						are given, in which case it is homologous to a sum of
 						c_l and existing_gens.
-						with_length indicates whether to
+						with_length_or_custom indicates whether to
 						minimize euclidean distance (if false, will instead
-						minimize number of simplices) *don't set with_length to
+						minimize number of simplices) *don't set with_length_or_custom to
 						true for dimension not equal to 1
 						setting int_sol = false may be faster, but may produce
 						bad solutions sometimes
@@ -132,10 +132,14 @@ function C_d_l__minimal(C,d,l, with_length, int_sol, existing_gens = [], pivot =
 	end
 	@variable(m2, y[1:ylen])
 	## we want to minimize sum abs x such that x differs from our generator by a boundary
-	if with_length
-		@objective(m2, Min, transpose(C.distVec[C.grainVec[2]][1:xlen])*(x_pos[1:xlen] .+ x_neg[1:xlen]) ) #shortest length
+	if typeof(with_length_or_custom) == Bool
+		if with_length_or_custom
+			@objective(m2, Min, transpose(C.distVec[C.grainVec[2]][1:xlen]) * (x_pos[1:xlen] .+ x_neg[1:xlen]) ) #shortest length
+		else
+			@objective(m2, Min, sum(x_pos[1:xlen].+x_neg[1:xlen]))
+		end
 	else
-		@objective(m2, Min, sum(x_pos[1:xlen].+x_neg[1:xlen]))
+		@objective(m2, Min, with_length_or_custom * (x_pos[1:xlen] .+ x_neg[1:xlen]) ) #shortest length
 	end
 	@constraints(m2, begin x_pos[1:xlen] .>= 0; x_neg[1:xlen] .>= 0 end)
 	@constraint(m2, x_pos[1:xlen] .- x_neg[1:xlen] .- ddi1 * y .==  convert(SparseMatrixCSC{Rational{Int64}, Int64}, gen[1:lastcol]))

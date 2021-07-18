@@ -6,7 +6,7 @@ we compute the homology as well as its dimension one minimal generators.
 #              COMPUTE HOMOLOGY          #
 ##########################################
 # 1. read in file:
-pc = readdlm("data/Synthetic-data/Gamma/Gamma-pointcloud/8x100-Gamma-8.csv")
+pc = readdlm("data/Synthetic-data/Gamma/Gamma-pointcloud/2x100-Gamma-4.csv")
 # 2. call computeHomology
 C = computeHomology(pc, false, 1) # <- compute homology of pc in dimension 1
 plotBarCode(C) # plots the bar code for a pointcloud
@@ -38,7 +38,7 @@ Pkg.build("Gurobi") # run in repl: ENV["GUROBI_HOME"]="/Library/gurobi903/mac64/
 using Gurobi
 d = 1  # dimension of the generator we hope to minimize
 l = 17 # index of the generator we hope to minimize
-requireIntegralSol = true # whether we want to require the generator vector to have integral entries.
+requireIntegralSol = false # whether we want to require the generator vector to have integral entries.
 ## 1. Uniform-weighted minimal generator: (minimizing the number of edges in the generators)
 """
 output:
@@ -50,13 +50,15 @@ output:
 function prsb_Edge(C)
     optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
     for l in 1: length(C.generators[1])
-        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findUnifEdgeOptimalCycles_prs(C, d, l, optimied, requireIntegralSol, true, true)
+        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findLenEdgeOptimalCycles_prs(C, d, l, optimied, requireIntegralSol, true, true)
         optimied[l] = vcat(uniform_weighted_minimal_gen, zeros(length(C.generators[1][1]) - length(uniform_weighted_minimal_gen.nzval)))
     end
     return optimied
 end
 
-findEdge(C)
+A = prsb_Edge(C)
+A[17]
+A[1].rowval
 
 
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen) # plots the optimal generator
@@ -64,13 +66,14 @@ plotGenerators(C,d,l) # plots the original generator
 ## requiring integral solutions
 requireIntegralSol = false
 uniform_weighted_minimal_gen, uniform_Len, uniform_zeroNorm = findUniformWeightedOptimalCycles(C, d, l, requireIntegralSol)
-
+l=17
 function tri_loss(C)
     optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
     for l in 1: length(C.generators[1])
         lower, upper = C.barCode[1][l]
-        dd, hverts=  findbasis(C, C.pointCloud, lower, upper, false)
-        optimal = findVolumeOptimalCycle(C,d,l,dd, hverts)
+
+        dd, triVerts = constructInput(C,1,17)
+        optimal = findVolumeOptimalCycle(C,d,l,dd, hverts, true)
         optimied[l] = optimal[1]
     end
     return optimied
@@ -87,3 +90,9 @@ plotMinimalLengthGenerators(C,1,length_weighted_minimal_gen)
 save("sampleHObject.jld", "C", C)
 # load saved C objects.
 C = load("sampleHObject.jld")["C"]
+
+classrep(C,1,1)
+
+C.permutedlverts[2][:, generators[1].rowval]
+
+typeof(true) == Bool

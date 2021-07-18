@@ -39,7 +39,7 @@ function constructInput(D, d, l)
 		ddi1 = findbasis(D, D.pointCloud, bi, di)
 	    deathGrain = findall(x -> x == di, D.distVec)[1]
 		dis = findall(x->x == deathGrain, D.grainVec[3])
-		pivotdis = dis[findall(in(broadcast(abs,D.pcola[2])), dis)] # triangles born at the death time that are pivot columns
+		# pivotdis = dis[findall(in(broadcast(abs,D.pcola[2])), dis)] # triangles born at the death time that are pivot columns
 
 		sigmadi = Int(D.simplexcode[d][l][2]) # the trianle born at the death time of the cycle
 		divec = pivotdis[findall(x->x<= sigmadi, pivotdis)] # all pivot triangles born before the death triangle
@@ -48,8 +48,8 @@ function constructInput(D, d, l)
 		didi = ddi1[1][:, findall(x->x==di, ddi1[3])]
 		dd = dd[:, 1:(size(dd,2) - size(didi,2))] # all triangles born before the death time of the cycle
 		oribdr = SparseMatrixCSC(length(D.bdrMatrices["cp"][1])-1, length(D.bdrMatrices["cp"][2])-1, D.bdrMatrices["cp"][2], D.bdrMatrices["rv"][2],  D.bdrMatrices["vl"][2])
-		dd = hcat(dd, oribdr[1:size(dd,1), divec]) # all triangles born before the death time, and triangles born at the death time are pivots
-		triVerts = hcat(ddi1[4][2][:, 1:(size(ddi1[1],2) - size(didi,2))], D.permutedhverts[2][:,divec])
+		dd = hcat(dd, oribdr[1:size(dd,1), dis]) # all triangles born before the death time, and triangles born at the death time are pivots
+		triVerts = hcat(ddi1[4][2][:, 1:(size(ddi1[1],2) - size(didi,2))], D.permutedhverts[2][:,dis])
 		return dd, triVerts
 end
 
@@ -76,7 +76,7 @@ function volumeOptimize(D, d, l, dd, triVerts, secondTime, positive, Area, integ
     xlen = size(dd,2)
     zlen = 1
 	ylen = xlen  -zlen
-    m2 = Model(Gurobi.Optimizer) # Clp.Optimizer
+    m2 = Model(GLPK.Optimizer) # Clp.Optimizer
     ## create variable x which is the optimal volumD.
 	println("variable")
 	println(xlen)

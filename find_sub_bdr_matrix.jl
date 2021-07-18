@@ -175,5 +175,5 @@ function findbasis(D, pc, lower, upper, distmat=false)
 	a = signbdrMatrix(verts, lowverts, higverts, 1, triangles, edge, grainsone, grainstwo)
 	filtrationorder = bdrMatrices__filtrationorder(a,1)
 	bdr = SparseMatrixCSC(length(filtrationorder["cp"][1]) - 1, length(filtrationorder["cp"][2]) - 1, filtrationorder["cp"][2], filtrationorder["rv"][2], filtrationorder["vl"][2])
-	return bdr, filtrationorder["hverts"] 
+	return bdr, sort!(grainstwo, rev = true), sort!(distances), filtrationorder["hverts"], sort!(edgeLength)
 end
