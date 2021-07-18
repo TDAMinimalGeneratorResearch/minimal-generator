@@ -93,13 +93,13 @@ function volumeOptimize(D, d, l, dd, triVerts, secondTime, positive, Area, integ
     # @variable(m2, y[1:ylen]) # a vector of the coefficients for the q+1 simplices born in (bi, di)
     # @variable(m2, z[1:zlen]) # variable z is a vector of the coefficients for the q+1 simplices born at di.
 	println("done")
-	# totalareaVec = Array{Float64}(undef, size(triVerts,2))
-	# # dm = pairwise(Euclidean(), pc)
-	# for i in 1:size(triVerts,2)
-	# 	points = triVerts[:,i]
-	# 	totalarea = findAreaDM(points, D.pointCloud)
-	# 	global totalareaVec[i] = totalarea
-	# end
+	totalareaVec = Array{Float64}(undef, size(triVerts,2))
+	# dm = pairwise(Euclidean(), pc)
+	for i in 1:size(triVerts,2)
+		points = triVerts[:,i]
+		totalarea = findArea(C.pointCloud[:,points])
+		totalareaVec[i] = totalarea
+	end
 	if !Area
 		@objective(m2, Min, sum(x_pos[1:xlen] .+ x_neg[1:xlen])) # for smallest sum of coeff.
 	else
