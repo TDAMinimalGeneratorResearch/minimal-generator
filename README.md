@@ -8,9 +8,9 @@
 2. Download Atom from https://atom.io/.
 3. Open Atom, go to preference -> packages, install package: `uber-juno`.
 4. Download Gurobi and obtain a free academic license at https://www.gurobi.com/academia/academic-program-and-licenses/. Run: ENV["GUROBI_HOME"] = "/Library/gurobi912/mac64"
-4. Open the folder containing all the scripts in Atom.
-5. Open the file named `installRequirements.jl`, run this file to install required packages and load all the other scripts into the environment. I had to run Pkg.build("HDF5") to compile Eirene.
-6.
+5. Open the folder containing all the scripts in Atom.
+6. Open the file named `installRequirements.jl`, run this file to install required packages and load all the other scripts into the environment. I had to run Pkg.build("HDF5") to compile Eirene.
+
 
 ### To compute homology and optimize generators for a given pointcloud, look at an example pipeline in the file `exampleRun.jl`.
 
