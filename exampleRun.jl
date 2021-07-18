@@ -67,13 +67,14 @@ plotGenerators(C,d,l) # plots the original generator
 requireIntegralSol = false
 uniform_weighted_minimal_gen, uniform_Len, uniform_zeroNorm = findUniformWeightedOptimalCycles(C, d, l, requireIntegralSol)
 l=17
+plotGenerators(C,1,17)
 function tri_loss(C)
     optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
     for l in 1: length(C.generators[1])
         lower, upper = C.barCode[1][l]
-
+        # dd, hverts=  findbasis(C, C.pointCloud, lower, upper, false)
         dd, triVerts = constructInput(C,1,17)
-        optimal = findVolumeOptimalCycle(C,d,l,dd, hverts, true)
+        optimal = findAreaOptimalCycle(C,d,l,dd, triVerts, true)
         optimied[l] = optimal[1]
     end
     return optimied
