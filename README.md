@@ -1,7 +1,39 @@
 # minimal-generator
 
 
-# Compute Homology
+## Quick start without Atom
+
+
+1. Download Julia from https://julialang.org/downloads/ and double click to install.
+2. Download Gurobi and obtain a free academic license at https://www.gurobi.com/academia/academic-program-and-licenses/. 
+3. Open a Julia REPL, and enter
+
+	```
+	julia> ENV["GUROBI_HOME"] = "/Library/gurobi912/mac64"
+ 	```
+ 	This tells Julia where to find the Gurobi installation.
+4. Import the minimal-generator library files by running the following commands in the julia REPL:
+
+	```
+	using Pkg
+	cd("path/to/source/folder")
+	include("installRequirements.jl")
+	```
+	
+5. Follow the example in `exampleRun.jl.`  For example, start by importing a point cloud, computing homology, and plotting a barcode:
+
+	```
+	# import a data file:
+	pc = readdlm("data/Synthetic-data/Gamma/Gamma-pointcloud/2x100-Gamma-4.csv")
+	# compute homology of pc in dimension 1
+	C = computeHomology(pc, false, 1) 
+	# plot the bar code for a pointcloud
+	plotBarCode(C) 
+	```
+
+
+## Quick start with Atom
+
 
 ### Requirements:
 1. Download Julia from https://julialang.org/downloads/ and double click to install.
@@ -15,7 +47,7 @@
 ### To compute homology and optimize generators for a given pointcloud, look at an example pipeline in the file `exampleRun.jl`.
 
 
-### Some output functions:
+## Some output functions:
 * point cloud --> C, where C is some object with "all the information you need"
 					about the computation, we used a customized object called "homologyObject" to represent C.
 * (C,m) 	  --> the euclidean coordinates of the mth point in the point cloud
