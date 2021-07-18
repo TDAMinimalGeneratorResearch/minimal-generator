@@ -39,7 +39,7 @@ function constructInput(D, d, l)
 		ddi1 = findbasis(D, D.pointCloud, bi, di)
 	    deathGrain = findall(x -> x == di, D.distVec)[1]
 		dis = findall(x->x == deathGrain, D.grainVec[3])
-		# pivotdis = dis[findall(in(broadcast(abs,D.pcola[2])), dis)] # triangles born at the death time that are pivot columns
+		pivotdis = dis[findall(in(broadcast(abs,D.pcola[2])), dis)] # triangles born at the death time that are pivot columns
 
 		sigmadi = Int(D.simplexcode[d][l][2]) # the trianle born at the death time of the cycle
 		divec = pivotdis[findall(x->x<= sigmadi, pivotdis)] # all pivot triangles born before the death triangle
