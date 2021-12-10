@@ -1,3 +1,4 @@
+
 """
 This file demonstrates a sample pipeline which takes in a pointcloud csv file as input,
 we compute the homology as well as its dimension one minimal generators.
@@ -37,63 +38,108 @@ gen = C_d_l__gen(C, 1, 10)
 Pkg.build("Gurobi") # run in repl: ENV["GUROBI_HOME"]="/Library/gurobi903/mac64/"
 using Gurobi
 d = 1  # dimension of the generator we hope to minimize
-l = 17 # index of the generator we hope to minimize
 requireIntegralSol = false # whether we want to require the generator vector to have integral entries.
-## 1. Uniform-weighted minimal generator: (minimizing the number of edges in the generators)
+
+
+
 """
 output:
 1. minimal generator vector
 2. the length weighted cost of the optimal generator
 3. the uniform weighted cost of the optimal generator
 """
+##########################################
+#              EDGE- LOSS                #
+##########################################
 
-function prsb_Edge(C)
-    optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+
+## 1. Uniform-weighted edge loss methods, which minimizes the number of edges in the generators.
+
+##################
+# To optimize a basis of cycle representatives
+##################
+function prsb_unif_Edge(C)
+    optimized = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
     for l in 1: length(C.generators[1])
-        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findLenEdgeOptimalCycles_prs(C, d, l, optimied, requireIntegralSol, true, true)
-        optimied[l] = vcat(uniform_weighted_minimal_gen, zeros(length(C.generators[1][1]) - length(uniform_weighted_minimal_gen.nzval)))
+        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findUnifEdgeOptimalCycles_prs(C, d, l, optimized, requireIntegralSol, true, true)
+        optimized[l] = vcat(uniform_weighted_minimal_gen, zeros(length(C.generators[1][1]) - length(uniform_weighted_minimal_gen.nzval)))
     end
-    return optimied
+    return optimized
 end
 
-A = prsb_Edge(C)
-A[17]
-A[1].rowval
+## 2. Length-weighted edge loss methods, which minimizes the total length of edges in the generators.
+
+function prsb_length_Edge(C)
+    optimized = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+    for l in 1: length(C.generators[1])
+        uniform_weighted_minimal_gen, uniform_gen_len, uniform_zeroNorm = findLenEdgeOptimalCycles_prs(C, d, l, optimized, requireIntegralSol, true, true)
+        optimized[l] = vcat(uniform_weighted_minimal_gen, zeros(length(C.generators[1][1]) - length(uniform_weighted_minimal_gen.nzval)))
+    end
+    return optimized
+end
+
+# Example calls:
+len_weighted_edge = prsb_unif_Edge(C)
+len_weighted_edge[l] # to access the lth optimized generator
+
+unif_weighted_edge = prsb_length_Edge(C)
+unif_weighted_edge[l] # to access the lth optimized generator
 
 
+##################
+# To optimize a single generator
+##################
+l = 17 # index of the generator we hope to minimize
+len_weighted = false # can substitute with a vector of lengths to customize your own way of defining length of edges
+uniform_weighted_minimal_gen, uniform_Len, uniform_zeroNorm = C_d_l__minimal(C,d,l, len_weighted, false, C.generators[1][1:l-1], false)
+
+len_weighted = true
+length_weighted_minimal_gen, len_Len, len_zeroNorm = C_d_l__minimal(C,d,l, true, len_weighted, C.generators[1][1:l-1], false)
+
+# plot only works up to dimension 3.
 plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen) # plots the optimal generator
 plotGenerators(C,d,l) # plots the original generator
-## requiring integral solutions
-requireIntegralSol = false
-uniform_weighted_minimal_gen, uniform_Len, uniform_zeroNorm = findUniformWeightedOptimalCycles(C, d, l, requireIntegralSol)
-l=17
-plotGenerators(C,1,17)
-function tri_loss(C)
-    optimied = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+
+
+##########################################
+#         TRIANGLE - LOSS                #
+##########################################
+
+## 3. Uniform-weighted triangle loss methods, which minimizes the number of triangles the generator bounds.
+
+function unif_tri(C)
+    optimized = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
     for l in 1: length(C.generators[1])
-        lower, upper = C.barCode[1][l]
-        # dd, hverts=  findbasis(C, C.pointCloud, lower, upper, false)
-        dd, triVerts = constructInput(C,1,17)
-        optimal = findAreaOptimalCycle(C,d,l,dd, triVerts, true)
-        optimied[l] = optimal[1]
+        dd, triVerts = constructInput(C,1,l)
+        optimal = findVolumeOptimalCycle(C, 1, l, dd, triVerts, true)
+        optimized[l] = optimal[1]
     end
-    return optimied
+    return optimized
 end
 
-tri_loss(C)
+## 4. Area-weighted triangle loss methods, which minimizes the total area of triangles the generator bounds.
 
-plotMinimalEdgeGenerators(C,1,uniform_weighted_minimal_gen)
+function area_tri(C)
+    optimized = Array{SparseMatrixCSC{Float64, Int64}, 1}(undef, length(C.generators[1]))
+    for l in 1: length(C.generators[1])
+        dd, triVerts = constructInput(C,1,l)
+        optimal = findAreaOptimalCycle(C, 1, l, dd, triVerts, true)
+        optimized[l] = optimal[1]
+    end
+    return optimized
+end
 
-# 2. length-weighted minimal generator: (minimizing the length of the generators)
-length_weighted_minimal_gen, length_Len, length_zeroNorm = findLengthWeightedOptimalCycles(C, d, l, requireIntegralSol)
-plotMinimalLengthGenerators(C,1,length_weighted_minimal_gen)
+# Example calls
+area_tri(C)
+
+unif_tri(C)
+
+# Optimize a single generator
+dd, triVerts = constructInput(C,d,l)
+optimal_cycle = findAreaOptimalCycle(C, d, l, dd, triVerts, true)[1]
+optimal_volume = findAreaOptimalCycle(C, d, l, dd, triVerts, true)[2] # number of triangles this cycle bounds
+
 # save this C object for future use.
 save("sampleHObject.jld", "C", C)
 # load saved C objects.
 C = load("sampleHObject.jld")["C"]
-
-classrep(C,1,1)
-
-C.permutedlverts[2][:, generators[1].rowval]
-
-typeof(true) == Bool

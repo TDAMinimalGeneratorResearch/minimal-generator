@@ -120,12 +120,10 @@ function C_d_l__minimal(C,d,l, with_length_or_custom, int_sol, existing_gens = [
 	m2 = Model(GLPK.Optimizer) # Clp.Optimizer
 	## create variable x which will be our new generator, and y for the boundary i+1
 	if int_sol  # --- later, int.  vs. {0, \pm 1}
-		println("int sol")
 		@variable(m2, x_pos[1:xlen], Int)
 		@variable(m2, x_neg[1:xlen], Int)
 		# @variable(m2, y[1:ylen], Int)
 	else
-		println("not int sol")
 		@variable(m2, x_pos[1:xlen])
 		@variable(m2, x_neg[1:xlen])
 
